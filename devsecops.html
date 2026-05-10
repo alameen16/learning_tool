@@ -1,0 +1,2385 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Folarin — DevSecOps & Infrastructure Mastery</title>
+<link href="https://fonts.googleapis.com/css2?family=Space+Mono:ital,wght@0,400;0,700;1,400&family=Unbounded:wght@300;400;600;800;900&family=Instrument+Serif:ital@0;1&display=swap" rel="stylesheet">
+<style>
+/* ─── TOKENS ─────────────────────────────────────────── */
+:root {
+  --bg:       #060608;
+  --surface:  #0d0d12;
+  --surface2: #13131a;
+  --surface3: #1a1a24;
+  --border:   rgba(255,255,255,0.07);
+  --border2:  rgba(255,255,255,0.13);
+  --text:     #e2dff5;
+  --text2:    #8b88a8;
+  --text3:    #4a4760;
+  --green:    #3dffa0;
+  --green2:   #1a7a4a;
+  --green-bg: rgba(61,255,160,0.07);
+  --green-bd: rgba(61,255,160,0.2);
+  --blue:     #5b8fff;
+  --blue-bg:  rgba(91,143,255,0.07);
+  --blue-bd:  rgba(91,143,255,0.2);
+  --orange:   #ff7a3d;
+  --orange-bg:rgba(255,122,61,0.07);
+  --orange-bd:rgba(255,122,61,0.2);
+  --purple:   #b06fff;
+  --purple-bg:rgba(176,111,255,0.07);
+  --purple-bd:rgba(176,111,255,0.2);
+  --red:      #ff4d6d;
+  --red-bg:   rgba(255,77,109,0.07);
+  --red-bd:   rgba(255,77,109,0.2);
+  --gold:     #ffd166;
+  --gold-bg:  rgba(255,209,102,0.07);
+  --gold-bd:  rgba(255,209,102,0.2);
+}
+
+*,*::before,*::after { box-sizing:border-box; margin:0; padding:0; }
+html { scroll-behavior:smooth; }
+
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: 'Instrument Serif', Georgia, serif;
+  min-height: 100vh;
+  overflow-x: hidden;
+}
+
+/* Custom scrollbar */
+::-webkit-scrollbar { width: 4px; }
+::-webkit-scrollbar-track { background: var(--bg); }
+::-webkit-scrollbar-thumb { background: var(--surface3); border-radius: 2px; }
+
+/* ─── LAYOUT ─────────────────────────────────────────── */
+.app { display:flex; min-height:100vh; }
+
+/* ─── SIDEBAR ────────────────────────────────────────── */
+.sidebar {
+  width: 270px;
+  flex-shrink: 0;
+  background: var(--surface);
+  border-right: 1px solid var(--border);
+  position: fixed;
+  top:0; left:0; bottom:0;
+  overflow-y: auto;
+  z-index: 100;
+  display: flex;
+  flex-direction: column;
+}
+
+.sidebar-brand {
+  padding: 28px 22px 22px;
+  border-bottom: 1px solid var(--border);
+}
+
+.brand-tag {
+  font-family: 'Space Mono', monospace;
+  font-size: 9px;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--text3);
+  margin-bottom: 8px;
+}
+
+.brand-name {
+  font-family: 'Unbounded', sans-serif;
+  font-size: 15px;
+  font-weight: 800;
+  color: var(--text);
+  line-height: 1.2;
+}
+
+.brand-name span { color: var(--green); }
+
+.brand-sub {
+  font-family: 'Space Mono', monospace;
+  font-size: 9px;
+  color: var(--text3);
+  margin-top: 6px;
+}
+
+.nav-section { padding: 18px 14px 6px; }
+
+.nav-section-label {
+  font-family: 'Space Mono', monospace;
+  font-size: 8px;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: var(--text3);
+  padding: 0 8px;
+  margin-bottom: 6px;
+}
+
+.nav-item {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  padding: 8px 10px;
+  border-radius: 7px;
+  cursor: pointer;
+  transition: all 0.14s;
+  margin-bottom: 1px;
+  border: 1px solid transparent;
+  text-decoration: none;
+  user-select: none;
+}
+
+.nav-item:hover { background: var(--surface2); }
+.nav-item.active { background: var(--surface3); border-color: var(--border2); }
+
+.nav-pip { width:6px; height:6px; border-radius:50%; flex-shrink:0; }
+.nav-label { font-family:'Space Mono',monospace; font-size:11px; font-weight:700; color:var(--text2); flex:1; }
+.nav-item.active .nav-label { color: var(--text); }
+.nav-months { font-family:'Space Mono',monospace; font-size:9px; color:var(--text3); }
+
+.sidebar-footer {
+  margin-top: auto;
+  padding: 18px 22px;
+  border-top: 1px solid var(--border);
+}
+
+.footer-label {
+  font-family: 'Space Mono', monospace;
+  font-size: 8px;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  color: var(--text3);
+  margin-bottom: 10px;
+}
+
+.legend-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 6px;
+  font-family: 'Space Mono', monospace;
+  font-size: 10px;
+  color: var(--text2);
+}
+
+.legend-sq { width:8px; height:8px; border-radius:2px; flex-shrink:0; }
+
+/* ─── MAIN ───────────────────────────────────────────── */
+.main { margin-left: 270px; flex:1; min-width:0; }
+
+/* ─── PAGES ──────────────────────────────────────────── */
+.page { display:none; }
+.page.active { display:block; animation: pgIn 0.25s ease; }
+
+@keyframes pgIn {
+  from { opacity:0; transform:translateY(6px); }
+  to   { opacity:1; transform:translateY(0); }
+}
+
+/* ─── PAGE HEADER ────────────────────────────────────── */
+.pg-header {
+  padding: 52px 52px 40px;
+  border-bottom: 1px solid var(--border);
+  position: relative;
+  overflow: hidden;
+}
+
+.pg-header::before {
+  content:'';
+  position:absolute;
+  top:-80px; right:-80px;
+  width:400px; height:400px;
+  border-radius:50%;
+  background: radial-gradient(circle, rgba(61,255,160,0.04) 0%, transparent 65%);
+  pointer-events:none;
+}
+
+.pg-eyebrow {
+  font-family: 'Space Mono', monospace;
+  font-size: 10px;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--text3);
+  margin-bottom: 14px;
+}
+
+.pg-title {
+  font-family: 'Unbounded', sans-serif;
+  font-size: 38px;
+  font-weight: 900;
+  color: var(--text);
+  letter-spacing: -0.02em;
+  line-height: 1.05;
+  margin-bottom: 12px;
+}
+
+.pg-sub {
+  font-size: 16px;
+  color: var(--text2);
+  font-style: italic;
+  max-width: 580px;
+  line-height: 1.7;
+}
+
+.pg-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 12px;
+  border-radius: 20px;
+  font-family: 'Space Mono', monospace;
+  font-size: 10px;
+  border: 1px solid;
+  margin-bottom: 18px;
+}
+
+/* ─── CONTENT ────────────────────────────────────────── */
+.content { padding: 44px 52px; }
+
+/* ─── SECTION TITLES ─────────────────────────────────── */
+.sec-title {
+  font-family: 'Space Mono', monospace;
+  font-size: 9px;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: var(--text3);
+  margin-bottom: 18px;
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+.sec-title::after { content:''; flex:1; height:1px; background:var(--border); }
+
+/* ─── STATS ROW ──────────────────────────────────────── */
+.stats-row { display:grid; grid-template-columns:repeat(4,1fr); gap:12px; margin-bottom:40px; }
+
+.stat-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 18px 20px;
+}
+
+.stat-num {
+  font-family: 'Unbounded', sans-serif;
+  font-size: 30px;
+  font-weight: 900;
+  line-height: 1;
+  margin-bottom: 5px;
+}
+
+.stat-label {
+  font-family: 'Space Mono', monospace;
+  font-size: 9px;
+  color: var(--text3);
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+}
+
+/* ─── PHASE CARDS ────────────────────────────────────── */
+.phase-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:14px; margin-bottom:40px; }
+
+.phase-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 22px;
+  cursor: pointer;
+  transition: all 0.18s;
+  position: relative;
+  overflow: hidden;
+}
+
+.phase-card:hover { border-color: var(--border2); transform: translateY(-2px); }
+
+.phase-card::before {
+  content:'';
+  position:absolute;
+  bottom:0; left:0; right:0;
+  height:2px;
+}
+
+.ph-num {
+  font-family: 'Space Mono', monospace;
+  font-size: 9px;
+  color: var(--text3);
+  letter-spacing: 0.12em;
+  margin-bottom: 7px;
+}
+
+.ph-title {
+  font-family: 'Unbounded', sans-serif;
+  font-size: 15px;
+  font-weight: 700;
+  color: var(--text);
+  margin-bottom: 5px;
+}
+
+.ph-months { font-size:12px; color:var(--text3); margin-bottom:14px; font-style:italic; }
+
+.ph-tags { display:flex; flex-wrap:wrap; gap:5px; }
+
+.ph-tag {
+  font-family: 'Space Mono', monospace;
+  font-size: 9px;
+  padding: 3px 8px;
+  border-radius: 20px;
+  border: 1px solid;
+}
+
+/* ─── TRACK CARDS ────────────────────────────────────── */
+.track-grid { display:grid; gap:14px; margin-bottom:40px; }
+.tg-2 { grid-template-columns:1fr 1fr; }
+.tg-3 { grid-template-columns:1fr 1fr 1fr; }
+.tg-1 { grid-template-columns:1fr; }
+
+.track-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  overflow: hidden;
+}
+
+.tc-header {
+  padding: 16px 20px;
+  border-bottom: 1px solid var(--border);
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.tc-icon {
+  width: 28px; height: 28px;
+  border-radius: 6px;
+  display: flex; align-items:center; justify-content:center;
+  font-size: 13px; flex-shrink:0;
+}
+
+.tc-label { font-size: 13px; font-weight: 700; color: var(--text); font-family:'Space Mono',monospace; }
+
+.tc-item {
+  padding: 14px 20px;
+  border-bottom: 1px solid var(--border);
+  font-size: 13.5px;
+  color: var(--text2);
+  line-height: 1.75;
+}
+
+.tc-item:last-child { border-bottom:none; }
+
+.tc-item strong {
+  color: var(--text);
+  font-family: 'Space Mono', monospace;
+  font-size: 11px;
+  font-weight: 700;
+  display: block;
+  margin-bottom: 5px;
+  letter-spacing: 0.03em;
+}
+
+.tc-item code {
+  font-family: 'Space Mono', monospace;
+  font-size: 11px;
+  background: var(--surface3);
+  padding: 1px 5px;
+  border-radius: 3px;
+  color: var(--green);
+}
+
+/* ─── BUILD TARGET ───────────────────────────────────── */
+.build-target {
+  background: var(--surface);
+  border: 1px solid var(--orange-bd);
+  border-left: 3px solid var(--orange);
+  border-radius: 12px;
+  padding: 22px 26px;
+  margin-bottom: 40px;
+  position: relative;
+}
+
+.build-target::before {
+  content: 'BUILD TARGET';
+  position: absolute;
+  top: -1px; right: 18px;
+  background: var(--orange);
+  color: #000;
+  font-family: 'Space Mono', monospace;
+  font-size: 8px;
+  font-weight: 700;
+  letter-spacing: 0.18em;
+  padding: 3px 10px;
+  border-radius: 0 0 6px 6px;
+}
+
+.bt-title { font-family:'Unbounded',sans-serif; font-size:14px; font-weight:700; color:var(--text); margin-bottom:8px; }
+.bt-text { font-size:13.5px; color:var(--text2); line-height:1.8; }
+.bt-text code { font-family:'Space Mono',monospace; font-size:11px; background:var(--surface3); padding:1px 5px; border-radius:3px; color:var(--orange); }
+
+/* ─── CONCEPT CARDS (Knowledge Base) ────────────────── */
+.concept {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  overflow: hidden;
+  margin-bottom: 16px;
+  transition: box-shadow 0.18s;
+}
+
+.concept:hover { box-shadow: 0 0 0 1px var(--border2); }
+
+.concept-hdr {
+  padding: 20px 24px;
+  cursor: pointer;
+  display: flex;
+  align-items: flex-start;
+  gap: 18px;
+  user-select: none;
+}
+
+.concept-meta { flex:1; min-width:0; }
+
+.concept-title-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+  margin-bottom: 6px;
+}
+
+.concept-title {
+  font-family: 'Unbounded', sans-serif;
+  font-size: 18px;
+  font-weight: 700;
+  color: var(--text);
+  letter-spacing: -0.01em;
+}
+
+.concept-badge {
+  font-family: 'Space Mono', monospace;
+  font-size: 8px;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  padding: 3px 8px;
+  border: 1px solid;
+  border-radius: 3px;
+  flex-shrink: 0;
+}
+
+.concept-tagline { font-size:14px; color:var(--text2); font-style:italic; line-height:1.5; }
+
+.concept-toggle {
+  width: 26px; height: 26px;
+  border: 1px solid var(--border2);
+  border-radius: 6px;
+  display: flex; align-items:center; justify-content:center;
+  font-family: 'Space Mono', monospace;
+  font-size: 16px;
+  color: var(--text3);
+  flex-shrink: 0;
+  transition: all 0.15s;
+}
+
+.concept.open .concept-toggle { background:var(--green2); color:#fff; border-color:var(--green2); }
+
+.concept-body { display:none; border-top:1px solid var(--border); }
+.concept.open .concept-body { display:block; }
+
+.concept-body-inner {
+  padding: 28px 24px;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 28px;
+}
+
+.col-label {
+  font-family: 'Space Mono', monospace;
+  font-size: 8px;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--text3);
+  margin-bottom: 14px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.col-label::after { content:''; flex:1; height:1px; background:var(--border); }
+
+.explanation p { font-size:13.5px; line-height:1.85; color:var(--text2); margin-bottom:13px; }
+.explanation p:last-child { margin-bottom:0; }
+.explanation strong { font-weight:700; color:var(--text); font-family:'Space Mono',monospace; font-size:11px; }
+
+.highlight {
+  background: var(--gold-bg);
+  border-left: 3px solid var(--gold);
+  padding: 10px 14px;
+  margin: 12px 0;
+  font-size: 13px;
+  line-height: 1.75;
+  border-radius: 0 6px 6px 0;
+}
+
+.callout-warn {
+  background: var(--red-bg);
+  border-left: 3px solid var(--red);
+  padding: 10px 14px;
+  margin: 12px 0;
+  font-size: 13px;
+  line-height: 1.75;
+  border-radius: 0 6px 6px 0;
+}
+
+.use-case { margin-bottom:18px; padding-bottom:18px; border-bottom:1px solid var(--border); }
+.use-case:last-child { border-bottom:none; margin-bottom:0; padding-bottom:0; }
+
+.uc-where {
+  font-family: 'Space Mono', monospace;
+  font-size: 10px;
+  font-weight: 700;
+  margin-bottom: 6px;
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  color: var(--text);
+}
+.uc-where::before { content:'→'; color:var(--green); font-size:12px; }
+.uc-desc { font-size:13px; color:var(--text2); line-height:1.7; }
+
+.code-section {
+  grid-column: 1/-1;
+  border-top: 1px solid var(--border);
+  padding-top: 22px;
+}
+
+.code-block {
+  background: #0a0a0f;
+  color: #c9c7e8;
+  font-family: 'Space Mono', monospace;
+  font-size: 11.5px;
+  line-height: 1.8;
+  padding: 18px 22px;
+  overflow-x: auto;
+  white-space: pre;
+  border-radius: 8px;
+  border: 1px solid var(--border);
+  margin-top: 8px;
+}
+
+.kw { color:#ff6b8a; }
+.str { color:#7dd3fc; }
+.cm { color:#464460; font-style:italic; }
+.fn { color:#93c5fd; }
+.num { color:#fbbf24; }
+.green-t { color:#3dffa0; }
+
+.tags-row {
+  padding: 12px 24px;
+  border-top: 1px solid var(--border);
+  background: var(--surface2);
+  display: flex;
+  gap: 6px;
+  flex-wrap: wrap;
+}
+
+.tag {
+  font-family: 'Space Mono', monospace;
+  font-size: 9px;
+  padding: 3px 7px;
+  background: var(--surface3);
+  border: 1px solid var(--border);
+  border-radius: 3px;
+  color: var(--text3);
+}
+
+/* Color variants */
+.cv-green { border-left: 3px solid var(--green); }
+.cv-blue  { border-left: 3px solid var(--blue); }
+.cv-orange{ border-left: 3px solid var(--orange); }
+.cv-purple{ border-left: 3px solid var(--purple); }
+.cv-gold  { border-left: 3px solid var(--gold); }
+.cv-red   { border-left: 3px solid var(--red); }
+
+.badge-green { color:var(--green); border-color:var(--green-bd); }
+.badge-blue  { color:var(--blue);  border-color:var(--blue-bd); }
+.badge-orange{ color:var(--orange);border-color:var(--orange-bd); }
+.badge-purple{ color:var(--purple);border-color:var(--purple-bd); }
+.badge-gold  { color:var(--gold);  border-color:var(--gold-bd); }
+.badge-red   { color:var(--red);   border-color:var(--red-bd); }
+
+/* ─── RESOURCES ──────────────────────────────────────── */
+.res-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:10px; margin-bottom:40px; }
+
+.res-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 16px;
+  transition: border-color 0.15s;
+}
+.res-card:hover { border-color: var(--border2); }
+.res-type { font-family:'Space Mono',monospace; font-size:8px; letter-spacing:0.18em; text-transform:uppercase; color:var(--text3); margin-bottom:5px; }
+.res-name { font-family:'Unbounded',sans-serif; font-size:12px; font-weight:700; color:var(--text); margin-bottom:5px; line-height:1.3; }
+.res-url { font-family:'Space Mono',monospace; font-size:9px; color:var(--green); margin-bottom:7px; display:block; text-decoration:none; word-break:break-all; }
+.res-url:hover { text-decoration:underline; }
+.res-desc { font-size:11.5px; color:var(--text3); line-height:1.65; }
+
+/* ─── CHECKLIST ──────────────────────────────────────── */
+.checklist { margin-bottom:40px; }
+
+.check-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  padding: 10px 14px;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background 0.1s;
+}
+.check-item:hover { background: var(--surface2); }
+
+.check-box {
+  width: 16px; height: 16px;
+  border: 1.5px solid var(--border2);
+  border-radius: 4px;
+  flex-shrink: 0;
+  margin-top: 2px;
+  display: flex; align-items:center; justify-content:center;
+  transition: all 0.15s;
+}
+.check-box.checked { background:var(--green); border-color:var(--green); }
+.check-box.checked::after { content:'✓'; font-size:10px; color:#000; font-weight:700; }
+
+.check-text { font-size:13px; color:var(--text2); line-height:1.55; }
+.check-text.done { text-decoration:line-through; color:var(--text3); }
+
+/* ─── TIMELINE ───────────────────────────────────────── */
+.timeline { position:relative; padding-left:24px; margin-bottom:40px; }
+.timeline::before { content:''; position:absolute; left:5px; top:8px; bottom:8px; width:1px; background:var(--border); }
+
+.tl-item { position:relative; margin-bottom:22px; }
+
+.tl-dot { position:absolute; left:-20px; top:7px; width:10px; height:10px; border-radius:50%; border:2px solid var(--bg); }
+
+.tl-content { background:var(--surface); border:1px solid var(--border); border-radius:10px; padding:14px 16px; }
+.tl-header { display:flex; justify-content:space-between; align-items:flex-start; margin-bottom:6px; }
+.tl-title { font-family:'Space Mono',monospace; font-size:12px; font-weight:700; color:var(--text); }
+.tl-time { font-family:'Space Mono',monospace; font-size:9px; color:var(--text3); }
+.tl-desc { font-size:12.5px; color:var(--text2); line-height:1.7; }
+
+/* ─── SEARCH ─────────────────────────────────────────── */
+.search-wrap { margin-bottom:28px; position:relative; }
+.search-wrap input {
+  width:100%;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 11px 42px 11px 16px;
+  font-family: 'Space Mono', monospace;
+  font-size: 12px;
+  color: var(--text);
+  outline: none;
+  transition: border-color 0.18s;
+}
+.search-wrap input:focus { border-color: var(--green); }
+.search-wrap input::placeholder { color: var(--text3); }
+.search-icon { position:absolute; right:14px; top:50%; transform:translateY(-50%); color:var(--text3); font-size:14px; pointer-events:none; }
+
+.result-count { font-family:'Space Mono',monospace; font-size:10px; color:var(--text3); margin-bottom:16px; min-height:16px; }
+
+/* ─── SPLIT BAR ──────────────────────────────────────── */
+.split-label { font-family:'Space Mono',monospace; font-size:9px; letter-spacing:0.15em; text-transform:uppercase; color:var(--text3); margin-bottom:10px; }
+.split-bar { display:flex; height:42px; border-radius:10px; overflow:hidden; margin-bottom:36px; border:1px solid var(--border); }
+.split-seg { display:flex; align-items:center; justify-content:center; font-size:10px; font-weight:700; font-family:'Space Mono',monospace; padding:0 8px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; transition:flex 0.4s ease; }
+
+/* ─── WEEK GRID ──────────────────────────────────────── */
+.week-grid { display:grid; grid-template-columns:repeat(4,1fr); gap:10px; margin-bottom:36px; }
+.week-card { background:var(--surface); border:1px solid var(--border); border-radius:10px; padding:14px 16px; }
+.week-num { font-family:'Space Mono',monospace; font-size:8px; color:var(--text3); letter-spacing:0.12em; text-transform:uppercase; margin-bottom:6px; }
+.week-title { font-family:'Space Mono',monospace; font-size:11px; font-weight:700; color:var(--text); margin-bottom:9px; }
+.week-items { list-style:none; }
+.week-items li { font-size:11px; color:var(--text2); padding:3px 0; border-bottom:1px solid var(--border); line-height:1.5; }
+.week-items li:last-child { border-bottom:none; }
+
+/* ─── MOBILE TOGGLE ──────────────────────────────────── */
+.menu-toggle {
+  display: none;
+  position: fixed;
+  top:14px; left:14px;
+  z-index: 200;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  width: 40px; height: 40px;
+  align-items:center; justify-content:center;
+  cursor: pointer;
+  flex-direction: column;
+  gap: 4px;
+}
+.menu-toggle span { width:18px; height:1.5px; background:var(--text2); border-radius:1px; display:block; }
+.sb-overlay { display:none; position:fixed; inset:0; background:rgba(0,0,0,0.7); z-index:99; }
+
+@media(max-width:960px) {
+  .sidebar { transform:translateX(-100%); transition:transform 0.22s ease; }
+  .sidebar.open { transform:translateX(0); }
+  .sb-overlay.open { display:block; }
+  .main { margin-left:0; }
+  .menu-toggle { display:flex; }
+  .pg-header { padding:58px 24px 30px; }
+  .content { padding:28px 24px; }
+  .tg-2,.tg-3 { grid-template-columns:1fr; }
+  .res-grid { grid-template-columns:1fr 1fr; }
+  .stats-row { grid-template-columns:1fr 1fr; }
+  .week-grid { grid-template-columns:1fr 1fr; }
+  .phase-grid { grid-template-columns:1fr 1fr; }
+  .concept-body-inner { grid-template-columns:1fr; }
+}
+
+@media(max-width:560px) {
+  .res-grid { grid-template-columns:1fr; }
+  .phase-grid { grid-template-columns:1fr; }
+  .stats-row { grid-template-columns:1fr 1fr; }
+  .week-grid { grid-template-columns:1fr; }
+}
+</style>
+</head>
+<body>
+
+<button class="menu-toggle" onclick="toggleSB()" aria-label="Menu">
+  <span></span><span></span><span></span>
+</button>
+<div class="sb-overlay" id="overlay" onclick="closeSB()"></div>
+
+<div class="app">
+
+<!-- ════════════════════ SIDEBAR ════════════════════ -->
+<aside class="sidebar" id="sidebar">
+  <div class="sidebar-brand">
+    <div class="brand-tag">// Folarin Akintola</div>
+    <div class="brand-name">DevSecOps<br><span>&amp; Infra</span> Mastery</div>
+    <div class="brand-sub">2026 → 2028 · Built on Bus Portal</div>
+  </div>
+
+  <div class="nav-section">
+    <div class="nav-section-label">Start Here</div>
+    <a class="nav-item active" onclick="show('overview')" href="#">
+      <div class="nav-pip" style="background:var(--purple)"></div>
+      <span class="nav-label">Overview</span>
+    </a>
+    <a class="nav-item" onclick="show('daily')" href="#">
+      <div class="nav-pip" style="background:var(--purple)"></div>
+      <span class="nav-label">Daily Structure</span>
+    </a>
+    <a class="nav-item" onclick="show('tracker')" href="#">
+      <div class="nav-pip" style="background:var(--purple)"></div>
+      <span class="nav-label">Progress Tracker</span>
+    </a>
+  </div>
+
+  <div class="nav-section">
+    <div class="nav-section-label">Security Track</div>
+    <a class="nav-item" onclick="show('ph1')" href="#">
+      <div class="nav-pip" style="background:var(--red)"></div>
+      <span class="nav-label">Phase 1 — Harden</span>
+      <span class="nav-months">Now</span>
+    </a>
+    <a class="nav-item" onclick="show('ph6')" href="#">
+      <div class="nav-pip" style="background:var(--red)"></div>
+      <span class="nav-label">Phase 6 — Pentest</span>
+      <span class="nav-months">M12–16</span>
+    </a>
+  </div>
+
+  <div class="nav-section">
+    <div class="nav-section-label">Infrastructure</div>
+    <a class="nav-item" onclick="show('ph2')" href="#">
+      <div class="nav-pip" style="background:var(--blue)"></div>
+      <span class="nav-label">Phase 2 — Linux</span>
+      <span class="nav-months">M2–4</span>
+    </a>
+    <a class="nav-item" onclick="show('ph3')" href="#">
+      <div class="nav-pip" style="background:var(--blue)"></div>
+      <span class="nav-label">Phase 3 — Docker</span>
+      <span class="nav-months">M4–7</span>
+    </a>
+    <a class="nav-item" onclick="show('ph4')" href="#">
+      <div class="nav-pip" style="background:var(--blue)"></div>
+      <span class="nav-label">Phase 4 — Cloud</span>
+      <span class="nav-months">M7–10</span>
+    </a>
+    <a class="nav-item" onclick="show('ph5')" href="#">
+      <div class="nav-pip" style="background:var(--blue)"></div>
+      <span class="nav-label">Phase 5 — Scale</span>
+      <span class="nav-months">M10–14</span>
+    </a>
+    <a class="nav-item" onclick="show('ph7')" href="#">
+      <div class="nav-pip" style="background:var(--blue)"></div>
+      <span class="nav-label">Phase 7 — K8s</span>
+      <span class="nav-months">M15–20</span>
+    </a>
+    <a class="nav-item" onclick="show('ph8')" href="#">
+      <div class="nav-pip" style="background:var(--blue)"></div>
+      <span class="nav-label">Phase 8 — ICS/OT</span>
+      <span class="nav-months">Ongoing</span>
+    </a>
+  </div>
+
+  <div class="nav-section">
+    <div class="nav-section-label">Knowledge Base</div>
+    <a class="nav-item" onclick="show('kb-security')" href="#">
+      <div class="nav-pip" style="background:var(--red)"></div>
+      <span class="nav-label">Security</span>
+    </a>
+    <a class="nav-item" onclick="show('kb-linux')" href="#">
+      <div class="nav-pip" style="background:var(--green)"></div>
+      <span class="nav-label">Linux & Networking</span>
+    </a>
+    <a class="nav-item" onclick="show('kb-backend')" href="#">
+      <div class="nav-pip" style="background:var(--blue)"></div>
+      <span class="nav-label">Backend & APIs</span>
+    </a>
+    <a class="nav-item" onclick="show('kb-infra')" href="#">
+      <div class="nav-pip" style="background:var(--orange)"></div>
+      <span class="nav-label">Docker & Cloud</span>
+    </a>
+    <a class="nav-item" onclick="show('kb-db')" href="#">
+      <div class="nav-pip" style="background:var(--purple)"></div>
+      <span class="nav-label">Databases</span>
+    </a>
+  </div>
+
+  <div class="nav-section">
+    <div class="nav-section-label">Career</div>
+    <a class="nav-item" onclick="show('certs')" href="#">
+      <div class="nav-pip" style="background:var(--gold)"></div>
+      <span class="nav-label">Certifications</span>
+    </a>
+    <a class="nav-item" onclick="show('resources')" href="#">
+      <div class="nav-pip" style="background:var(--gold)"></div>
+      <span class="nav-label">All Resources</span>
+    </a>
+  </div>
+
+  <div class="sidebar-footer">
+    <div class="footer-label">Track Key</div>
+    <div class="legend-row"><div class="legend-sq" style="background:var(--red)"></div>Security</div>
+    <div class="legend-row"><div class="legend-sq" style="background:var(--blue)"></div>Infrastructure</div>
+    <div class="legend-sq" style="background:var(--green); display:inline-block; width:8px; height:8px; border-radius:2px; margin-right:8px;"></div><span style="font-family:'Space Mono',monospace;font-size:10px;color:var(--text2)">Linux & Networking</span>
+    <div class="legend-row" style="margin-top:6px"><div class="legend-sq" style="background:var(--gold)"></div>Certifications</div>
+    <div class="legend-row"><div class="legend-sq" style="background:var(--orange)"></div>Build Targets</div>
+  </div>
+</aside>
+
+<!-- ════════════════════ MAIN ════════════════════ -->
+<main class="main">
+
+<!-- ══════ OVERVIEW ══════ -->
+<div class="page active" id="page-overview">
+  <div class="pg-header">
+    <div class="pg-eyebrow">// Master Plan · 2026–2028</div>
+    <div class="pg-title">DevSecOps &amp;<br>Infrastructure<br>Mastery</div>
+    <div class="pg-sub">Security. Linux. Docker. Cloud. Kubernetes. OT/ICS. Built on real code, deployed in production, practiced on Bus Portal.</div>
+  </div>
+  <div class="content">
+    <div class="stats-row">
+      <div class="stat-card"><div class="stat-num" style="color:var(--green)">8</div><div class="stat-label">Phases</div></div>
+      <div class="stat-card"><div class="stat-num" style="color:var(--blue)">24</div><div class="stat-label">Months</div></div>
+      <div class="stat-card"><div class="stat-num" style="color:var(--orange)">7</div><div class="stat-label">Certifications</div></div>
+      <div class="stat-card"><div class="stat-num" style="color:var(--gold)">8</div><div class="stat-label">Build Targets</div></div>
+    </div>
+
+    <div class="sec-title">The Core Principle</div>
+    <div class="track-grid tg-1" style="margin-bottom:36px">
+      <div class="track-card">
+        <div class="tc-item"><strong>Why this path specifically</strong>You shipped a live production system as a junior intern. That's real. Most developers never have that at your stage. The next level is not more features — it's understanding what happens when that system gets attacked, when it needs to handle 10,000 users instead of 50, when it needs to recover from failure at 2AM. This roadmap is about those skills.</div>
+        <div class="tc-item"><strong>Your unique advantage</strong>You have an EEE background, power systems internship, a live production app, and a family business in Nigeria's transmission sector. Most DevSecOps engineers have none of those things. OT/ICS security — securing industrial control systems — is one of the most underserved and highest-paid niches globally. You can get there.</div>
+        <div class="tc-item"><strong>The method: learn on real code</strong>Every concept in this roadmap gets applied to Bus Portal — your actual live system with actual users. You will attack it, harden it, containerize it, deploy it on cloud infrastructure, load test it, and eventually use it to practice penetration testing. No toy projects. No tutorial apps. Real consequences teach faster.</div>
+        <div class="tc-item"><strong>Consistency beats intensity</strong>20 minutes every day for 2 years beats a 12-hour weekend every month. The engineers who build real skills touch something every day. Use this tool to track what you've done and what comes next.</div>
+      </div>
+    </div>
+
+    <div class="sec-title">All 8 Phases</div>
+    <div class="phase-grid">
+      <div class="phase-card" onclick="show('ph1')" style="border-color:var(--red-bd)">
+        <div style="position:absolute;bottom:0;left:0;right:0;height:2px;background:var(--red)"></div>
+        <div class="ph-num">Phase 1 · Now</div>
+        <div class="ph-title">Security Hardening</div>
+        <div class="ph-months">Months 1–3</div>
+        <div class="ph-tags">
+          <span class="ph-tag" style="color:var(--red);border-color:var(--red-bd)">NoSQL Injection</span>
+          <span class="ph-tag" style="color:var(--red);border-color:var(--red-bd)">Rate Limiting</span>
+          <span class="ph-tag" style="color:var(--red);border-color:var(--red-bd)">Helmet.js</span>
+        </div>
+      </div>
+      <div class="phase-card" onclick="show('ph2')" style="border-color:var(--green-bd)">
+        <div style="position:absolute;bottom:0;left:0;right:0;height:2px;background:var(--green)"></div>
+        <div class="ph-num">Phase 2 · M2–4</div>
+        <div class="ph-title">Linux &amp; Networking</div>
+        <div class="ph-months">Months 2–4</div>
+        <div class="ph-tags">
+          <span class="ph-tag" style="color:var(--green);border-color:var(--green-bd)">WSL2</span>
+          <span class="ph-tag" style="color:var(--green);border-color:var(--green-bd)">SSH</span>
+          <span class="ph-tag" style="color:var(--green);border-color:var(--green-bd)">Wireshark</span>
+        </div>
+      </div>
+      <div class="phase-card" onclick="show('ph3')" style="border-color:var(--blue-bd)">
+        <div style="position:absolute;bottom:0;left:0;right:0;height:2px;background:var(--blue)"></div>
+        <div class="ph-num">Phase 3 · M4–7</div>
+        <div class="ph-title">Docker &amp; CI/CD</div>
+        <div class="ph-months">Months 4–7</div>
+        <div class="ph-tags">
+          <span class="ph-tag" style="color:var(--blue);border-color:var(--blue-bd)">Containers</span>
+          <span class="ph-tag" style="color:var(--blue);border-color:var(--blue-bd)">GitHub Actions</span>
+          <span class="ph-tag" style="color:var(--blue);border-color:var(--blue-bd)">Testing</span>
+        </div>
+      </div>
+      <div class="phase-card" onclick="show('ph4')" style="border-color:var(--blue-bd)">
+        <div style="position:absolute;bottom:0;left:0;right:0;height:2px;background:var(--blue)"></div>
+        <div class="ph-num">Phase 4 · M7–10</div>
+        <div class="ph-title">Cloud Infrastructure</div>
+        <div class="ph-months">Months 7–10</div>
+        <div class="ph-tags">
+          <span class="ph-tag" style="color:var(--blue);border-color:var(--blue-bd)">AWS</span>
+          <span class="ph-tag" style="color:var(--blue);border-color:var(--blue-bd)">Terraform</span>
+          <span class="ph-tag" style="color:var(--blue);border-color:var(--blue-bd)">VPC</span>
+        </div>
+      </div>
+      <div class="phase-card" onclick="show('ph5')" style="border-color:var(--orange-bd)">
+        <div style="position:absolute;bottom:0;left:0;right:0;height:2px;background:var(--orange)"></div>
+        <div class="ph-num">Phase 5 · M10–14</div>
+        <div class="ph-title">Performance &amp; Scale</div>
+        <div class="ph-months">Months 10–14</div>
+        <div class="ph-tags">
+          <span class="ph-tag" style="color:var(--orange);border-color:var(--orange-bd)">Redis</span>
+          <span class="ph-tag" style="color:var(--orange);border-color:var(--orange-bd)">k6 Load Test</span>
+          <span class="ph-tag" style="color:var(--orange);border-color:var(--orange-bd)">Sentry</span>
+        </div>
+      </div>
+      <div class="phase-card" onclick="show('ph6')" style="border-color:var(--red-bd)">
+        <div style="position:absolute;bottom:0;left:0;right:0;height:2px;background:var(--red)"></div>
+        <div class="ph-num">Phase 6 · M12–16</div>
+        <div class="ph-title">Penetration Testing</div>
+        <div class="ph-months">Months 12–16</div>
+        <div class="ph-tags">
+          <span class="ph-tag" style="color:var(--red);border-color:var(--red-bd)">Kali Linux</span>
+          <span class="ph-tag" style="color:var(--red);border-color:var(--red-bd)">Burp Suite</span>
+          <span class="ph-tag" style="color:var(--red);border-color:var(--red-bd)">HackTheBox</span>
+        </div>
+      </div>
+      <div class="phase-card" onclick="show('ph7')" style="border-color:var(--purple-bd)">
+        <div style="position:absolute;bottom:0;left:0;right:0;height:2px;background:var(--purple)"></div>
+        <div class="ph-num">Phase 7 · M15–20</div>
+        <div class="ph-title">Kubernetes</div>
+        <div class="ph-months">Months 15–20</div>
+        <div class="ph-tags">
+          <span class="ph-tag" style="color:var(--purple);border-color:var(--purple-bd)">K8s</span>
+          <span class="ph-tag" style="color:var(--purple);border-color:var(--purple-bd)">Helm</span>
+          <span class="ph-tag" style="color:var(--purple);border-color:var(--purple-bd)">Microservices</span>
+        </div>
+      </div>
+      <div class="phase-card" onclick="show('ph8')" style="border-color:var(--green-bd)">
+        <div style="position:absolute;bottom:0;left:0;right:0;height:2px;background:var(--green)"></div>
+        <div class="ph-num">Phase 8 · Ongoing</div>
+        <div class="ph-title">ICS/OT Security</div>
+        <div class="ph-months">Parallel from Month 2</div>
+        <div class="ph-tags">
+          <span class="ph-tag" style="color:var(--green);border-color:var(--green-bd)">MQTT</span>
+          <span class="ph-tag" style="color:var(--green);border-color:var(--green-bd)">SCADA</span>
+          <span class="ph-tag" style="color:var(--green);border-color:var(--green-bd)">GICSP</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="sec-title">What This Path Opens</div>
+    <div class="track-grid tg-2">
+      <div class="track-card">
+        <div class="tc-header">
+          <div class="tc-icon" style="background:var(--red-bg)">🛡️</div>
+          <div class="tc-label" style="color:var(--red)">Security Roles</div>
+        </div>
+        <div class="tc-item"><strong>DevSecOps Engineer</strong>Embeds security into every stage of the development pipeline. Writes security tests, automates vulnerability scanning, owns security gates in CI/CD.</div>
+        <div class="tc-item"><strong>Cloud Security Engineer</strong>Secures AWS/GCP/Azure environments. IAM hardening, VPC design, encryption at rest and in transit, GuardDuty, CloudTrail.</div>
+        <div class="tc-item"><strong>ICS/SCADA Security Specialist</strong>Your most unique angle. Secures industrial control systems — power plants, substations, factories. Combines OT knowledge (relays, SCADA, protocols) with IT security. Extremely rare. Extremely well paid.</div>
+        <div class="tc-item"><strong>Penetration Tester / Red Team</strong>Tests systems by attacking them. Finds vulnerabilities before attackers do. Writes professional security reports. OSCP is the gold standard cert.</div>
+      </div>
+      <div class="track-card">
+        <div class="tc-header">
+          <div class="tc-icon" style="background:var(--blue-bg)">⚙️</div>
+          <div class="tc-label" style="color:var(--blue)">Infrastructure Roles</div>
+        </div>
+        <div class="tc-item"><strong>Site Reliability Engineer (SRE)</strong>Keeps production systems reliable. Writes incident runbooks, manages SLOs/SLAs, automates toil, designs for failure. Google invented this role.</div>
+        <div class="tc-item"><strong>Platform / Infrastructure Engineer</strong>Builds the internal platform that other engineers deploy on. Kubernetes clusters, CI/CD tooling, observability stacks, developer experience.</div>
+        <div class="tc-item"><strong>Solutions Architect</strong>Designs cloud infrastructure for organizations. Heavy AWS/GCP knowledge, systems thinking, cost optimization. AWS SAA cert is the entry point.</div>
+        <div class="tc-item"><strong>CTO / Technical Founder</strong>The long game — combining full-stack, security, infrastructure, and energy domain knowledge to lead the technical direction of your family startup or new venture.</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ══════ DAILY STRUCTURE ══════ -->
+<div class="page" id="page-daily">
+  <div class="pg-header">
+    <div class="pg-eyebrow">// How the days look</div>
+    <div class="pg-title">Daily Structure</div>
+    <div class="pg-sub">3–4 hours every day. Consistency beats intensity. Your Dell i7/16GB handles everything.</div>
+  </div>
+  <div class="content">
+    <div class="split-label">Recommended daily time split</div>
+    <div class="split-bar">
+      <div class="split-seg" style="flex:2;background:var(--red-bg);color:var(--red);border-right:1px solid var(--red-bd)">1.5h Security/Infra Study</div>
+      <div class="split-seg" style="flex:1.5;background:var(--blue-bg);color:var(--blue);border-right:1px solid var(--blue-bd)">1h Build on Bus Portal</div>
+      <div class="split-seg" style="flex:0.5;background:var(--green-bg);color:var(--green);border-right:1px solid var(--green-bd)">30m Tools</div>
+      <div class="split-seg" style="flex:0.5;background:var(--gold-bg);color:var(--gold)">15m Review</div>
+    </div>
+
+    <div class="sec-title">Weekly Rhythm</div>
+    <div class="week-grid">
+      <div class="week-card">
+        <div class="week-num">MON — WED</div>
+        <div class="week-title">Concept Days</div>
+        <ul class="week-items">
+          <li>New security/infra concept</li>
+          <li>Read documentation deeply</li>
+          <li>Take structured notes</li>
+          <li>Small code experiment</li>
+        </ul>
+      </div>
+      <div class="week-card">
+        <div class="week-num">THU — FRI</div>
+        <div class="week-title">Application Days</div>
+        <ul class="week-items">
+          <li>Apply this week's concept to Bus Portal</li>
+          <li>Write the code, test it</li>
+          <li>Document what you changed and why</li>
+          <li>Push to GitHub</li>
+        </ul>
+      </div>
+      <div class="week-card">
+        <div class="week-num">SATURDAY</div>
+        <div class="week-title">Deep Work</div>
+        <ul class="week-items">
+          <li>2–3hr focused build session</li>
+          <li>Security testing / CTF challenge</li>
+          <li>Write a blog post / README</li>
+          <li>Weekly GitHub commit review</li>
+        </ul>
+      </div>
+      <div class="week-card">
+        <div class="week-num">SUNDAY</div>
+        <div class="week-title">Review &amp; Plan</div>
+        <ul class="week-items">
+          <li>Review this week's notes</li>
+          <li>Update progress tracker</li>
+          <li>Plan next week's focus</li>
+          <li>Rest (seriously)</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="sec-title">Non-Negotiable Rules</div>
+    <div class="track-grid tg-1">
+      <div class="track-card">
+        <div class="tc-item"><strong>Every concept touches Bus Portal</strong>Never learn in isolation. When you learn rate limiting, add it to Bus Portal. When you learn Docker, containerize Bus Portal. When you learn penetration testing, attack Bus Portal. Real code with real stakes teaches faster than any tutorial project.</div>
+        <div class="tc-item"><strong>Document everything</strong>Write about what you learn. GitHub READMEs, a personal blog, LinkedIn articles. Every security fix you make to Bus Portal should be documented as a writeup: what was the vulnerability, how you found it, how you fixed it, what you learned. This becomes your portfolio.</div>
+        <div class="tc-item"><strong>Attack your own app first</strong>The best way to learn security is to try to break something you built. You already know the codebase. Try to bypass authentication. Try to access other users' data. Try to crash the server. Then fix what you find. This is more valuable than any CTF platform for understanding real vulnerabilities.</div>
+        <div class="tc-item"><strong>Your hardware is not the bottleneck</strong>Dell Latitude 7400, i7, 16GB RAM. This runs Docker Desktop, WSL2 Ubuntu, Kali Linux in a VM, multiple containers simultaneously, k6 load tests, and Minikube. There is no hardware excuse. The MacBook upgrade when it comes is a comfort upgrade, not a necessity. Start now.</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ══════ TRACKER ══════ -->
+<div class="page" id="page-tracker">
+  <div class="pg-header">
+    <div class="pg-eyebrow">// Your Progress</div>
+    <div class="pg-title">Progress Tracker</div>
+    <div class="pg-sub">Check off items as you complete them. Saves in your browser.</div>
+  </div>
+  <div class="content">
+    <div class="sec-title">Phase 1 — Security Hardening</div>
+    <div class="checklist" id="ck-ph1"></div>
+
+    <div class="sec-title">Phase 2 — Linux &amp; Networking</div>
+    <div class="checklist" id="ck-ph2"></div>
+
+    <div class="sec-title">Phase 3 — Docker &amp; CI/CD</div>
+    <div class="checklist" id="ck-ph3"></div>
+
+    <div class="sec-title">Phase 4 — Cloud Infrastructure</div>
+    <div class="checklist" id="ck-ph4"></div>
+
+    <div class="sec-title">Phase 5 — Performance &amp; Scalability</div>
+    <div class="checklist" id="ck-ph5"></div>
+
+    <div class="sec-title">Phase 6 — Penetration Testing</div>
+    <div class="checklist" id="ck-ph6"></div>
+
+    <div class="sec-title">Phase 7 — Kubernetes</div>
+    <div class="checklist" id="ck-ph7"></div>
+
+    <div class="sec-title">Phase 8 — ICS/OT Security</div>
+    <div class="checklist" id="ck-ph8"></div>
+
+    <div class="sec-title">Certifications</div>
+    <div class="checklist" id="ck-certs"></div>
+  </div>
+</div>
+
+<!-- ══════ PHASE 1 ══════ -->
+<div class="page" id="page-ph1">
+  <div class="pg-header">
+    <div class="pg-badge" style="background:var(--red-bg);color:var(--red);border-color:var(--red-bd)">Phase 1 · Now — Month 3</div>
+    <div class="pg-title">Security<br>Hardening</div>
+    <div class="pg-sub">Attack your own app. Fix what you find. Document everything. This is how security engineers are made.</div>
+  </div>
+  <div class="content">
+    <div class="sec-title">The First Vulnerability — Already Found</div>
+    <div class="track-grid tg-1" style="margin-bottom:28px">
+      <div class="track-card cv-red">
+        <div class="tc-item"><strong>NoSQL Injection (500 Error on Login)</strong>You already found this. Your login route doesn't sanitize inputs before passing them to MongoDB. Sending <code>{"email": {"$gt": ""}, "password": "anything"}</code> causes a 500 Internal Server Error — the MongoDB operator injection crashes the server instead of returning a clean 401. The server didn't log in the attacker, but it revealed that something broke internally. An attacker can use repeated 500s to probe your system.</div>
+        <div class="tc-item"><strong>The Fix — Input Sanitization</strong>Install <code>express-mongo-sanitize</code> or <code>mongo-sanitize</code>. This middleware strips any keys that start with <code>$</code> or contain <code>.</code> from req.body, req.params, and req.query before they reach your route handlers. Add it globally in server.js: <code>app.use(mongoSanitize())</code>. After this fix, the injection attempt returns a clean 401 instead of a 500.</div>
+      </div>
+    </div>
+
+    <div class="sec-title">What to Add to Bus Portal</div>
+    <div class="track-grid tg-2">
+      <div class="track-card">
+        <div class="tc-header"><div class="tc-icon" style="background:var(--red-bg)">🔒</div><div class="tc-label" style="color:var(--red)">Rate Limiting</div></div>
+        <div class="tc-item"><strong>Install express-rate-limit</strong>Without rate limiting, an attacker can try 10,000 passwords per second on your login endpoint. Rate limiting blocks this. Install: <code>npm install express-rate-limit</code>. Apply a strict limit to <code>/api/auth/login</code>: 10 attempts per 15 minutes per IP. Return 429 with a <code>Retry-After</code> header. Apply a looser limit to all other routes: 100 requests per minute.</div>
+        <div class="tc-item"><strong>For production: use Redis-backed limiting</strong>The default in-memory rate limiter resets when your server restarts and doesn't work across multiple Render instances. Use <code>rate-limit-redis</code> with your MongoDB Atlas or a Redis instance to share limits across all server instances.</div>
+      </div>
+      <div class="track-card">
+        <div class="tc-header"><div class="tc-icon" style="background:var(--orange-bg)">🪖</div><div class="tc-label" style="color:var(--orange)">Helmet.js</div></div>
+        <div class="tc-item"><strong>Install helmet</strong>Helmet sets 11 security-related HTTP response headers automatically. <code>npm install helmet</code>, then <code>app.use(helmet())</code> in server.js before your routes. It sets: Content-Security-Policy (restricts which scripts/styles can run), X-Frame-Options (prevents clickjacking), X-Content-Type-Options (prevents MIME sniffing), Strict-Transport-Security (forces HTTPS), and more.</div>
+        <div class="tc-item"><strong>CSP matters for your frontend</strong>Content-Security-Policy tells the browser which origins are allowed to load scripts. A strict CSP prevents XSS attacks from executing injected scripts even if they get into your HTML. Start with a report-only policy to understand what it would block before enforcing it.</div>
+      </div>
+      <div class="track-card">
+        <div class="tc-header"><div class="tc-icon" style="background:var(--blue-bg)">✅</div><div class="tc-label" style="color:var(--blue)">Input Validation</div></div>
+        <div class="tc-item"><strong>Install express-validator</strong>Validate and sanitize all incoming request data before it reaches your business logic. <code>npm install express-validator</code>. Use it on every POST/PUT/PATCH route: check that email is actually an email, password meets minimum length, names don't contain dangerous characters, IDs match expected format.</div>
+        <div class="tc-item"><strong>Validation vs Sanitization</strong>Validation checks if data meets your rules (reject if not). Sanitization transforms data into a safe form (trim whitespace, escape HTML, lowercase emails). Do both. Validate first — return 400 if invalid. Sanitize before storing.</div>
+      </div>
+      <div class="track-card">
+        <div class="tc-header"><div class="tc-icon" style="background:var(--purple-bg)">🔑</div><div class="tc-label" style="color:var(--purple)">JWT Hardening</div></div>
+        <div class="tc-item"><strong>Shorten token expiry</strong>Your current JWT expires in 24 hours. If a token is stolen, an attacker has 24 hours of access. Shorten the access token to 1 hour. Implement a refresh token (stored in an HttpOnly cookie) that lasts 7 days. Short access + long refresh is the industry standard pattern.</div>
+        <div class="tc-item"><strong>Algorithm matters</strong>Switch from HS256 (shared secret) to RS256 (public/private key pair). RS256 means the private key never leaves your auth server, while other services can verify tokens using the public key. Generate a key pair with: <code>openssl genrsa -out private.pem 2048</code> and <code>openssl rsa -in private.pem -pubout -out public.pem</code>.</div>
+      </div>
+    </div>
+
+    <div class="sec-title">Concepts to Understand Deeply</div>
+    <div class="track-grid tg-1">
+      <div class="track-card">
+        <div class="tc-item"><strong>OWASP Top 10</strong>The 10 most critical web application security risks. Study each one, understand the attack and the defense. The most important for Bus Portal: Broken Access Control (#1 — can a staff user access admin routes?), Injection (#3 — the MongoDB injection you found), Security Misconfiguration (#5 — missing headers), Identification and Authentication Failures (#7 — JWT handling).</div>
+        <div class="tc-item"><strong>How HTTPS/TLS works</strong>TLS provides encryption (nobody can read the traffic), authentication (you're talking to the real server, not an impostor), and integrity (the data wasn't modified in transit). The TLS handshake: server presents a certificate, client verifies it against trusted CAs, they negotiate a symmetric session key using asymmetric crypto, all subsequent communication is encrypted with that session key.</div>
+        <div class="tc-item"><strong>HTTP Headers as a security layer</strong>Headers are your first line of defense before any application code runs. Learn what each security header does: Content-Security-Policy (XSS prevention), X-Frame-Options (clickjacking prevention), Strict-Transport-Security (HTTPS enforcement), X-Content-Type-Options (MIME sniffing prevention), Referrer-Policy (information leakage control). Test your headers at securityheaders.com.</div>
+      </div>
+    </div>
+
+    <div class="build-target">
+      <div class="bt-title">Phase 1 Build Target — Hardened Bus Portal</div>
+      <div class="bt-text">Bus Portal with: NoSQL injection fixed + express-mongo-sanitize installed, rate limiting on login (10/15min) and all routes (100/min), Helmet.js with custom CSP, express-validator on all POST/PUT routes, JWT access tokens at 1hr + HttpOnly refresh cookies at 7 days, RS256 key pair for signing. Run securityheaders.com on your deployed URL — aim for A rating. Write a security audit document describing every vulnerability found, its CVSS score, proof of concept, and the fix applied. Publish on GitHub. This is your first security portfolio piece.</div>
+    </div>
+
+    <div class="sec-title">Tools for This Phase</div>
+    <div class="res-grid">
+      <div class="res-card"><div class="res-type">Browser proxy</div><div class="res-name">Burp Suite Community</div><a class="res-url" href="https://portswigger.net/burp/communitydownload" target="_blank">portswigger.net/burp</a><div class="res-desc">Free. The industry standard for web security testing. Intercept and modify HTTP requests between your browser and Bus Portal. Test every input, every header, every authentication flow.</div></div>
+      <div class="res-card"><div class="res-type">API testing</div><div class="res-name">Postman</div><a class="res-url" href="https://postman.com" target="_blank">postman.com</a><div class="res-desc">Free. Test API endpoints with custom headers, bodies, and authentication. Create a collection for Bus Portal with tests for all your attack scenarios. Share collections with team.</div></div>
+      <div class="res-card"><div class="res-type">Automated scanner</div><div class="res-name">OWASP ZAP</div><a class="res-url" href="https://zaproxy.org" target="_blank">zaproxy.org</a><div class="res-desc">Free automated vulnerability scanner. Point it at Bus Portal and let it run. It finds XSS, injection points, missing headers, and insecure configurations automatically.</div></div>
+      <div class="res-card"><div class="res-type">Header checker</div><div class="res-name">Security Headers</div><a class="res-url" href="https://securityheaders.com" target="_blank">securityheaders.com</a><div class="res-desc">Free. Enter your Bus Portal URL and see which security headers are missing. Graded from F to A+. Use after adding Helmet.js to verify your configuration is correct.</div></div>
+      <div class="res-card"><div class="res-type">Learning</div><div class="res-name">PortSwigger Web Academy</div><a class="res-url" href="https://portswigger.net/web-security" target="_blank">portswigger.net/web-security</a><div class="res-desc">Free. Hands-on labs for every OWASP vulnerability. Do the SQL injection, XSS, CSRF, and authentication labs. Each lab takes 20–30 minutes and teaches the concept better than any book.</div></div>
+      <div class="res-card"><div class="res-type">Package</div><div class="res-name">npm audit + Snyk</div><a class="res-url" href="https://snyk.io" target="_blank">snyk.io</a><div class="res-desc">Free tier. Run <code>npm audit</code> on Bus Portal to find known CVEs in your dependencies. Snyk gives more detail and suggests fixes. Add to your CI pipeline to catch vulnerabilities before deploy.</div></div>
+    </div>
+  </div>
+</div>
+
+<!-- ══════ PHASE 2 ══════ -->
+<div class="page" id="page-ph2">
+  <div class="pg-header">
+    <div class="pg-badge" style="background:var(--green-bg);color:var(--green);border-color:var(--green-bd)">Phase 2 · Months 2–4</div>
+    <div class="pg-title">Linux &amp;<br>Networking</div>
+    <div class="pg-sub">Every server, container, and cloud instance runs Linux. Every network protocol underpins every system you'll ever build or secure.</div>
+  </div>
+  <div class="content">
+    <div class="sec-title">Linux Fundamentals</div>
+    <div class="track-grid tg-2">
+      <div class="track-card">
+        <div class="tc-header"><div class="tc-icon" style="background:var(--green-bg)">🐧</div><div class="tc-label" style="color:var(--green)">Core Skills</div></div>
+        <div class="tc-item"><strong>Install WSL2 on your Dell</strong>Open PowerShell as admin: <code>wsl --install</code>. Choose Ubuntu 22.04. This gives you a full Linux environment on your Windows machine. Everything you learn here translates directly to any server you'll ever manage.</div>
+        <div class="tc-item"><strong>File system navigation</strong>Understand: <code>/etc</code> (config files), <code>/var/log</code> (logs), <code>/home</code> (user files), <code>/usr/bin</code> (executables), <code>/proc</code> (virtual filesystem, kernel info). Commands: <code>ls -la</code>, <code>cd</code>, <code>pwd</code>, <code>find / -name "config.js"</code>, <code>locate</code>.</div>
+        <div class="tc-item"><strong>File permissions</strong><code>rwxr-xr-x</code> means: owner can read/write/execute, group can read/execute, others can read/execute. <code>chmod 755 script.sh</code> sets these permissions. <code>chown folarin:folarin file</code> changes owner. <code>sudo</code> runs as root — understand when it's needed and when it's dangerous.</div>
+        <div class="tc-item"><strong>Process management</strong><code>ps aux</code> shows all running processes. <code>top</code> / <code>htop</code> shows live CPU/memory usage. <code>kill -9 PID</code> force-kills a process. <code>systemctl status nginx</code> checks service status. <code>journalctl -u nginx -f</code> follows service logs in real time. These are your first tools when something breaks in production.</div>
+      </div>
+      <div class="track-card">
+        <div class="tc-header"><div class="tc-icon" style="background:var(--green-bg)">🔧</div><div class="tc-label" style="color:var(--green)">Essential Tools</div></div>
+        <div class="tc-item"><strong>SSH — the gateway to every server</strong>Generate a key pair: <code>ssh-keygen -t ed25519 -C "folarin"</code>. Copy public key to server: <code>ssh-copy-id user@server</code>. Connect: <code>ssh -i ~/.ssh/id_ed25519 user@server</code>. Configure <code>~/.ssh/config</code> for shortcuts. Disable password auth, only allow key-based — this is production server hygiene.</div>
+        <div class="tc-item"><strong>grep, awk, sed — text processing</strong><code>grep "ERROR" /var/log/app.log</code> finds error lines. <code>grep -r "password" .</code> searches recursively — useful for finding hardcoded secrets. <code>awk '{print $1}' log.txt</code> extracts columns. <code>sed 's/localhost/production.url/g' .env</code> replaces strings. These tools are how you analyze logs and configs.</div>
+        <div class="tc-item"><strong>Bash scripting basics</strong>Write scripts to automate repetitive tasks. Variables: <code>NAME="folarin"</code>. Conditionals: <code>if [ -f "file" ]; then</code>. Loops: <code>for file in *.log; do</code>. Functions: <code>function backup() { tar -czf backup.tar.gz $1; }</code>. A backup script, a deployment script, a log rotation script — write all three for Bus Portal.</div>
+        <div class="tc-item"><strong>Cron jobs — scheduled tasks</strong><code>crontab -e</code> opens the cron editor. Format: <code>minute hour day month weekday command</code>. <code>0 2 * * * /scripts/backup.sh</code> runs at 2AM daily. Useful for: database backups, log rotation, health check alerts. Understand cron timing notation.</div>
+      </div>
+    </div>
+
+    <div class="sec-title">Networking Concepts</div>
+    <div class="track-grid tg-1">
+      <div class="track-card">
+        <div class="tc-item"><strong>OSI Model — All 7 Layers</strong>Layer 1 Physical (cables, signals), Layer 2 Data Link (MAC addresses, Ethernet frames, switches), Layer 3 Network (IP addresses, routing, routers), Layer 4 Transport (TCP/UDP, ports, reliability), Layer 5 Session (maintaining connections), Layer 6 Presentation (encryption, compression), Layer 7 Application (HTTP, DNS, SMTP). When debugging network issues, work down from Layer 7 — is the HTTP response malformed? Is the TCP connection being established? Is the route reachable?</div>
+        <div class="tc-item"><strong>TCP/IP in depth</strong>TCP provides reliable, ordered delivery with a 3-way handshake: SYN → SYN-ACK → ACK. Every packet has a sequence number. Lost packets are retransmitted. UDP provides unreliable, fast delivery — no handshake, no retransmission. Use UDP for: video streaming, gaming, DNS, VoIP. Use TCP for: HTTP, database connections, file transfers. Your Node.js Express app uses TCP. Your MQTT broker can use TCP or WebSocket.</div>
+        <div class="tc-item"><strong>DNS in depth</strong>A: maps name to IPv4. AAAA: maps to IPv6. CNAME: alias to another name. MX: mail server. TXT: verification, SPF, DKIM. TTL is the cache duration — lower TTL before a DNS change. The resolution journey: browser cache → OS cache → recursive resolver → root nameserver → TLD nameserver → authoritative nameserver. Tools: <code>dig api.busportal.com</code>, <code>nslookup</code>, <code>whois</code>.</div>
+        <div class="tc-item"><strong>Firewalls — UFW on Ubuntu</strong>UFW (Uncomplicated Firewall) is the easy interface to iptables. <code>sudo ufw enable</code>. <code>sudo ufw allow 22</code> (SSH). <code>sudo ufw allow 80</code>. <code>sudo ufw allow 443</code>. <code>sudo ufw deny 5432</code> (block direct Postgres access). Default policy: deny all incoming, allow all outgoing. This is the minimum setup on any server you own.</div>
+      </div>
+    </div>
+
+    <div class="sec-title">Networking Tools to Master</div>
+    <div class="res-grid">
+      <div class="res-card"><div class="res-type">Packet analysis</div><div class="res-name">Wireshark</div><a class="res-url" href="https://wireshark.org" target="_blank">wireshark.org</a><div class="res-desc">Free GUI packet capture. Capture traffic on your WSL2 interface while Bus Portal is running. See the HTTP requests, TLS handshakes, and TCP connections in real time. Filter by: <code>http</code>, <code>tcp.port==3000</code>, <code>ip.addr==your.server</code>.</div></div>
+      <div class="res-card"><div class="res-type">Network scanning</div><div class="res-name">nmap</div><a class="res-url" href="https://nmap.org" target="_blank">nmap.org</a><div class="res-desc">Free. The essential network scanner. <code>nmap -sV localhost</code> shows which ports are open and what services are running. <code>nmap -sC -sV target.com</code> runs default scripts. Used by both defenders (inventory) and attackers (recon). Know how to use it and how to detect it.</div></div>
+      <div class="res-card"><div class="res-type">Command line</div><div class="res-name">curl + netcat</div><a class="res-url" href="https://curl.se" target="_blank">curl.se</a><div class="res-desc">curl: make HTTP requests from the command line. <code>curl -I https://bus-portal.vercel.app</code> shows response headers. netcat (nc): the Swiss army knife of networking. <code>nc -zv host 3000</code> tests if a port is open. Both are in every pentest toolkit.</div></div>
+      <div class="res-card"><div class="res-type">Simulator</div><div class="res-name">Cisco Packet Tracer</div><a class="res-url" href="https://netacad.com" target="_blank">netacad.com</a><div class="res-desc">Free with NetAcad account. Simulate network topologies with routers, switches, VLANs, and firewalls. Build the network architecture you'd use for a secure cloud deployment. Excellent for CCNA prep.</div></div>
+      <div class="res-card"><div class="res-type">Learning</div><div class="res-name">TryHackMe</div><a class="res-url" href="https://tryhackme.com" target="_blank">tryhackme.com</a><div class="res-desc">Paid (~$14/mo). Hands-on rooms covering Linux fundamentals, networking, and security basics. The "Pre-Security" and "Jr Penetration Tester" paths are well-structured for beginners. Do 1 room per day.</div></div>
+      <div class="res-card"><div class="res-type">Reference</div><div class="res-name">Linux Command Line (TLCL)</div><a class="res-url" href="https://linuxcommand.org/tlcl.php" target="_blank">linuxcommand.org/tlcl.php</a><div class="res-desc">Free PDF. "The Linux Command Line" by William Shotts. The best free Linux book. Read chapters 1–10 in the first month, then use as reference. Covers everything from basic navigation to bash scripting.</div></div>
+    </div>
+
+    <div class="build-target">
+      <div class="bt-title">Phase 2 Build Target — EC2 Manual Deployment</div>
+      <div class="bt-text">Deploy Bus Portal backend manually on an AWS EC2 t2.micro (free tier). Document every command: <code>ssh-keygen</code>, <code>ssh-copy-id</code>, installing Node.js via nvm, cloning the repo, configuring environment variables, setting up UFW firewall (allow 22, 443, deny everything else), installing nginx as reverse proxy, obtaining a Let's Encrypt TLS certificate with certbot, configuring nginx to proxy to your Node app on port 5000, setting up PM2 to keep the process alive and restart on crash. Write a runbook — a step-by-step document you could hand to someone to reproduce the deployment. This is the foundation of everything in Phase 4.</div>
+    </div>
+  </div>
+</div>
+
+<!-- ══════ PHASE 3 ══════ -->
+<div class="page" id="page-ph3">
+  <div class="pg-header">
+    <div class="pg-badge" style="background:var(--blue-bg);color:var(--blue);border-color:var(--blue-bd)">Phase 3 · Months 4–7</div>
+    <div class="pg-title">Docker &amp;<br>CI/CD</div>
+    <div class="pg-sub">Containerize Bus Portal. Automate testing and deployment. Never manually deploy again.</div>
+  </div>
+  <div class="content">
+    <div class="sec-title">Docker Core Concepts</div>
+    <div class="track-grid tg-2">
+      <div class="track-card">
+        <div class="tc-header"><div class="tc-icon" style="background:var(--blue-bg)">🐳</div><div class="tc-label" style="color:var(--blue)">Containers</div></div>
+        <div class="tc-item"><strong>Image vs Container</strong>An image is a blueprint (like a class). A container is a running instance of that image (like an object). Images are built from Dockerfiles, stored in registries (Docker Hub, AWS ECR), and are immutable. Containers are ephemeral — when you stop one, its filesystem changes are gone unless you used a volume.</div>
+        <div class="tc-item"><strong>Dockerfile layer caching</strong>Each Dockerfile instruction creates a layer. Docker caches layers and only rebuilds from the point of change. This is why you copy <code>package.json</code> and run <code>npm install</code> BEFORE copying your source code — if only your source code changed, the npm install layer is reused. Wrong order = reinstall all dependencies on every code change.</div>
+        <div class="tc-item"><strong>Multi-stage builds</strong>Stage 1 builds the app (installs dev dependencies, compiles TypeScript, builds assets). Stage 2 is the production image — it copies only the compiled output from Stage 1 into a minimal base image (node:20-alpine). Result: a production image without dev dependencies, build tools, or source code. Typical size reduction: 1.2GB → 150MB.</div>
+        <div class="tc-item"><strong>Security: never run as root</strong>By default, Docker containers run as root inside the container. If the container is compromised, the attacker has root. Add <code>USER node</code> (or a non-root user) before the CMD instruction. Also: scan images with <code>docker scout cves myimage</code> or Snyk Container.</div>
+      </div>
+      <div class="track-card">
+        <div class="tc-header"><div class="tc-icon" style="background:var(--blue-bg)">📦</div><div class="tc-label" style="color:var(--blue)">Docker Compose</div></div>
+        <div class="tc-item"><strong>What it solves</strong>Bus Portal has a backend, MongoDB, and possibly Redis. Running each manually with <code>docker run</code> is painful. Docker Compose defines your entire multi-container application in one <code>docker-compose.yml</code> file. <code>docker compose up</code> starts everything. <code>docker compose down</code> stops it. Developers clone your repo and have a working environment in minutes.</div>
+        <div class="tc-item"><strong>Service networking</strong>Services defined in the same Compose file can reach each other by service name. Your backend connects to <code>mongodb://mongo:27017/ogatransit</code> — Docker's internal DNS resolves <code>mongo</code> to the MongoDB container's IP. No hardcoded IPs. Works identically in development, CI, and production.</div>
+        <div class="tc-item"><strong>Volumes for persistence</strong>MongoDB data stored inside a container is lost when the container is removed. Named volumes persist data: <code>volumes: mongo_data:/data/db</code>. The data lives in Docker's managed storage, separate from the container lifecycle. Health checks ensure the DB is ready before the app starts: <code>depends_on: mongo: condition: service_healthy</code>.</div>
+        <div class="tc-item"><strong>Environment separation</strong>Have two compose files: <code>docker-compose.yml</code> (base) and <code>docker-compose.override.yml</code> (development additions like volume mounts for hot reload). In production use <code>docker-compose.prod.yml</code> with health checks, restart policies, and resource limits. Never put secrets in compose files — use <code>.env</code> files or Docker Secrets.</div>
+      </div>
+    </div>
+
+    <div class="sec-title">CI/CD with GitHub Actions</div>
+    <div class="track-grid tg-1">
+      <div class="track-card">
+        <div class="tc-item"><strong>What CI/CD means in practice</strong>Continuous Integration: every push runs your tests automatically, telling you within minutes if you broke something. Continuous Deployment: every push that passes tests automatically deploys to production. This eliminates "it worked on my machine" and manual deployment mistakes. It's how professional teams ship software.</div>
+        <div class="tc-item"><strong>Your first GitHub Actions workflow</strong>Create <code>.github/workflows/ci.yml</code>. On every push: checkout code, set up Node.js 20, run <code>npm ci</code>, run <code>npm run lint</code>, run <code>npm test</code>. On push to main: build Docker image, push to Docker Hub or GitHub Container Registry, trigger Render redeploy via webhook. The whole workflow runs in 2–3 minutes in GitHub's cloud. Free for public repos.</div>
+        <div class="tc-item"><strong>Testing Bus Portal</strong>Install Jest and Supertest. Write tests for: login with valid credentials returns 200, login with wrong password returns 401, creating a booking without auth returns 401, creating a booking as staff returns 201, duplicate booking returns 409, accessing admin routes as staff returns 403. These 6 tests cover your most critical security and business logic. Run them on every push.</div>
+      </div>
+    </div>
+
+    <div class="build-target">
+      <div class="bt-title">Phase 3 Build Target — Containerized + Automated</div>
+      <div class="bt-text">Bus Portal backend containerized with a multi-stage Dockerfile (non-root user, minimal Alpine image). Docker Compose file for local development (backend + MongoDB + optional Redis). <code>docker compose up</code> gets a new developer running in under 5 minutes. GitHub Actions pipeline: runs ESLint + Jest tests on every PR, builds Docker image on merge to main, pushes to GitHub Container Registry, triggers Render redeploy via webhook. Add a <code>CONTRIBUTING.md</code> with setup instructions. Badge in README showing CI status. This is how professional open-source projects are run.</div>
+    </div>
+
+    <div class="sec-title">Resources</div>
+    <div class="res-grid">
+      <div class="res-card"><div class="res-type">Official docs</div><div class="res-name">Docker Docs</div><a class="res-url" href="https://docs.docker.com" target="_blank">docs.docker.com</a><div class="res-desc">Free. Start with "Get Started" guide. Covers single containers → Compose → Swarm. The Dockerfile reference and Compose specification are excellent technical references.</div></div>
+      <div class="res-card"><div class="res-type">CI/CD</div><div class="res-name">GitHub Actions Docs</div><a class="res-url" href="https://docs.github.com/en/actions" target="_blank">docs.github.com/en/actions</a><div class="res-desc">Free. The official docs are excellent. Start with "Understanding GitHub Actions" then "Building and testing Node.js". The marketplace has thousands of pre-built actions.</div></div>
+      <div class="res-card"><div class="res-type">Testing</div><div class="res-name">Jest + Supertest</div><a class="res-url" href="https://jestjs.io" target="_blank">jestjs.io</a><div class="res-desc">Free. Jest is the standard Node.js test runner. Supertest makes HTTP assertions against your Express app without actually starting a server. Perfect for API integration tests.</div></div>
+      <div class="res-card"><div class="res-type">Image scanning</div><div class="res-name">Docker Scout</div><a class="res-url" href="https://docs.docker.com/scout" target="_blank">docs.docker.com/scout</a><div class="res-desc">Free tier. Scans your Docker images for known CVEs in base images and dependencies. Integrate with your CI pipeline: fail the build if high-severity CVEs are found in the production image.</div></div>
+      <div class="res-card"><div class="res-type">Security</div><div class="res-name">Hadolint</div><a class="res-url" href="https://hadolint.github.io/hadolint" target="_blank">hadolint.github.io</a><div class="res-desc">Free Dockerfile linter. Catches common mistakes: running as root, using latest tag (non-reproducible builds), not using COPY --chown, missing HEALTHCHECK. Add to your CI pipeline.</div></div>
+      <div class="res-card"><div class="res-type">Secrets</div><div class="res-name">GitHub Encrypted Secrets</div><a class="res-url" href="https://docs.github.com/en/actions/security-for-github-actions/security-guides/using-secrets-in-github-actions" target="_blank">docs.github.com</a><div class="res-desc">Free. Store MONGODB_URI, JWT_SECRET, and other secrets in GitHub repository secrets. Reference in workflows as <code>${{ secrets.MONGODB_URI }}</code>. Never put secrets in code or compose files.</div></div>
+    </div>
+  </div>
+</div>
+
+<!-- ══════ PHASE 4 ══════ -->
+<div class="page" id="page-ph4">
+  <div class="pg-header">
+    <div class="pg-badge" style="background:var(--blue-bg);color:var(--blue);border-color:var(--blue-bd)">Phase 4 · Months 7–10</div>
+    <div class="pg-title">Cloud<br>Infrastructure</div>
+    <div class="pg-sub">Deploy Bus Portal on AWS with production-grade architecture. Define infrastructure as code. Never click through a console again.</div>
+  </div>
+  <div class="content">
+    <div class="sec-title">AWS Core Services</div>
+    <div class="track-grid tg-2">
+      <div class="track-card">
+        <div class="tc-header"><div class="tc-icon" style="background:var(--blue-bg)">☁️</div><div class="tc-label" style="color:var(--blue)">Compute &amp; Networking</div></div>
+        <div class="tc-item"><strong>IAM — Identity and Access Management</strong>Every action in AWS must be authorized. IAM users have credentials. IAM roles are assumed by services (an EC2 instance assumes a role to access S3). IAM policies define allowed actions. Principle of least privilege: grant only what's needed. Create separate users for development and production. Enable MFA on your root account. This is the first thing you set up.</div>
+        <div class="tc-item"><strong>VPC — Virtual Private Cloud</strong>A VPC is your private network in AWS. Divide it into subnets: public subnets (connected to the internet via an Internet Gateway — for your load balancer), private subnets (no direct internet access — for your EC2 instances and databases). Traffic between subnets is controlled by route tables and security groups. This network isolation is critical for security — your database should never be in a public subnet.</div>
+        <div class="tc-item"><strong>EC2 — Elastic Compute Cloud</strong>Virtual servers. Choose instance type (t2.micro for free tier, t3.small for production). Use Auto Scaling Groups to automatically add/remove instances based on CPU or request count. Put instances behind an Application Load Balancer for health checks and traffic distribution. Never SSH to production instances manually — use Systems Manager Session Manager (no SSH port needed).</div>
+        <div class="tc-item"><strong>CloudWatch — Monitoring</strong>All AWS services emit metrics to CloudWatch. Set alarms: alert when CPU &gt; 80%, when error rate &gt; 5%, when DB connections near limit. Create dashboards showing your application's health. Log Groups store your application logs. CloudWatch Insights lets you query logs with SQL-like syntax. This is your eyes in production.</div>
+      </div>
+      <div class="track-card">
+        <div class="tc-header"><div class="tc-icon" style="background:var(--blue-bg)">🏗️</div><div class="tc-label" style="color:var(--blue)">Infrastructure as Code</div></div>
+        <div class="tc-item"><strong>Why Terraform</strong>Clicking through the AWS console to create resources is not reproducible. Terraform defines your infrastructure in code: VPC, subnets, EC2 instances, security groups, load balancers — all in <code>.tf</code> files committed to Git. <code>terraform plan</code> shows what will change. <code>terraform apply</code> makes it happen. <code>terraform destroy</code> tears it all down. Your entire AWS environment is version-controlled and reproducible.</div>
+        <div class="tc-item"><strong>Terraform basics</strong>Provider (AWS, GCP), resources (aws_instance, aws_vpc), variables (parameterize configs), outputs (export values like EC2 IP), state (Terraform tracks what it created — store remotely in S3). The workflow: write HCL code → <code>terraform init</code> (download providers) → <code>terraform plan</code> (preview) → <code>terraform apply</code> (execute). Always review the plan before applying.</div>
+        <div class="tc-item"><strong>Security with Terraform</strong>Never put AWS credentials in Terraform files — use environment variables or IAM roles. Use a separate S3 bucket and DynamoDB table for remote state with locking (prevents concurrent applies). Enable state encryption. Use modules to encapsulate reusable infrastructure patterns. Commit <code>.tfvars</code> files only if they contain no secrets.</div>
+        <div class="tc-item"><strong>AWS free tier limits</strong>EC2: 750 hours/month of t2.micro (runs one instance full time). RDS: 750 hours of db.t2.micro. S3: 5GB storage. Lambda: 1M requests/month. CloudWatch: 10 custom metrics. Stay within these limits by: stopping instances when not learning, using t2.micro not t3, cleaning up resources after each experiment with <code>terraform destroy</code>.</div>
+      </div>
+    </div>
+
+    <div class="build-target">
+      <div class="bt-title">Phase 4 Build Target — Bus Portal on AWS</div>
+      <div class="bt-text">Entire AWS infrastructure for Bus Portal defined in Terraform: VPC with public and private subnets across 2 availability zones, Application Load Balancer in public subnet, EC2 Auto Scaling Group in private subnet running your Docker container, MongoDB Atlas connected via VPC peering or private endpoint, Security Groups: ALB allows 80/443 from internet, EC2 allows 5000 only from ALB security group, S3 bucket for static assets with CloudFront CDN, Route 53 for DNS, ACM certificate for HTTPS, CloudWatch alarms for CPU, error rate, and latency, CloudTrail enabled for all API calls. All created and destroyed with <code>terraform apply</code> / <code>terraform destroy</code>. Cost: ~$0 on free tier with t2.micro.</div>
+    </div>
+
+    <div class="sec-title">AWS Security Deep Dive</div>
+    <div class="track-grid tg-1">
+      <div class="track-card">
+        <div class="tc-item"><strong>IAM hardening checklist</strong>Root account: enable MFA, no access keys, only used for billing. IAM users: MFA required, strong password policy. IAM roles: use for EC2/Lambda instead of access keys. Permissions: least privilege — no wildcards in production policies. Audit: use IAM Access Analyzer to find overpermissive policies. Rotate access keys regularly.</div>
+        <div class="tc-item"><strong>GuardDuty — Threat Detection</strong>Enable GuardDuty in every AWS account. It analyzes CloudTrail, VPC Flow Logs, and DNS logs using ML to detect threats: cryptocurrency mining on your EC2, unusual API calls from unknown locations, port scanning from your instances. Free trial for 30 days, then ~$4/month for a small account. The alerts are high-signal — enable it always.</div>
+        <div class="tc-item"><strong>S3 security</strong>S3 buckets are accidentally made public every week, leaking sensitive data. Block all public access at the account level unless explicitly needed. Enable bucket versioning (recover accidentally deleted files). Enable server-side encryption (SSE-S3 or SSE-KMS). Enable access logging. Use bucket policies to restrict access to specific principals. Never use ACLs (deprecated).</div>
+      </div>
+    </div>
+
+    <div class="res-grid">
+      <div class="res-card"><div class="res-type">Free training</div><div class="res-name">AWS Skill Builder</div><a class="res-url" href="https://skillbuilder.aws" target="_blank">skillbuilder.aws</a><div class="res-desc">Free tier has hundreds of courses from AWS. "AWS Cloud Practitioner Essentials" and "AWS Solutions Architect" learning plans are directly relevant. Prepare for SAA-C03.</div></div>
+      <div class="res-card"><div class="res-type">IaC</div><div class="res-name">Terraform Docs</div><a class="res-url" href="https://developer.hashicorp.com/terraform" target="_blank">developer.hashicorp.com/terraform</a><div class="res-desc">Free. The official Terraform documentation. Start with "Get Started - AWS". The AWS provider documentation shows every resource type and argument.</div></div>
+      <div class="res-card"><div class="res-type">Practice</div><div class="res-name">AWS Well-Architected Tool</div><a class="res-url" href="https://aws.amazon.com/well-architected-tool" target="_blank">aws.amazon.com</a><div class="res-desc">Free. Evaluates your architecture against AWS best practices across 5 pillars: Operational Excellence, Security, Reliability, Performance, Cost Optimization. Run it on your Bus Portal deployment.</div></div>
+    </div>
+  </div>
+</div>
+
+<!-- ══════ PHASE 5 ══════ -->
+<div class="page" id="page-ph5">
+  <div class="pg-header">
+    <div class="pg-badge" style="background:var(--orange-bg);color:var(--orange);border-color:var(--orange-bd)">Phase 5 · Months 10–14</div>
+    <div class="pg-title">Performance &amp;<br>Scalability</div>
+    <div class="pg-sub">What happens when 200 staff all try to book seats at 8AM simultaneously? Find out before your users do.</div>
+  </div>
+  <div class="content">
+    <div class="sec-title">Database Optimization</div>
+    <div class="track-grid tg-2">
+      <div class="track-card">
+        <div class="tc-header"><div class="tc-icon" style="background:var(--orange-bg)">📊</div><div class="tc-label" style="color:var(--orange)">MongoDB Indexes</div></div>
+        <div class="tc-item"><strong>Why your queries are slow</strong>Without indexes, every MongoDB query does a collection scan — it reads every document to find matches. With 1,000 bookings and no index on <code>userId</code>, <code>Booking.find({userId: "u-123"})</code> reads all 1,000 documents. With an index, it reads ~1. Add indexes based on your actual query patterns.</div>
+        <div class="tc-item"><strong>Indexes to add to Bus Portal</strong>User model: unique index on <code>email</code> (already enforced by Mongoose unique: true, but verify). Booking model: compound index on <code>{userId: 1, date: 1}</code> — covers the "my bookings for today" query. Booking model: compound index on <code>{routeId: 1, date: 1, departure: 1}</code> — covers the taken-seats query. Run these in MongoDB Atlas's Data Explorer or via mongoose.</div>
+        <div class="tc-item"><strong>Explain plans</strong>Use <code>.explain("executionStats")</code> after a query to see if it's using an index. Look for <code>IXSCAN</code> (index scan — good) vs <code>COLLSCAN</code> (collection scan — add an index). Check <code>totalDocsExamined</code> vs <code>nReturned</code> — if examined is much larger than returned, you need a better index.</div>
+      </div>
+      <div class="track-card">
+        <div class="tc-header"><div class="tc-icon" style="background:var(--orange-bg)">⚡</div><div class="tc-label" style="color:var(--orange)">Redis Caching</div></div>
+        <div class="tc-item"><strong>What to cache in Bus Portal</strong>Routes change rarely but are read on every booking page load. Cache <code>GET /api/routes</code> in Redis with a 5-minute TTL. Invalidate when a route is created/updated. Bus data changes rarely — cache it too. Taken-seats data changes frequently (every booking) — cache with a 10-second TTL or use Redis pub/sub to invalidate on booking creation.</div>
+        <div class="tc-item"><strong>Cache-aside pattern</strong>1. Check Redis for the key. 2. If found (cache hit), return immediately — no DB query. 3. If not found (cache miss), query MongoDB, store result in Redis with TTL, return. This pattern reduces DB load dramatically for read-heavy data. Bus Portal's taken-seats endpoint gets polled every 30 seconds by every active booking page — caching this saves many DB queries.</div>
+        <div class="tc-item"><strong>Redis for rate limiting</strong>Move your rate limiting from in-memory to Redis. This means rate limits persist across server restarts and work correctly when you scale to multiple instances. Install <code>rate-limit-redis</code> as the store for <code>express-rate-limit</code>. Your existing rate limiting code barely changes — just add the Redis store.</div>
+      </div>
+    </div>
+
+    <div class="sec-title">Load Testing</div>
+    <div class="track-grid tg-1">
+      <div class="track-card">
+        <div class="tc-item"><strong>k6 — load testing in JavaScript</strong>k6 is a load testing tool where test scripts are JavaScript. You define virtual users, ramp-up patterns, and assertions. <code>k6 run --vus 200 --duration 60s test.js</code> runs 200 concurrent virtual users for 60 seconds. It reports: p95 latency (95% of requests under this), throughput (requests/second), error rate, and more.</div>
+        <div class="tc-item"><strong>The Bus Portal 8AM scenario</strong>Write a k6 script that simulates 200 staff all logging in and then hitting the booking page simultaneously. Ramp up from 0 to 200 users over 30 seconds (realistic), hold for 60 seconds, ramp down. What breaks? Probably the taken-seats polling hammering MongoDB. The fix: Redis cache + longer polling interval. Before vs after — measurable improvement.</div>
+        <div class="tc-item"><strong>What to measure</strong>p50 (median — typical user experience), p95 (95th percentile — slow users), p99 (99th percentile — worst users), error rate (% of failed requests), TTFB (time to first byte). Targets for an internal tool: p95 &lt; 500ms for API calls, error rate &lt; 0.1%. Booking creation: p95 &lt; 1000ms (DB write involved).</div>
+      </div>
+    </div>
+
+    <div class="sec-title">Monitoring &amp; Observability</div>
+    <div class="track-grid tg-2">
+      <div class="track-card">
+        <div class="tc-header"><div class="tc-icon" style="background:var(--orange-bg)">🔍</div><div class="tc-label" style="color:var(--orange)">Sentry — Error Tracking</div></div>
+        <div class="tc-item"><strong>Set up today</strong>Sentry captures every unhandled error in your application with full stack traces, the request that caused it, and the user who was affected. Free tier covers 5,000 errors/month — more than enough for Bus Portal. <code>npm install @sentry/node</code>, add to server.js. Sentry also tracks performance: slow transactions, N+1 queries, and memory leaks.</div>
+        <div class="tc-item"><strong>Structured logging with Winston</strong>Replace all <code>console.log</code> calls with Winston. Winston produces structured JSON logs: <code>{"level":"error","message":"Login failed","userId":"u-123","ip":"41.x.x.x","timestamp":"..."}</code>. These are parseable by log aggregators (CloudWatch Logs Insights, Grafana Loki). Levels: error, warn, info, debug. Only log errors in production, all levels in development.</div>
+      </div>
+      <div class="track-card">
+        <div class="tc-header"><div class="tc-icon" style="background:var(--orange-bg)">📈</div><div class="tc-label" style="color:var(--orange)">Prometheus + Grafana</div></div>
+        <div class="tc-item"><strong>Metrics vs Logs vs Traces</strong>Logs: individual events ("User 123 logged in at 09:01:34"). Metrics: aggregated numbers over time ("200 logins per minute"). Traces: the path of a single request through multiple services ("login request took 340ms: 20ms auth, 280ms DB, 40ms response"). You need all three for full observability.</div>
+        <div class="tc-item"><strong>prom-client for Node.js</strong>Install <code>prom-client</code>. Expose a <code>/metrics</code> endpoint. Prometheus scrapes it every 15 seconds. Track: HTTP request duration histogram (p50/p95/p99 per route), active connections gauge, booking creation counter, failed login counter. Grafana visualizes these as dashboards. This is how production teams know their system's health at a glance.</div>
+      </div>
+    </div>
+
+    <div class="build-target">
+      <div class="bt-title">Phase 5 Build Target — Performance Report</div>
+      <div class="bt-text">A documented performance improvement cycle for Bus Portal. Baseline: run k6 with 200 concurrent users, record metrics, identify bottlenecks. Improvements: add MongoDB indexes on bookings collection, add Redis caching for routes and taken-seats, add Sentry error tracking, add Winston structured logging, add prom-client metrics endpoint. After: run k6 again, compare before/after metrics. Write a report: problem found, hypothesis, change made, result measured. This becomes a portfolio piece demonstrating you think about performance, not just functionality.</div>
+    </div>
+  </div>
+</div>
+
+<!-- ══════ PHASE 6 ══════ -->
+<div class="page" id="page-ph6">
+  <div class="pg-header">
+    <div class="pg-badge" style="background:var(--red-bg);color:var(--red);border-color:var(--red-bd)">Phase 6 · Months 12–16</div>
+    <div class="pg-title">Penetration<br>Testing</div>
+    <div class="pg-sub">Attack your own production app with permission. Find what attackers would find. Write professional security reports.</div>
+  </div>
+  <div class="content">
+    <div class="sec-title">Setting Up Your Lab</div>
+    <div class="track-grid tg-2">
+      <div class="track-card">
+        <div class="tc-header"><div class="tc-icon" style="background:var(--red-bg)">💀</div><div class="tc-label" style="color:var(--red)">Kali Linux</div></div>
+        <div class="tc-item"><strong>Install in WSL2</strong>Kali Linux is the standard OS for penetration testing — it comes pre-installed with hundreds of security tools. Install via WSL2: <code>wsl --install -d kali-linux</code>. Then: <code>sudo apt update && sudo apt install kali-tools-web</code> for web testing tools. Your Dell i7/16GB handles Kali in WSL2 comfortably alongside your normal Windows workflow.</div>
+        <div class="tc-item"><strong>Essential tools in Kali</strong>Burp Suite (already covered), nmap (port scanning), gobuster (directory enumeration), hydra (brute force), sqlmap (SQL injection testing), nikto (web vulnerability scanner), john/hashcat (password cracking), metasploit (exploitation framework). You won't use all of these on Bus Portal, but knowing they exist is part of thinking like an attacker.</div>
+      </div>
+      <div class="track-card">
+        <div class="tc-header"><div class="tc-icon" style="background:var(--red-bg)">🎯</div><div class="tc-label" style="color:var(--red)">Legal &amp; Ethical Rules</div></div>
+        <div class="tc-item"><strong>Only attack what you own or have permission to test</strong>Testing your own Bus Portal deployment is legal and encouraged. Never test any system you don't own without written permission. Bug bounty programs (HackerOne, Bugcrowd) give explicit permission to test their systems within defined scope. CTF platforms (HackTheBox, TryHackMe) are designed for this. Everything else is illegal under Nigeria's Cybercrimes Act and most countries' laws.</div>
+        <div class="tc-item"><strong>Rules of Engagement</strong>Even for your own app: only test the staging/development instance, not production (you could accidentally break it for real users). Keep notes of everything you find. Fix vulnerabilities before publishing writeups. Never exfiltrate real user data — you're looking for the vulnerability, not exploiting it for actual gain.</div>
+      </div>
+    </div>
+
+    <div class="sec-title">What to Test on Bus Portal</div>
+    <div class="track-grid tg-1">
+      <div class="track-card">
+        <div class="tc-item"><strong>Authentication bypass</strong>Try every method: token manipulation (change the JWT payload using jwt.io, see if the signature check is skipped), expired tokens (use a token past its expiry date), algorithm confusion (change alg header from RS256 to none, or HS256 with the public key as the HMAC secret), missing tokens (what happens if you send no Authorization header?). Document what each attempt returns.</div>
+        <div class="tc-item"><strong>Broken access control (IDOR)</strong>Log in as staff user A. Get your booking ID from the API response. Try to access staff user B's booking by changing the booking ID in the URL. Try to cancel staff user B's booking. Try to access admin routes. Try to read all users' bookings by changing the userId parameter. For each: what does the server return? 403 Forbidden (good), 200 OK (bad), or something else?</div>
+        <div class="tc-item"><strong>Mass assignment vulnerability</strong>When creating a booking or registering, add extra fields to the JSON body: <code>{"name": "Folarin", "email": "...", "role": "superadmin"}</code>. Does the server accept the role field and elevate your privileges? Check your Mongoose models — are you passing raw req.body directly to create(), or are you explicitly selecting which fields to use?</div>
+        <div class="tc-item"><strong>Rate limiting bypass</strong>Try to brute-force the login endpoint: write a script that sends 100 login attempts rapidly. Does the rate limiter kick in after 10? Can you bypass it by changing the X-Forwarded-For header (some rate limiters trust this header to get the client IP — you can spoof it if not validated)? What happens if you rotate between 10 different IPs?</div>
+        <div class="tc-item"><strong>Information leakage</strong>What does the server reveal in error messages? Does a 500 error expose a stack trace? Does the login error differentiate between "user not found" and "wrong password" (this is a username enumeration vulnerability — always return the same message for both)? What headers does the server expose? Does it reveal the Node.js version or Express version?</div>
+      </div>
+    </div>
+
+    <div class="sec-title">Practice Platforms</div>
+    <div class="res-grid">
+      <div class="res-card"><div class="res-type">CTF Platform</div><div class="res-name">HackTheBox</div><a class="res-url" href="https://hackthebox.com" target="_blank">hackthebox.com</a><div class="res-desc">Free tier with some machines. The gold standard for penetration testing practice. Start with "Starting Point" machines — guided intro. Each machine is a real Linux/Windows system to hack. Write-ups are published after machines retire.</div></div>
+      <div class="res-card"><div class="res-type">Guided learning</div><div class="res-name">TryHackMe</div><a class="res-url" href="https://tryhackme.com" target="_blank">tryhackme.com</a><div class="res-desc">More guided than HackTheBox. Structured learning paths: "Jr Penetration Tester" path covers web attacks, network pentesting, privilege escalation. Better for beginners before moving to HackTheBox.</div></div>
+      <div class="res-card"><div class="res-type">Web app labs</div><div class="res-name">PortSwigger Web Academy</div><a class="res-url" href="https://portswigger.net/web-security" target="_blank">portswigger.net/web-security</a><div class="res-desc">Free. 250+ interactive labs covering every web vulnerability. The SQL injection, XSS, CSRF, SSRF, and authentication labs are directly applicable to Bus Portal. Teaches attack and defense simultaneously.</div></div>
+      <div class="res-card"><div class="res-type">Certification</div><div class="res-name">OSCP — Offensive Security</div><a class="res-url" href="https://offsec.com/courses/pen-200" target="_blank">offsec.com/courses/pen-200</a><div class="res-desc">Paid (~$1,499). The gold standard penetration testing certification. 24-hour practical exam: hack 5 machines, write a professional report. Highly respected. Tackle after Phase 6 when you have strong fundamentals.</div></div>
+      <div class="res-card"><div class="res-type">Bug bounty</div><div class="res-name">HackerOne</div><a class="res-url" href="https://hackerone.com" target="_blank">hackerone.com</a><div class="res-desc">Free. The largest bug bounty platform. Find companies offering public programs with scope that matches your skills. Start with small-scope programs. Your first valid finding — even $50 — is proof of real-world security skill.</div></div>
+      <div class="res-card"><div class="res-type">Report template</div><div class="res-name">CVSS Calculator</div><a class="res-url" href="https://nvd.nist.gov/vuln-metrics/cvss/v3-calculator" target="_blank">nvd.nist.gov</a><div class="res-desc">Free. CVSS (Common Vulnerability Scoring System) scores security vulnerabilities 0–10 based on impact and exploitability. Use it to score every vulnerability you find in Bus Portal for your security report.</div></div>
+    </div>
+
+    <div class="build-target">
+      <div class="bt-title">Phase 6 Build Target — Professional Pentest Report</div>
+      <div class="bt-text">A full penetration testing report of Bus Portal written as if you were a hired security consultant. Structure: Executive Summary (1 page, non-technical — what was tested, what was found, what's the risk), Methodology (tools used, testing approach, scope), Findings (each vulnerability: title, CVSS score, description, proof of concept with screenshots, remediation steps), Conclusion. Minimum 3 findings — even if they're low-severity like information leakage in error messages. This document demonstrates you can think like an attacker AND communicate clearly to a non-technical audience. Publish on GitHub (with production details redacted).</div>
+    </div>
+  </div>
+</div>
+
+<!-- ══════ PHASE 7 ══════ -->
+<div class="page" id="page-ph7">
+  <div class="pg-header">
+    <div class="pg-badge" style="background:var(--purple-bg);color:var(--purple);border-color:var(--purple-bd)">Phase 7 · Months 15–20</div>
+    <div class="pg-title">Kubernetes &amp;<br>Microservices</div>
+    <div class="pg-sub">After Docker is solid and you've felt the pain of managing containers manually, Kubernetes makes sense.</div>
+  </div>
+  <div class="content">
+    <div class="sec-title">Why Kubernetes Exists</div>
+    <div class="track-grid tg-1" style="margin-bottom:28px">
+      <div class="track-card cv-purple">
+        <div class="tc-item"><strong>The problem Docker Compose doesn't solve</strong>Docker Compose runs multiple containers on one machine. But what happens when that machine goes down? What if you need 20 instances of your API during peak hours but only 2 at night? What if one instance crashes — who restarts it? How do you deploy a new version without downtime? How do you manage secrets across 50 containers? Kubernetes solves all of these. It's a control plane that manages containers across a cluster of machines, enforcing your desired state automatically.</div>
+        <div class="tc-item"><strong>The mental model shift</strong>With Docker, you think about containers. With Kubernetes, you think about desired state: "I want 3 replicas of my API always running." Kubernetes makes it true. If a container crashes, K8s creates a new one. If a node fails, K8s reschedules pods on healthy nodes. You declare what you want, the control plane makes it happen. This is the paradigm shift.</div>
+      </div>
+    </div>
+
+    <div class="sec-title">Core Abstractions</div>
+    <div class="track-grid tg-2">
+      <div class="track-card">
+        <div class="tc-header"><div class="tc-icon" style="background:var(--purple-bg)">⚙️</div><div class="tc-label" style="color:var(--purple)">Workloads</div></div>
+        <div class="tc-item"><strong>Pod</strong>The smallest deployable unit. One or more tightly coupled containers sharing a network namespace and storage. Pods are ephemeral — they're created and destroyed. They have IP addresses that change. Never connect directly to a pod IP.</div>
+        <div class="tc-item"><strong>Deployment</strong>Declares desired state: "run 3 replicas of this pod spec." The Deployment controller constantly reconciles actual vs desired. If a pod crashes, it creates a new one. Rolling updates create new pods one at a time before terminating old ones — zero downtime deploys.</div>
+        <div class="tc-item"><strong>Service</strong>A stable DNS name and virtual IP that load-balances across pod replicas. Pods come and go; Services are stable. Types: ClusterIP (internal only), NodePort (exposed on each node's IP), LoadBalancer (provisions a cloud load balancer).</div>
+        <div class="tc-item"><strong>Ingress</strong>Routes external HTTP/S traffic to Services based on host and path rules. One Ingress with an NGINX controller can route <code>api.busportal.com</code> to the API service and <code>busportal.com</code> to the frontend — with TLS termination handled by cert-manager automatically.</div>
+      </div>
+      <div class="track-card">
+        <div class="tc-header"><div class="tc-icon" style="background:var(--purple-bg)">🔧</div><div class="tc-label" style="color:var(--purple)">Configuration &amp; Security</div></div>
+        <div class="tc-item"><strong>ConfigMaps</strong>Non-sensitive configuration injected into pods as environment variables or volume mounts. Your Node.js server reads PORT, NODE_ENV, LOG_LEVEL from environment variables — store these in a ConfigMap. Change the ConfigMap to reconfigure all running pods without rebuilding the image.</div>
+        <div class="tc-item"><strong>Secrets</strong>Base64-encoded sensitive values: database passwords, JWT keys, API keys. Injected as environment variables or volume mounts. Secrets are stored in etcd — enable etcd encryption at rest. Use external secret stores (AWS Secrets Manager via External Secrets Operator) in production.</div>
+        <div class="tc-item"><strong>RBAC</strong>ServiceAccounts are identities for pods. Roles define what a ServiceAccount can do. RoleBindings attach Roles to ServiceAccounts. Example: your API pod's ServiceAccount should only be able to read ConfigMaps in its own namespace — not list all secrets cluster-wide. Principle of least privilege in K8s.</div>
+        <div class="tc-item"><strong>NetworkPolicies</strong>By default, all pods can communicate with all other pods. NetworkPolicies restrict this: only allow the API pod to connect to the MongoDB pod. Block all other cross-pod communication. This limits blast radius if one pod is compromised — it can't reach other services.</div>
+      </div>
+    </div>
+
+    <div class="build-target">
+      <div class="bt-title">Phase 7 Build Target — Bus Portal on Kubernetes</div>
+      <div class="bt-text">Bus Portal running on Minikube (local) or AWS EKS (free tier). Kubernetes manifests: Deployment for the API (3 replicas, rolling update strategy, resource requests/limits, readiness + liveness probes), Service (ClusterIP), Ingress with TLS (cert-manager + Let's Encrypt), ConfigMap for non-sensitive config, Secret for MONGODB_URI and JWT_SECRET, HorizontalPodAutoscaler targeting 70% CPU, NetworkPolicy restricting API pod communication. Deployed via Helm chart. <code>kubectl rollout status deployment/bus-portal-api</code> shows rolling deploy status. <code>kubectl rollout undo</code> reverts in 10 seconds. CI/CD pipeline updates the image tag in the Helm values file and commits — GitOps with ArgoCD or Flux watches the repo and syncs automatically.</div>
+    </div>
+  </div>
+</div>
+
+<!-- ══════ PHASE 8 ══════ -->
+<div class="page" id="page-ph8">
+  <div class="pg-header">
+    <div class="pg-badge" style="background:var(--green-bg);color:var(--green);border-color:var(--green-bd)">Phase 8 · Ongoing from Month 2</div>
+    <div class="pg-title">ICS/OT<br>Security</div>
+    <div class="pg-sub">Your rarest skill. The intersection of power systems engineering, software, and cybersecurity. Almost nobody has all three.</div>
+  </div>
+  <div class="content">
+    <div class="sec-title">Why This Is Your Unique Angle</div>
+    <div class="track-grid tg-1" style="margin-bottom:28px">
+      <div class="track-card cv-green">
+        <div class="tc-item"><strong>The gap in the market</strong>Most cybersecurity engineers understand IT security deeply but know nothing about power systems, SCADA protocols, or what a protection relay does. Most power engineers understand substations deeply but have no idea what a JWT token is or how SQL injection works. You are building both. That intersection is genuinely rare globally — and it's almost nonexistent in Nigeria's power sector.</div>
+        <div class="tc-item"><strong>The threat landscape for OT</strong>Industrial control systems — SCADA, DCS, PLCs, protection relays — were designed for reliability, not security. Many run Windows XP (end of life). Many use default credentials. Many are network-connected but not patched. The Colonial Pipeline attack (2021) shut down fuel supply to the US East Coast via a ransomware attack on the IT network that spread to OT. Nigeria's grid is equally exposed — and has much less security expertise available.</div>
+        <div class="tc-item"><strong>IT/OT convergence is your opportunity</strong>As Nigerian DISCOs and TCN digitize — SCADA upgrades, IoT sensors, remote monitoring — they are connecting previously isolated OT networks to IT infrastructure. This creates new attack surfaces. Someone needs to secure these networks with knowledge of both the power engineering side (what does breaker protection mean for security design?) and the IT security side (network segmentation, encryption, patch management). That person is you.</div>
+      </div>
+    </div>
+
+    <div class="sec-title">ICS Security Concepts</div>
+    <div class="track-grid tg-2">
+      <div class="track-card">
+        <div class="tc-header"><div class="tc-icon" style="background:var(--green-bg)">🏭</div><div class="tc-label" style="color:var(--green)">OT vs IT Security</div></div>
+        <div class="tc-item"><strong>The fundamental difference</strong>In IT security, the CIA triad prioritizes Confidentiality first (don't leak data), then Integrity, then Availability. In OT security, Availability comes first — you cannot take down a substation for a security patch without a planned outage. Safety comes before all of them: a misconfigured protection relay that trips incorrectly causes a blackout; a misconfigured firewall just causes downtime.</div>
+        <div class="tc-item"><strong>Purdue Model / ICS network layers</strong>Level 0: Physical process (transformers, breakers). Level 1: Field devices (PLCs, RTUs, protection relays). Level 2: Control network (SCADA HMI, historian). Level 3: Site operations (business systems). Level 3.5: DMZ (demilitarized zone — firewall between OT and IT). Level 4: IT enterprise network. Never connect Level 0–2 directly to Level 4. The DMZ is where your SCADA data historian lives, accessible from both sides with strict controls.</div>
+        <div class="tc-item"><strong>Common ICS vulnerabilities</strong>Default credentials on PLCs and RTUs (change them — this is the most exploited vector). Unpatched systems (Windows XP running the SCADA HMI). No encryption on protocols (Modbus and DNP3 send data in plaintext — use VPN tunnels for remote access). Flat networks (all OT devices on one VLAN — a single compromised device reaches everything). No monitoring (no SIEM watching OT network traffic for anomalies).</div>
+      </div>
+      <div class="track-card">
+        <div class="tc-header"><div class="tc-icon" style="background:var(--green-bg)">🔌</div><div class="tc-label" style="color:var(--green)">NERC CIP Standards</div></div>
+        <div class="tc-item"><strong>What NERC CIP is</strong>NERC CIP (North American Electric Reliability Corporation Critical Infrastructure Protection) is a set of security standards for the bulk electric system. While it's North American, its framework is the global reference for power grid cybersecurity. Understanding it makes you credible with TCN, NERC Nigeria, and international energy companies operating in Nigeria.</div>
+        <div class="tc-item"><strong>Key requirements relevant to Nigeria</strong>CIP-002: Asset identification — know what's in your OT network. CIP-005: Electronic Security Perimeters — define the boundaries between OT and IT. CIP-007: System security management — patch management, ports/services, security event monitoring. CIP-010: Configuration change management — document baseline configs, detect unauthorized changes. CIP-013: Supply chain risk management — vet vendors of OT equipment.</div>
+        <div class="tc-item"><strong>How to apply it to Bus Portal / SCADA work</strong>Your IoT dashboard and SCADA projects should implement: asset inventory (every device listed with firmware version, last patched date), network diagram showing IT/OT boundaries, firewall rules documented, access control list (who can log into the SCADA HMI?), audit log of all control actions (every breaker operation logged with timestamp, user, and outcome). These make your system enterprise-ready.</div>
+        <div class="tc-item"><strong>GICSP — your target certification</strong>Global Industrial Cyber Security Professional. Awarded by GIAC. Tests knowledge of both OT systems (protocols, PLCs, SCADA architecture) and IT security (network security, access control, incident response). The exam is difficult — it combines domains most people only know one of. You have both from your EEE background and this roadmap. Budget 6 months of study after Phase 5.</div>
+      </div>
+    </div>
+
+    <div class="sec-title">Industrial Protocols (Security Perspective)</div>
+    <div class="track-grid tg-1">
+      <div class="track-card">
+        <div class="tc-item"><strong>Modbus security issues</strong>Modbus has no authentication, no encryption, no authorization. Any device on the network can read or write any register on any Modbus device. An attacker on your OT network can send a Modbus write command to a PLC and change a setpoint. Mitigation: network segmentation (Modbus devices should only be reachable from the SCADA server IP), unidirectional security gateways for critical systems, Modbus TCP over VPN for remote access.</div>
+        <div class="tc-item"><strong>DNP3 security (SA)</strong>DNP3 Secure Authentication (SA) v5 adds HMAC-based authentication to DNP3 messages. Critical control messages (like breaker trip commands) require authentication. Not widely deployed yet in Nigeria — but your knowledge of it makes you valuable as OT networks are upgraded. Understanding the attack (unauthenticated DNP3 allows command injection) is the first step to advocating for the defense.</div>
+        <div class="tc-item"><strong>IEC 62351 — OT security standards</strong>IEC 62351 is the security standard for power system communications. Part 3: TLS for ICCP and MMS (IEC 61850). Part 5: authentication for DNP3. Part 6: security for IEC 61850 GOOSE and SV. Part 8: role-based access control for power systems. These standards are the "what to do" — your job is to implement them. Your IEC 61850 SCADA work with libiec61850 can implement TLS using these standards.</div>
+      </div>
+    </div>
+
+    <div class="build-target">
+      <div class="bt-title">Phase 8 Build Target — Secure IoT Energy Dashboard</div>
+      <div class="bt-text">An IoT energy monitoring dashboard that reads real or simulated sensor data via MQTT, displays it in real time, triggers alerts on threshold violations, and has proper security. Deployed on a Raspberry Pi or Ubuntu VM with: Mosquitto MQTT broker with TLS (port 8883), client certificate authentication, ACL file restricting publishers/subscribers, Node.js backend with JWT auth, RBAC (admin vs viewer roles), audit log of all control actions, network diagram documenting IT/OT boundary, asset inventory document. The security model follows NERC CIP principles. This ties your EEE background, SCADA knowledge, and security skills into one project. The GICSP exam tests exactly this kind of real-world implementation knowledge.</div>
+    </div>
+
+    <div class="sec-title">Resources for ICS/OT Security</div>
+    <div class="res-grid">
+      <div class="res-card"><div class="res-type">Certification</div><div class="res-name">GICSP — GIAC ICS Security</div><a class="res-url" href="https://giac.org/certifications/global-industrial-cyber-security-professional-gicsp" target="_blank">giac.org</a><div class="res-desc">Your target OT security certification. Tests ICS architecture, industrial protocols, OT-specific threats, and security controls. Rare — most security professionals can't pass it because they don't understand OT. You have the advantage.</div></div>
+      <div class="res-card"><div class="res-type">Free training</div><div class="res-name">CISA ICS Training</div><a class="res-url" href="https://www.cisa.gov/ics-training-available" target="_blank">cisa.gov</a><div class="res-desc">Free. The US Cybersecurity and Infrastructure Security Agency offers free ICS security courses including 100W (Introduction to ICS Security) and 210W (ICS Cybersecurity for Managers). Self-paced, US government quality.</div></div>
+      <div class="res-card"><div class="res-type">Lab platform</div><div class="res-name">ICS-CERT Advisories</div><a class="res-url" href="https://www.cisa.gov/uscert/ics/advisories" target="_blank">cisa.gov/uscert/ics</a><div class="res-desc">Free. Real-world ICS vulnerability advisories. Read 5 per week — understand what was vulnerable, the attack vector, and the remediation. This is how you learn what attackers actually exploit in production OT systems.</div></div>
+      <div class="res-card"><div class="res-type">Standards</div><div class="res-name">NERC CIP Standards</div><a class="res-url" href="https://www.nerc.com/pa/Stand/Pages/CIPStandards.aspx" target="_blank">nerc.com</a><div class="res-desc">Free. Download and read the CIP standards — particularly CIP-005 (electronic security perimeters) and CIP-007 (system security management). These are the reference documents for grid cybersecurity globally.</div></div>
+      <div class="res-card"><div class="res-type">Book</div><div class="res-name">Hacking Exposed ICS/SCADA</div><a class="res-url" href="https://www.mhprofessional.com" target="_blank">mhprofessional.com</a><div class="res-desc">Available for purchase. The most practical ICS security book — covers real attacks on real industrial systems, protocol vulnerabilities, and defense strategies. Written by practitioners, not academics.</div></div>
+      <div class="res-card"><div class="res-type">Community</div><div class="res-name">S4 Conference / Dale Peterson</div><a class="res-url" href="https://s4xevents.com" target="_blank">s4xevents.com</a><div class="res-desc">The premier ICS security conference. Free recordings of past talks on YouTube. Dale Peterson's blog and podcast are the best ongoing source of ICS security news and thinking. Follow him on LinkedIn.</div></div>
+    </div>
+  </div>
+</div>
+
+<!-- ══════ KNOWLEDGE BASE — SECURITY ══════ -->
+<div class="page" id="page-kb-security">
+  <div class="pg-header">
+    <div class="pg-eyebrow">// Knowledge Base</div>
+    <div class="pg-title">Security<br>Concepts</div>
+    <div class="pg-sub">Deep explanations with practical use cases for every security concept you need to master.</div>
+  </div>
+  <div class="content">
+    <div class="search-wrap"><input type="text" placeholder="Search security concepts..." oninput="searchKB(this,'kb-sec')"><span class="search-icon">⌕</span></div>
+    <div class="result-count" id="rc-kb-sec"></div>
+    <div id="kb-sec-list"></div>
+  </div>
+</div>
+
+<!-- ══════ KNOWLEDGE BASE — LINUX ══════ -->
+<div class="page" id="page-kb-linux">
+  <div class="pg-header">
+    <div class="pg-eyebrow">// Knowledge Base</div>
+    <div class="pg-title">Linux &amp;<br>Networking</div>
+    <div class="pg-sub">The operating system and network concepts every infrastructure engineer must know cold.</div>
+  </div>
+  <div class="content">
+    <div class="search-wrap"><input type="text" placeholder="Search Linux & networking..." oninput="searchKB(this,'kb-linux')"><span class="search-icon">⌕</span></div>
+    <div class="result-count" id="rc-kb-linux"></div>
+    <div id="kb-linux-list"></div>
+  </div>
+</div>
+
+<!-- ══════ KNOWLEDGE BASE — BACKEND ══════ -->
+<div class="page" id="page-kb-backend">
+  <div class="pg-header">
+    <div class="pg-eyebrow">// Knowledge Base</div>
+    <div class="pg-title">Backend &amp;<br>API Concepts</div>
+    <div class="pg-sub">Deep technical reference for Node.js, REST, databases, and system design.</div>
+  </div>
+  <div class="content">
+    <div class="search-wrap"><input type="text" placeholder="Search backend concepts..." oninput="searchKB(this,'kb-backend')"><span class="search-icon">⌕</span></div>
+    <div class="result-count" id="rc-kb-backend"></div>
+    <div id="kb-backend-list"></div>
+  </div>
+</div>
+
+<!-- ══════ KNOWLEDGE BASE — INFRA ══════ -->
+<div class="page" id="page-kb-infra">
+  <div class="pg-header">
+    <div class="pg-eyebrow">// Knowledge Base</div>
+    <div class="pg-title">Docker &amp;<br>Cloud Concepts</div>
+    <div class="pg-sub">Container internals, CI/CD patterns, and cloud infrastructure explained deeply.</div>
+  </div>
+  <div class="content">
+    <div class="search-wrap"><input type="text" placeholder="Search infra concepts..." oninput="searchKB(this,'kb-infra')"><span class="search-icon">⌕</span></div>
+    <div class="result-count" id="rc-kb-infra"></div>
+    <div id="kb-infra-list"></div>
+  </div>
+</div>
+
+<!-- ══════ KNOWLEDGE BASE — DATABASES ══════ -->
+<div class="page" id="page-kb-db">
+  <div class="pg-header">
+    <div class="pg-eyebrow">// Knowledge Base</div>
+    <div class="pg-title">Database<br>Concepts</div>
+    <div class="pg-sub">Indexing, transactions, replication, and the tradeoffs that make or break production systems.</div>
+  </div>
+  <div class="content">
+    <div class="search-wrap"><input type="text" placeholder="Search database concepts..." oninput="searchKB(this,'kb-db')"><span class="search-icon">⌕</span></div>
+    <div class="result-count" id="rc-kb-db"></div>
+    <div id="kb-db-list"></div>
+  </div>
+</div>
+
+<!-- ══════ CERTIFICATIONS ══════ -->
+<div class="page" id="page-certs">
+  <div class="pg-header">
+    <div class="pg-eyebrow">// Your Certification Path</div>
+    <div class="pg-title">Certifications</div>
+    <div class="pg-sub">In order. Each one builds on the previous. The GICSP is your rarest and most valuable.</div>
+  </div>
+  <div class="content">
+    <div class="sec-title">Certification Roadmap</div>
+    <div class="timeline">
+      <div class="tl-item">
+        <div class="tl-dot" style="background:var(--green)"></div>
+        <div class="tl-content">
+          <div class="tl-header"><div class="tl-title">CompTIA Security+</div><div class="tl-time">After Phase 1–2</div></div>
+          <div class="tl-desc">The entry-level security certification. Tests OWASP vulnerabilities, cryptography, network security, identity management, and incident response. Globally recognized. Prepare with Professor Messer's free video course + Darril Gibson's book. Exam: $392, 90 questions, 90 minutes. Pass rate ~60% first attempt.</div>
+        </div>
+      </div>
+      <div class="tl-item">
+        <div class="tl-dot" style="background:var(--blue)"></div>
+        <div class="tl-content">
+          <div class="tl-header"><div class="tl-title">AWS Solutions Architect Associate (SAA-C03)</div><div class="tl-time">After Phase 4</div></div>
+          <div class="tl-desc">The most recognized cloud certification. Tests EC2, VPC, S3, RDS, Lambda, IAM, and architectural best practices. Prepare with Adrian Cantrill's course or Stephane Maarek's Udemy course + practice exams. Exam: $150, 65 questions, 130 minutes. High market value — opens cloud and DevOps roles globally.</div>
+        </div>
+      </div>
+      <div class="tl-item">
+        <div class="tl-dot" style="background:var(--green)"></div>
+        <div class="tl-content">
+          <div class="tl-header"><div class="tl-title">CCNA (Cisco Certified Network Associate)</div><div class="tl-time">After Phase 2</div></div>
+          <div class="tl-desc">Validates deep networking knowledge: TCP/IP, routing (OSPF, EIGRP), switching (VLANs, STP), network security basics, wireless, and automation. Relevant to both the infrastructure and ICS/OT tracks. Prepare with Jeremy's IT Lab (free YouTube) + Cisco Packet Tracer labs. Exam: $330, 120 questions, 120 minutes.</div>
+        </div>
+      </div>
+      <div class="tl-item">
+        <div class="tl-dot" style="background:var(--red)"></div>
+        <div class="tl-content">
+          <div class="tl-header"><div class="tl-title">CEH (Certified Ethical Hacker)</div><div class="tl-time">After Phase 6</div></div>
+          <div class="tl-desc">EC-Council's ethical hacking certification. Covers recon, scanning, exploitation, post-exploitation, and social engineering. More theoretical than OSCP but widely recognized by HR departments in companies that don't know what OSCP is. Prepare with EC-Council's courseware. Exam: ~$950, 125 questions, 4 hours. Get CEH before OSCP if budget is a concern.</div>
+        </div>
+      </div>
+      <div class="tl-item">
+        <div class="tl-dot" style="background:var(--red)"></div>
+        <div class="tl-content">
+          <div class="tl-header"><div class="tl-title">OSCP (Offensive Security Certified Professional)</div><div class="tl-time">After Phase 6 — Senior level</div></div>
+          <div class="tl-desc">The gold standard penetration testing certification. No multiple choice. 24-hour practical exam: hack 5 machines, write a professional report. Highly respected by security practitioners. The PEN-200 course (~$1,499) includes 90 days of lab access. Requires strong foundation in Linux, networking, and web exploitation. Budget 6+ months of preparation.</div>
+        </div>
+      </div>
+      <div class="tl-item">
+        <div class="tl-dot" style="background:var(--gold)"></div>
+        <div class="tl-content">
+          <div class="tl-header"><div class="tl-title" style="color:var(--gold)">GICSP (Global Industrial Cyber Security Professional)</div><div class="tl-time">After Phase 8 — Your rarest credential</div></div>
+          <div class="tl-desc">Tests the intersection of OT/ICS knowledge (protocols, SCADA architecture, industrial systems) and IT security (network security, access control, incident response). Most security professionals can't pass because they lack OT knowledge. Most OT engineers can't pass because they lack security knowledge. You have both. Budget 6 months study after completing Phase 5. Exam: ~$949. This certification + your EEE background + Bus Portal + SCADA experience = a profile that almost nobody in Nigeria can match.</div>
+        </div>
+      </div>
+      <div class="tl-item">
+        <div class="tl-dot" style="background:var(--purple)"></div>
+        <div class="tl-content">
+          <div class="tl-header"><div class="tl-title">CKA (Certified Kubernetes Administrator)</div><div class="tl-time">After Phase 7</div></div>
+          <div class="tl-desc">Validates Kubernetes administration skills: cluster setup, workload management, networking, storage, security, and troubleshooting. Practical exam: 2 hours on a live cluster, solve real-world problems. Prepare with Mumshad Mannambeth's KodeKloud course. Exam: $395. Opens platform engineering and DevOps roles at companies running K8s at scale.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ══════ RESOURCES ══════ -->
+<div class="page" id="page-resources">
+  <div class="pg-header">
+    <div class="pg-eyebrow">// Complete Reference</div>
+    <div class="pg-title">All Resources</div>
+    <div class="pg-sub">Every resource referenced in this roadmap, organized by domain.</div>
+  </div>
+  <div class="content">
+    <div class="sec-title">Security</div>
+    <div class="res-grid">
+      <div class="res-card"><div class="res-type">Learning platform</div><div class="res-name">PortSwigger Web Academy</div><a class="res-url" href="https://portswigger.net/web-security" target="_blank">portswigger.net/web-security</a><div class="res-desc">Free. 250+ hands-on labs for every web vulnerability. The best free security learning resource.</div></div>
+      <div class="res-card"><div class="res-type">CTF platform</div><div class="res-name">HackTheBox</div><a class="res-url" href="https://hackthebox.com" target="_blank">hackthebox.com</a><div class="res-desc">Real machines to hack. Free tier available. Industry-standard practice platform.</div></div>
+      <div class="res-card"><div class="res-type">Guided learning</div><div class="res-name">TryHackMe</div><a class="res-url" href="https://tryhackme.com" target="_blank">tryhackme.com</a><div class="res-desc">More guided than HackTheBox. Better for beginners. Jr Penetration Tester path is excellent.</div></div>
+      <div class="res-card"><div class="res-type">Reference</div><div class="res-name">OWASP</div><a class="res-url" href="https://owasp.org" target="_blank">owasp.org</a><div class="res-desc">Free. The OWASP Top 10, Testing Guide, and Cheat Sheet Series are the canonical security references.</div></div>
+      <div class="res-card"><div class="res-type">Scanner</div><div class="res-name">OWASP ZAP</div><a class="res-url" href="https://zaproxy.org" target="_blank">zaproxy.org</a><div class="res-desc">Free automated vulnerability scanner. Point at Bus Portal, run active scan, review findings.</div></div>
+      <div class="res-card"><div class="res-type">Proxy</div><div class="res-name">Burp Suite Community</div><a class="res-url" href="https://portswigger.net/burp" target="_blank">portswigger.net/burp</a><div class="res-desc">Free community edition. The industry standard web security testing tool.</div></div>
+    </div>
+
+    <div class="sec-title">Linux &amp; Networking</div>
+    <div class="res-grid">
+      <div class="res-card"><div class="res-type">Book</div><div class="res-name">The Linux Command Line</div><a class="res-url" href="https://linuxcommand.org/tlcl.php" target="_blank">linuxcommand.org/tlcl.php</a><div class="res-desc">Free PDF. The best free Linux book. Read chapters 1–10, then use as reference.</div></div>
+      <div class="res-card"><div class="res-type">Networking</div><div class="res-name">Cisco Packet Tracer</div><a class="res-url" href="https://netacad.com" target="_blank">netacad.com</a><div class="res-desc">Free with NetAcad account. Simulate VLANs, routing, firewalls. Excellent for CCNA prep.</div></div>
+      <div class="res-card"><div class="res-type">Packet analysis</div><div class="res-name">Wireshark</div><a class="res-url" href="https://wireshark.org" target="_blank">wireshark.org</a><div class="res-desc">Free. Capture and analyze network traffic. Essential for understanding what your app actually sends.</div></div>
+      <div class="res-card"><div class="res-type">CCNA prep</div><div class="res-name">Jeremy's IT Lab</div><a class="res-url" href="https://youtube.com/@JeremysITLab" target="_blank">youtube.com/@JeremysITLab</a><div class="res-desc">Free YouTube. The best free CCNA course. Comprehensive, well-explained, with free lab files.</div></div>
+      <div class="res-card"><div class="res-type">Reference</div><div class="res-name">explain shell</div><a class="res-url" href="https://explainshell.com" target="_blank">explainshell.com</a><div class="res-desc">Free. Paste any shell command and get a breakdown of every flag and argument. Essential when reading someone else's bash scripts.</div></div>
+      <div class="res-card"><div class="res-type">Network scanner</div><div class="res-name">nmap</div><a class="res-url" href="https://nmap.org" target="_blank">nmap.org</a><div class="res-desc">Free. The essential network scanner. <code>nmap -sV localhost</code> shows open ports and services. Used by both defenders and attackers.</div></div>
+    </div>
+
+    <div class="sec-title">Docker &amp; CI/CD</div>
+    <div class="res-grid">
+      <div class="res-card"><div class="res-type">Official docs</div><div class="res-name">Docker Docs</div><a class="res-url" href="https://docs.docker.com" target="_blank">docs.docker.com</a><div class="res-desc">Free. Start with Get Started. The Dockerfile reference and Compose specification are the best technical references.</div></div>
+      <div class="res-card"><div class="res-type">CI/CD</div><div class="res-name">GitHub Actions</div><a class="res-url" href="https://docs.github.com/en/actions" target="_blank">docs.github.com/en/actions</a><div class="res-desc">Free for public repos. Start with "Building and testing Node.js" guide.</div></div>
+      <div class="res-card"><div class="res-type">Testing</div><div class="res-name">Jest + Supertest</div><a class="res-url" href="https://jestjs.io" target="_blank">jestjs.io</a><div class="res-desc">Free. Jest is the standard Node.js test runner. Supertest makes HTTP assertions against your Express app.</div></div>
+      <div class="res-card"><div class="res-type">Linter</div><div class="res-name">Hadolint</div><a class="res-url" href="https://hadolint.github.io/hadolint" target="_blank">hadolint.github.io</a><div class="res-desc">Free Dockerfile linter. Catches security mistakes: running as root, using latest tag. Add to CI.</div></div>
+      <div class="res-card"><div class="res-type">GitOps</div><div class="res-name">ArgoCD</div><a class="res-url" href="https://argoproj.github.io/cd" target="_blank">argoproj.github.io/cd</a><div class="res-desc">Free open source. GitOps continuous delivery for Kubernetes. Watches your Git repo and syncs cluster state automatically.</div></div>
+      <div class="res-card"><div class="res-type">Secrets</div><div class="res-name">HashiCorp Vault</div><a class="res-url" href="https://vaultproject.io" target="_blank">vaultproject.io</a><div class="res-desc">Free open source. Centralized secrets management. Dynamic secrets (auto-rotating DB credentials), encryption as a service, PKI certificates. The production secrets solution.</div></div>
+    </div>
+
+    <div class="sec-title">Cloud &amp; Infrastructure</div>
+    <div class="res-grid">
+      <div class="res-card"><div class="res-type">Free training</div><div class="res-name">AWS Skill Builder</div><a class="res-url" href="https://skillbuilder.aws" target="_blank">skillbuilder.aws</a><div class="res-desc">Free tier. Hundreds of AWS courses. Cloud Practitioner Essentials + Solutions Architect path for SAA-C03 prep.</div></div>
+      <div class="res-card"><div class="res-type">IaC</div><div class="res-name">Terraform Docs</div><a class="res-url" href="https://developer.hashicorp.com/terraform" target="_blank">developer.hashicorp.com</a><div class="res-desc">Free. Official docs. Start with Get Started - AWS. The registry has 3,000+ provider resources.</div></div>
+      <div class="res-card"><div class="res-type">K8s learning</div><div class="res-name">KodeKloud</div><a class="res-url" href="https://kodekloud.com" target="_blank">kodekloud.com</a><div class="res-desc">Paid (~$15/mo). The best Kubernetes + DevOps learning platform. Hands-on labs in a real cluster. CKA, CKAD, CKS exam prep.</div></div>
+      <div class="res-card"><div class="res-type">K8s official</div><div class="res-name">Kubernetes Docs</div><a class="res-url" href="https://kubernetes.io/docs" target="_blank">kubernetes.io/docs</a><div class="res-desc">Free. The official K8s documentation. The Concepts section explains every abstraction. The Tasks section shows how to do specific things.</div></div>
+      <div class="res-card"><div class="res-type">Performance</div><div class="res-name">k6 Load Testing</div><a class="res-url" href="https://k6.io" target="_blank">k6.io</a><div class="res-desc">Free open source. JavaScript-based load testing. Write test scripts in JS, run against Bus Portal. Cloud version for larger tests.</div></div>
+      <div class="res-card"><div class="res-type">Monitoring</div><div class="res-name">Sentry</div><a class="res-url" href="https://sentry.io" target="_blank">sentry.io</a><div class="res-desc">Free tier (5K errors/month). Error tracking and performance monitoring. Add to Bus Portal today. Captures stack traces, affected users, and request context.</div></div>
+    </div>
+
+    <div class="sec-title">ICS/OT Security</div>
+    <div class="res-grid">
+      <div class="res-card"><div class="res-type">Certification</div><div class="res-name">GICSP</div><a class="res-url" href="https://giac.org/certifications/global-industrial-cyber-security-professional-gicsp" target="_blank">giac.org</a><div class="res-desc">Your target OT security certification. Rare combination of OT and IT security knowledge tested.</div></div>
+      <div class="res-card"><div class="res-type">Free training</div><div class="res-name">CISA ICS Training</div><a class="res-url" href="https://cisa.gov/ics-training-available" target="_blank">cisa.gov</a><div class="res-desc">Free government ICS security courses. 100W (Intro to ICS Security) is the starting point.</div></div>
+      <div class="res-card"><div class="res-type">Advisories</div><div class="res-name">CISA ICS-CERT</div><a class="res-url" href="https://cisa.gov/uscert/ics/advisories" target="_blank">cisa.gov/uscert/ics</a><div class="res-desc">Free. Real-world ICS vulnerability advisories. Read 5 per week to learn what's actually exploited.</div></div>
+      <div class="res-card"><div class="res-type">Standards</div><div class="res-name">NERC CIP</div><a class="res-url" href="https://nerc.com/pa/Stand/Pages/CIPStandards.aspx" target="_blank">nerc.com</a><div class="res-desc">Free. The global reference for grid cybersecurity standards. CIP-005 and CIP-007 are most relevant.</div></div>
+      <div class="res-card"><div class="res-type">Protocol</div><div class="res-name">HiveMQ MQTT Essentials</div><a class="res-url" href="https://hivemq.com/mqtt-essentials" target="_blank">hivemq.com/mqtt-essentials</a><div class="res-desc">Free 11-part series. The definitive MQTT guide including security (TLS, auth, ACLs).</div></div>
+      <div class="res-card"><div class="res-type">ICS simulator</div><div class="res-name">Triangle MicroWorks DNP3</div><a class="res-url" href="https://trianglemicroworks.com/documents" target="_blank">trianglemicroworks.com</a><div class="res-desc">Free DNP3 outstation simulator and technical reference. Use to test DNP3 master implementations without real hardware.</div></div>
+    </div>
+  </div>
+</div>
+
+</main>
+</div>
+
+<script>
+// ════════════════════════════════════════════════
+// KNOWLEDGE BASE DATA
+// ════════════════════════════════════════════════
+const KB = {
+'kb-sec': [
+  {
+    title: 'JWT — JSON Web Tokens',
+    badge: 'Authentication', color: 'red',
+    tagline: 'The stateless token mechanism behind every modern API authentication system.',
+    explanation: `<p>A JWT has three base64url-encoded parts: <strong>header.payload.signature</strong>. The header specifies the algorithm (HS256 or RS256). The payload contains claims — sub (user ID), exp (expiration), iat (issued-at), and custom claims (role, permissions). The signature is a cryptographic hash of header+payload using a secret key.</p>
+    <p>The server signs the JWT on login. On subsequent requests, the client sends it in the Authorization header. The server validates the signature — if valid and not expired, it trusts the claims without any database lookup. This is what makes JWT stateless and scalable.</p>
+    <div class="highlight"><strong>HS256 vs RS256:</strong> HS256 uses a single shared secret. RS256 uses a public/private key pair — the auth server signs with the private key, all other services verify with the public key. RS256 is essential for microservices where multiple services validate tokens independently.</div>
+    <div class="callout-warn"><strong>Never store JWTs in localStorage.</strong> XSS attacks can steal localStorage. Store access tokens in memory (JS variable) and refresh tokens in HttpOnly cookies. HttpOnly cookies are inaccessible to JavaScript — XSS-proof.</div>`,
+    usecases: [
+      { where: 'Bus Portal login flow', desc: 'User submits email/password. Server validates, signs a JWT with user ID and role, returns it. The React app stores it in memory and attaches it to every API request via the Authorization header. On page refresh, the app calls /api/auth/me with the refresh token cookie to restore the session.' },
+      { where: 'Microservices authorization', desc: 'API Gateway validates JWT signature using the public key. If valid, it forwards the decoded claims as headers. Downstream services read X-User-Id and X-User-Role headers — no DB lookup per request. This scales to millions of requests per second.' },
+      { where: 'Role-based access control', desc: 'The JWT payload contains <code>{"sub":"u-123","role":"superadmin"}</code>. Your requireRole middleware checks req.user.role against the allowed roles. If a staff user tries to access an admin route, they get 403 Forbidden — the server doesn\'t even query the database.' },
+    ],
+    code: `<span class="cm">// Sign JWT on login</span>
+<span class="kw">const</span> token = jwt.<span class="fn">sign</span>(
+  { sub: user.id, role: user.role },
+  process.env.JWT_PRIVATE_KEY,
+  { expiresIn: <span class="str">'1h'</span>, algorithm: <span class="str">'RS256'</span> }
+);
+
+<span class="cm">// Verify JWT in middleware</span>
+<span class="kw">function</span> <span class="fn">authenticate</span>(req, res, next) {
+  <span class="kw">const</span> token = req.headers.authorization?.<span class="fn">split</span>(<span class="str">' '</span>)[<span class="num">1</span>];
+  <span class="kw">if</span> (!token) <span class="kw">return</span> res.<span class="fn">status</span>(<span class="num">401</span>).<span class="fn">json</span>({ message: <span class="str">'No token'</span> });
+  <span class="kw">try</span> {
+    req.user = jwt.<span class="fn">verify</span>(token, PUBLIC_KEY, { algorithms: [<span class="str">'RS256'</span>] });
+    <span class="fn">next</span>();
+  } <span class="kw">catch</span> {
+    res.<span class="fn">status</span>(<span class="num">401</span>).<span class="fn">json</span>({ message: <span class="str">'Invalid token'</span> });
+  }
+}`,
+    tags: ['JWT', 'RS256', 'HS256', 'HttpOnly Cookie', 'Refresh Token', 'RBAC']
+  },
+  {
+    title: 'OWASP Top 10',
+    badge: 'Vulnerabilities', color: 'red',
+    tagline: 'The ten most critical web security risks — every developer must know and prevent these.',
+    explanation: `<p><strong>A01: Broken Access Control</strong> — Users access resources they shouldn't. IDOR: changing /users/42 to /users/43 and seeing someone else's data. Fix: always check authorization server-side, never trust the client. Deny by default.</p>
+    <p><strong>A03: Injection</strong> — SQL/NoSQL injection, command injection. Your Bus Portal had a NoSQL injection that returned 500. Fix: parameterized queries, input sanitization (express-mongo-sanitize), never concatenate user input into queries.</p>
+    <p><strong>A05: Security Misconfiguration</strong> — Missing security headers, default credentials, verbose error messages that reveal stack traces. Fix: Helmet.js, custom error handlers that return generic messages in production, remove default accounts.</p>
+    <div class="highlight"><strong>A07: Identification and Authentication Failures</strong> — Weak JWT implementation, brute force on login, session fixation. Fix: rate limiting on auth routes, short JWT expiry, HttpOnly refresh cookies, account lockout after N failed attempts.</div>
+    <p><strong>A09: Security Logging and Monitoring Failures</strong> — Not logging security events means you don't know when you're being attacked. Fix: log every failed login with IP and user-agent, log all admin actions, ship logs to a SIEM.</p>`,
+    usecases: [
+      { where: 'A01 — Bus Portal booking access', desc: 'A staff user could try GET /api/bookings/bk-xxxxx with a booking ID belonging to another user. Without an ownership check, they\'d see it. Fix: <code>Booking.findOne({id, userId: req.user.id})</code> — the query only returns the booking if the requesting user owns it.' },
+      { where: 'A03 — Login injection', desc: 'Sending <code>{"email":{"$gt":""},"password":"x"}</code> exploits MongoDB query operators. express-mongo-sanitize strips <code>$</code> prefixed keys from req.body before your route handler sees them. The attack attempt becomes <code>{"email":{}}</code> — no match, clean 401.' },
+      { where: 'A05 — Information leakage', desc: 'A default Express error handler sends the full error stack trace in the response. An attacker sees your file paths, Node.js version, and internal logic. Fix: custom error handler that logs the full error internally but returns only a generic "Something went wrong" message to the client.' },
+    ],
+    code: `<span class="cm">// A01 Fix: always verify ownership</span>
+router.<span class="fn">get</span>(<span class="str">'/bookings/:id'</span>, authenticate, <span class="kw">async</span> (req, res) => {
+  <span class="kw">const</span> booking = <span class="kw">await</span> Booking.<span class="fn">findOne</span>({
+    id: req.params.id,
+    userId: req.user.id  <span class="cm">// ← ownership check</span>
+  });
+  <span class="kw">if</span> (!booking) <span class="kw">return</span> res.<span class="fn">status</span>(<span class="num">404</span>).<span class="fn">json</span>({ message: <span class="str">'Not found'</span> });
+  res.<span class="fn">json</span>(booking);
+});
+
+<span class="cm">// A03 Fix: sanitize MongoDB inputs</span>
+<span class="kw">import</span> mongoSanitize <span class="kw">from</span> <span class="str">'express-mongo-sanitize'</span>;
+app.<span class="fn">use</span>(<span class="fn">mongoSanitize</span>()); <span class="cm">// strips $ and . from inputs</span>
+
+<span class="cm">// A05 Fix: safe error handler</span>
+app.<span class="fn">use</span>((err, req, res, next) => {
+  console.<span class="fn">error</span>(err);  <span class="cm">// full error to logs only</span>
+  res.<span class="fn">status</span>(<span class="num">500</span>).<span class="fn">json</span>({ message: <span class="str">'Internal server error'</span> });
+});`,
+    tags: ['OWASP', 'IDOR', 'Injection', 'XSS', 'CSRF', 'Rate Limiting', 'Helmet']
+  },
+  {
+    title: 'TLS/SSL and HTTPS',
+    badge: 'Encryption', color: 'red',
+    tagline: 'How the internet encrypts data in transit — and why HTTP without it is unacceptable in production.',
+    explanation: `<p>TLS (Transport Layer Security) provides three guarantees: <strong>Encryption</strong> (nobody can read the traffic between client and server), <strong>Authentication</strong> (the server is who it claims to be — verified by a Certificate Authority), and <strong>Integrity</strong> (data wasn't modified in transit).</p>
+    <p><strong>The TLS handshake:</strong> Client sends ClientHello (supported cipher suites, TLS version). Server sends ServerHello (chosen cipher suite) + its Certificate. Client verifies the certificate against trusted CAs in the OS trust store. They exchange key material to derive a symmetric session key. All subsequent communication is encrypted with that session key (AES-256-GCM).</p>
+    <p><strong>Certificate chains:</strong> Your server's certificate is signed by an intermediate CA, which is signed by a root CA. Browsers trust a built-in list of root CAs. Let's Encrypt is a free CA that automates certificate issuance. Certbot + nginx can auto-renew Let's Encrypt certificates.</p>
+    <div class="highlight"><strong>HSTS (HTTP Strict Transport Security):</strong> Once a browser sees the HSTS header (<code>Strict-Transport-Security: max-age=31536000; includeSubDomains</code>), it refuses to connect to that domain over plain HTTP for the specified duration. Helmet.js adds this header automatically.</div>`,
+    usecases: [
+      { where: 'Render/Vercel deployment', desc: 'Both Render and Vercel automatically provision TLS certificates for your custom domain. Your Bus Portal is already HTTPS. What you need to ensure: HSTS header is set (Helmet does this), HTTP requests redirect to HTTPS (Render/Vercel handle this), your JWT is never sent over HTTP.' },
+      { where: 'Internal MQTT broker security', desc: 'Your Mosquitto MQTT broker for IoT/SCADA work should use TLS on port 8883 instead of plain 1883. Configure Mosquitto with a server certificate and CA certificate. Clients present client certificates for mutual TLS (mTLS). This means only your authorized Python gateway scripts can publish, not any device on the network.' },
+      { where: 'Certificate pinning in mobile apps', desc: 'A React Native app can pin the server\'s certificate — hardcoding the expected certificate fingerprint. Even if an attacker presents a valid certificate from a different CA, the app rejects it. Used to prevent man-in-the-middle attacks on corporate networks.' },
+    ],
+    code: `<span class="cm">// Redirect HTTP to HTTPS in Node.js</span>
+<span class="kw">if</span> (process.env.NODE_ENV === <span class="str">'production'</span>) {
+  app.<span class="fn">use</span>((req, res, next) => {
+    <span class="kw">if</span> (req.header(<span class="str">'x-forwarded-proto'</span>) !== <span class="str">'https'</span>) {
+      <span class="kw">return</span> res.<span class="fn">redirect</span>(<span class="str">\`https://\${req.header('host')}\${req.url}\`</span>);
+    }
+    <span class="fn">next</span>();
+  });
+}
+
+<span class="cm">// Helmet sets HSTS and other security headers</span>
+app.<span class="fn">use</span>(<span class="fn">helmet</span>({
+  hsts: {
+    maxAge: <span class="num">31536000</span>,
+    includeSubDomains: <span class="kw">true</span>,
+    preload: <span class="kw">true</span>
+  }
+}));
+
+<span class="cm"># Certbot auto-renew (runs in crontab)</span>
+<span class="cm"># 0 12 * * * certbot renew --quiet</span>`,
+    tags: ['TLS', 'HTTPS', 'HSTS', 'Certificate', 'Let\'s Encrypt', 'Helmet', 'Certbot']
+  },
+  {
+    title: 'Rate Limiting',
+    badge: 'Hardening', color: 'red',
+    tagline: 'Preventing brute force attacks, denial of service, and API abuse.',
+    explanation: `<p>Without rate limiting, an attacker can try millions of passwords against your login endpoint, scrape all your data, or send enough requests to crash your server. Rate limiting restricts how many requests a client can make in a time window.</p>
+    <p><strong>Algorithms:</strong> Token Bucket — each client gets N tokens per period, each request consumes a token, tokens replenish at a fixed rate. Allows bursts. Sliding Window — track request timestamps in a sliding window, reject if count exceeds limit. More accurate but memory-intensive. Fixed Window — count requests per fixed interval (per minute). Simple but vulnerable to burst at window boundaries.</p>
+    <p><strong>Identifying clients:</strong> By IP address (default, but easily spoofed by manipulating X-Forwarded-For header), by user ID (more accurate for authenticated routes), by API key (for third-party API access). Use IP for unauthenticated routes (login), user ID for authenticated routes.</p>
+    <div class="highlight"><strong>Redis-backed rate limiting for production:</strong> The default in-memory store resets on server restart and doesn't work across multiple instances. For Bus Portal on Render, use <code>rate-limit-redis</code> as the store — limits are shared across all server processes.</div>`,
+    usecases: [
+      { where: 'Login brute force prevention', desc: '10 failed login attempts per IP per 15 minutes. After the limit, return 429 with <code>Retry-After: 900</code> header. Log every rate limit hit — high volume from one IP is an active attack to investigate. Optionally: after 100 failed attempts, permanently block the IP in your firewall.' },
+      { where: 'API endpoint protection', desc: 'Apply a general rate limit to all routes: 100 requests per minute per IP. Stricter for expensive operations: password reset 5/hour, registration 10/hour, booking creation 20/hour. More generous for read operations that are cheap to serve.' },
+      { where: 'DDoS mitigation', desc: 'Rate limiting at the application layer handles moderate abuse. For real DDoS attacks, Cloudflare (free tier) sits in front of your server and absorbs the traffic before it reaches you. Enable Cloudflare\'s "Under Attack" mode when you detect an attack.' },
+    ],
+    code: `<span class="kw">import</span> rateLimit <span class="kw">from</span> <span class="str">'express-rate-limit'</span>;
+<span class="kw">import</span> RedisStore <span class="kw">from</span> <span class="str">'rate-limit-redis'</span>;
+
+<span class="cm">// Strict limit for login</span>
+<span class="kw">const</span> loginLimiter = <span class="fn">rateLimit</span>({
+  windowMs: <span class="num">15</span> * <span class="num">60</span> * <span class="num">1000</span>,  <span class="cm">// 15 minutes</span>
+  max: <span class="num">10</span>,
+  message: { message: <span class="str">'Too many login attempts'</span> },
+  standardHeaders: <span class="kw">true</span>,      <span class="cm">// X-RateLimit-* headers</span>
+  store: <span class="kw">new</span> <span class="fn">RedisStore</span>({ client: redis }),
+});
+
+<span class="cm">// General API limit</span>
+<span class="kw">const</span> apiLimiter = <span class="fn">rateLimit</span>({
+  windowMs: <span class="num">60</span> * <span class="num">1000</span>,  <span class="cm">// 1 minute</span>
+  max: <span class="num">100</span>,
+  store: <span class="kw">new</span> <span class="fn">RedisStore</span>({ client: redis }),
+});
+
+app.<span class="fn">use</span>(<span class="str">'/api'</span>, apiLimiter);
+app.<span class="fn">use</span>(<span class="str">'/api/auth/login'</span>, loginLimiter);`,
+    tags: ['Rate Limiting', 'Brute Force', 'DDoS', 'Redis', 'express-rate-limit', '429']
+  },
+],
+
+'kb-linux': [
+  {
+    title: 'Linux File System & Permissions',
+    badge: 'Core Concepts', color: 'green',
+    tagline: 'The directory structure every Linux user must know — and how permissions protect it.',
+    explanation: `<p>The Linux filesystem is a single tree rooted at <code>/</code>. Key directories: <strong>/etc</strong> — system-wide configuration files (nginx.conf, hosts, passwd). <strong>/var/log</strong> — application and system logs. <strong>/home</strong> — user home directories. <strong>/usr/bin</strong> — user executables. <strong>/usr/local/bin</strong> — locally installed executables. <strong>/proc</strong> — virtual filesystem exposing kernel/process info. <strong>/sys</strong> — hardware and device info. <strong>/tmp</strong> — temporary files (cleared on reboot).</p>
+    <p><strong>Permission model:</strong> Every file/directory has: owner (user), group, and others. Three permission bits for each: read (r=4), write (w=2), execute (x=1). <code>rwxr-xr-x</code> = owner rwx (7), group r-x (5), others r-x (5) = octal 755. Directories need execute permission to be entered.</p>
+    <div class="highlight"><strong>setuid bit:</strong> An executable with setuid runs with the owner's privileges, not the caller's. <code>passwd</code> has setuid root — it needs to write to /etc/shadow (root-owned) when you change your password. Dangerous if set on scripts — attackers can use it for privilege escalation.</div>
+    <p><strong>Special permissions:</strong> Sticky bit on a directory (like /tmp): only the file owner can delete their own files, even if others have write permission. Used on shared directories to prevent users deleting each other's files.</p>`,
+    usecases: [
+      { where: 'Securing a production server', desc: 'Your Bus Portal server should have: nginx running as www-data (not root), Node.js process owned by a dedicated user (busportal), log files in /var/log/busportal writable only by the busportal user, .env file with 600 permissions (owner read/write only). Audit with <code>find / -perm -4000</code> to list setuid executables.' },
+      { where: 'Docker container security', desc: 'A Dockerfile with USER node changes the process owner inside the container from root to the node user. If the container is compromised, the attacker has node user privileges, not root. They can\'t install packages, modify system files, or escape the container via root-required syscalls.' },
+      { where: 'SSH key management', desc: '~/.ssh/authorized_keys must be 600 (owner read/write only). ~/.ssh directory must be 700 (owner only). If these permissions are wrong, sshd refuses to use them — a security feature. <code>chmod 700 ~/.ssh && chmod 600 ~/.ssh/authorized_keys</code>' },
+    ],
+    code: `<span class="cm"># View permissions in detail</span>
+ls -la /etc/nginx/nginx.conf
+<span class="cm"># -rw-r--r-- 1 root root 1234 Jan 1 nginx.conf</span>
+<span class="cm"># owner=root (rw), group=root (r), others (r)</span>
+
+<span class="cm"># Change permissions</span>
+chmod 600 .env           <span class="cm"># owner rw only</span>
+chmod 755 /scripts/start.sh  <span class="cm"># owner rwx, others rx</span>
+chmod +x script.sh       <span class="cm"># add execute for all</span>
+
+<span class="cm"># Change ownership</span>
+chown busportal:busportal /var/log/busportal
+chown -R node:node /app   <span class="cm"># recursive</span>
+
+<span class="cm"># Find world-writable files (security risk)</span>
+find /etc -perm -002 -type f 2>/dev/null
+
+<span class="cm"># Find setuid executables</span>
+find / -perm -4000 -type f 2>/dev/null`,
+    tags: ['chmod', 'chown', 'setuid', 'Permissions', 'Linux', 'Security']
+  },
+  {
+    title: 'HTTP Protocol in Depth',
+    badge: 'Networking', color: 'green',
+    tagline: 'The protocol powering the web — headers, methods, status codes, and the evolution to HTTP/3.',
+    explanation: `<p><strong>HTTP/1.1:</strong> Text-based, one request per connection with keep-alive reuse. Head-of-line blocking: a slow request blocks all subsequent requests. Browsers open 6 parallel connections per origin to work around this.</p>
+    <p><strong>HTTP/2:</strong> Binary-framed, multiplexed — multiple requests over one TCP connection simultaneously. Header compression (HPACK). Server push. Eliminates HOL blocking at the HTTP layer. One connection replaces 6.</p>
+    <p><strong>HTTP/3:</strong> Runs over QUIC (UDP-based). Eliminates TCP HOL blocking at the transport layer. 0-RTT connection resumption for returning visitors. Faster on lossy networks (mobile).</p>
+    <div class="highlight"><strong>Status codes you must know:</strong> 200 OK, 201 Created, 204 No Content, 301 Permanent Redirect, 302 Temporary Redirect, 304 Not Modified, 400 Bad Request, 401 Unauthorized (not authenticated), 403 Forbidden (authenticated but not allowed), 404 Not Found, 409 Conflict, 422 Unprocessable, 429 Rate Limited, 500 Internal Server Error, 502 Bad Gateway, 503 Service Unavailable.</div>
+    <p><strong>Security-relevant headers:</strong> Content-Security-Policy (prevents XSS), Strict-Transport-Security (forces HTTPS), X-Frame-Options (prevents clickjacking), X-Content-Type-Options (prevents MIME sniffing), Referrer-Policy (controls referrer leakage), Permissions-Policy (restricts browser APIs).</p>`,
+    usecases: [
+      { where: 'Debugging Bus Portal API calls', desc: 'DevTools Network tab shows every HTTP request. A 401 means missing/expired token. A 403 means wrong role. A 422 means validation failed. A 500 means your code crashed. The Response tab shows the exact error message from your error handler. This is your first debugging stop for any API issue.' },
+      { where: 'CDN configuration', desc: 'Static assets (JS bundles) get Cache-Control: max-age=31536000, immutable. The CDN caches them forever. Dynamic API responses get Cache-Control: no-store. Your Vercel frontend automatically sets correct cache headers for Next.js/Vite builds.' },
+      { where: 'Load balancer health checks', desc: 'AWS ALB sends GET /api/health every 30 seconds. If your server returns non-200 or times out, ALB removes it from the target group. Your /api/health endpoint should check MongoDB connectivity and return 503 if the DB is unreachable — the load balancer then routes traffic to healthy instances.' },
+    ],
+    code: `<span class="cm"># HTTP request/response anatomy</span>
+<span class="cm"># Request:</span>
+POST /api/auth/login HTTP/2
+Host: bus-portal.onrender.com
+Content-Type: application/json
+Authorization: Bearer eyJ...
+
+{"email": "user@company.com", "password": "..."}
+
+<span class="cm"># Response:</span>
+HTTP/2 200 OK
+Content-Type: application/json
+Set-Cookie: refresh=...; HttpOnly; Secure; SameSite=Strict
+X-RateLimit-Remaining: 9
+
+{"token": "eyJ...", "user": {...}}
+
+<span class="cm"># curl to test your API headers</span>
+curl -I https://bus-portal.onrender.com/api/health
+<span class="cm"># Look for: Strict-Transport-Security, X-Frame-Options</span>`,
+    tags: ['HTTP/2', 'HTTP/3', 'Status Codes', 'Cache-Control', 'HSTS', 'Security Headers']
+  },
+],
+
+'kb-backend': [
+  {
+    title: 'REST API Design',
+    badge: 'Architecture', color: 'blue',
+    tagline: 'Designing HTTP APIs that are predictable, scalable, and a joy to consume.',
+    explanation: `<p>REST uses HTTP semantics deliberately: <strong>nouns as resources, HTTP methods as verbs, status codes as outcomes</strong>. Resources are nouns: <code>/users</code>, <code>/bookings/42</code>. Never verbs: not <code>/getUser</code> or <code>/createBooking</code>.</p>
+    <p><strong>HTTP methods:</strong> GET = safe + idempotent (read, no side effects). POST = creates, not idempotent. PUT = full replace, idempotent. PATCH = partial update. DELETE = idempotent removal. Idempotent means calling it N times has the same effect as calling it once — essential for safe retry logic.</p>
+    <div class="highlight"><strong>Versioning:</strong> URL versioning (<code>/v1/users</code>) is most visible and cache-friendly. Never break existing clients — add fields, don't remove. Version only for breaking changes. Your Bus Portal API doesn't need versioning yet, but plan for it.</div>
+    <p><strong>Pagination:</strong> Cursor-based (for feeds, real-time data) is most scalable and stable. Offset-based (page=2&limit=20) is simple. Always include a next cursor or total count so clients know if there's more data.</p>`,
+    usecases: [
+      { where: 'Bus Portal booking API', desc: 'POST /api/bookings creates a booking (201 Created). GET /api/bookings/my?userId=xxx returns this user\'s bookings. PATCH /api/bookings/bk-xxx updates the seat. DELETE /api/bookings/bk-xxx (soft delete, sets status to cancelled). GET /api/bookings/taken-seats?routeId=x&date=y&departure=z returns taken seats array.' },
+      { where: 'Error responses', desc: 'Every error response should include a machine-readable message and human-readable description. 400: <code>{"message":"Email is required"}</code>. 409: <code>{"message":"You already have a booking for today","bookingRef":"OGA-2026-0042"}</code>. The client can use bookingRef to redirect to My Bookings.' },
+    ],
+    code: `<span class="cm">// REST resource structure for Bus Portal</span>
+GET    /api/bookings/my        <span class="cm">// my bookings</span>
+POST   /api/bookings           <span class="cm">// create booking → 201</span>
+PATCH  /api/bookings/:id       <span class="cm">// update seat → 200</span>
+DELETE /api/bookings/:id       <span class="cm">// cancel → 204</span>
+
+GET    /api/routes/search?from=VI&to=Abule
+GET    /api/routes/:id
+POST   /api/routes             <span class="cm">// admin only</span>
+PUT    /api/routes/:id         <span class="cm">// full update</span>
+PATCH  /api/routes/:id/status  <span class="cm">// toggle status</span>
+
+<span class="cm">// Standard error response shape</span>
+res.<span class="fn">status</span>(<span class="num">409</span>).<span class="fn">json</span>({
+  message: <span class="str">'Already booked today'</span>,
+  bookingRef: existing.bookingRef,  <span class="cm">// extra context</span>
+});`,
+    tags: ['REST', 'HTTP Methods', 'Status Codes', 'Versioning', 'Pagination', 'HATEOAS']
+  },
+  {
+    title: 'Caching Strategies',
+    badge: 'Performance', color: 'blue',
+    tagline: 'Storing expensive computation results to serve future requests faster.',
+    explanation: `<p><strong>Cache-Aside (Lazy Loading):</strong> Check cache → if miss, query DB → store in cache → return. Application controls cache explicitly. Most common pattern. Used for user profiles, route data, any read-heavy data.</p>
+    <p><strong>Write-Through:</strong> Write to cache and DB simultaneously. Cache is always fresh but write latency doubles. Good for data that is read immediately after being written.</p>
+    <p><strong>Cache invalidation strategies:</strong> TTL (Time-to-Live) — simplest, data can be stale up to TTL. Event-based — delete/update cache key when data changes (what Bus Portal should do for taken-seats). Cache versioning — embed version in key, change version to bust cache.</p>
+    <div class="highlight"><strong>What to cache in Bus Portal:</strong> Routes list (rarely changes — 5 minute TTL), bus details (rarely changes — 5 minute TTL), taken-seats (changes per booking — 30 second TTL or event-based invalidation on booking creation). Do NOT cache: authentication, booking creation, anything that must be fresh.</div>`,
+    usecases: [
+      { where: 'Taken-seats polling optimization', desc: 'Your booking page polls /api/bookings/taken-seats every 30 seconds with 200 concurrent users = 6 DB queries per second sustained. With Redis cache (30s TTL), this becomes 0.03 DB queries per second — one query every 30 seconds regardless of how many users are booking.' },
+      { where: 'Route data caching', desc: 'Routes change when admins edit them — maybe once a week. But GET /api/routes is called on every booking page load. Cache the routes array in Redis with a 5-minute TTL. Invalidate (delete the key) whenever a route is created/updated/deleted. 5-minute stale data is acceptable for route info.' },
+    ],
+    code: `<span class="cm">// Cache-aside for taken-seats</span>
+router.<span class="fn">get</span>(<span class="str">'/taken-seats'</span>, verifyToken, <span class="kw">async</span> (req, res) => {
+  <span class="kw">const</span> { routeId, date, departure } = req.query;
+  <span class="kw">const</span> key = <span class="str">\`taken:\${routeId}:\${date}:\${departure}\`</span>;
+  
+  <span class="cm">// 1. Check cache</span>
+  <span class="kw">const</span> cached = <span class="kw">await</span> redis.<span class="fn">get</span>(key);
+  <span class="kw">if</span> (cached) <span class="kw">return</span> res.<span class="fn">json</span>(JSON.<span class="fn">parse</span>(cached));
+  
+  <span class="cm">// 2. Query DB</span>
+  <span class="kw">const</span> bookings = <span class="kw">await</span> Booking.<span class="fn">find</span>({
+    routeId, date, departure,
+    status: { $nin: [<span class="str">'cancelled'</span>] }
+  });
+  <span class="kw">const</span> takenSeats = bookings.<span class="fn">flatMap</span>(b => b.seats);
+  
+  <span class="cm">// 3. Cache for 30s</span>
+  <span class="kw">await</span> redis.<span class="fn">setEx</span>(key, <span class="num">30</span>, JSON.<span class="fn">stringify</span>({ takenSeats }));
+  res.<span class="fn">json</span>({ takenSeats });
+});`,
+    tags: ['Redis', 'Cache-Aside', 'TTL', 'Cache Invalidation', 'Performance']
+  },
+],
+
+'kb-infra': [
+  {
+    title: 'Docker Internals',
+    badge: 'Containers', color: 'orange',
+    tagline: 'What actually happens when Docker runs a container — namespaces, cgroups, and layers.',
+    explanation: `<p>Docker doesn't use magic. It uses two Linux kernel features: <strong>namespaces</strong> (isolation) and <strong>cgroups</strong> (resource limits).</p>
+    <p><strong>Namespaces</strong> give each container its own view of the system: PID namespace (container sees its own process tree, not the host's), Network namespace (its own network interfaces, IP), Mount namespace (its own filesystem), UTS namespace (its own hostname), User namespace (its own user/group IDs).</p>
+    <p><strong>cgroups</strong> limit what resources a container can use: CPU shares and quotas, memory limits, disk I/O limits, network bandwidth. When you set <code>--memory=512m</code> in docker run or <code>limits.memory: 512m</code> in Kubernetes, you're setting a cgroup limit.</p>
+    <div class="highlight"><strong>Image layers and the Union Filesystem:</strong> Each Dockerfile instruction creates an immutable layer. Layers are content-addressed (hash of their content). Identical layers across images are stored once. When a container writes files, it uses a copy-on-write layer on top of the read-only image layers — the original layers are never modified.</div>`,
+    usecases: [
+      { where: 'Understanding Docker security', desc: 'Containers share the host kernel — they are NOT VMs. A kernel vulnerability can potentially be exploited from inside a container to gain host access. This is why: never run containers as root, use seccomp profiles to restrict syscalls, use AppArmor/SELinux profiles. For highest security, use gVisor or Firecracker which add a kernel boundary.' },
+      { where: 'Optimizing Bus Portal Docker image', desc: 'Use node:20-alpine as your base — Alpine is 5MB vs 330MB for node:20. Multi-stage build copies only dist/ and node_modules/ (production only). Run as USER node. Use .dockerignore to exclude node_modules, .git, .env, and test files from the build context.' },
+    ],
+    code: `<span class="cm"># Optimized Bus Portal Dockerfile</span>
+FROM node:20-alpine AS builder
+WORKDIR /app
+COPY package*.json ./
+RUN npm ci --frozen-lockfile
+COPY . .
+RUN npm run build
+
+FROM node:20-alpine
+WORKDIR /app
+COPY --from=builder /app/dist ./dist
+COPY --from=builder /app/node_modules ./node_modules
+COPY --from=builder /app/package.json .
+
+<span class="cm"># Security: non-root user</span>
+USER node
+
+<span class="cm"># Health check</span>
+HEALTHCHECK --interval=30s --timeout=5s \
+  CMD wget -qO- http://localhost:5000/api/health || exit 1
+
+EXPOSE 5000
+CMD ["node", "dist/server.js"]`,
+    tags: ['Namespaces', 'cgroups', 'Union Filesystem', 'Multi-stage', 'Alpine', 'Security']
+  },
+],
+
+'kb-db': [
+  {
+    title: 'MongoDB Indexing',
+    badge: 'Performance', color: 'purple',
+    tagline: 'Turning O(n) collection scans into O(log n) indexed lookups — the single most impactful DB optimization.',
+    explanation: `<p>Without an index, every MongoDB query does a <strong>collection scan</strong> — it reads every document to find matches. With 10,000 bookings and no index on userId, <code>Booking.find({userId:"u-123"})</code> reads all 10,000 documents to find the 5 for that user.</p>
+    <p><strong>Index types:</strong> Single field (<code>{userId: 1}</code>). Compound (<code>{userId: 1, date: 1}</code> — covers queries filtering on both). Text (<code>{description: "text"}</code> — full-text search). Geospatial. Unique (enforces uniqueness).</p>
+    <p><strong>Compound index prefix rule:</strong> An index on <code>{userId: 1, date: 1, departure: 1}</code> can be used for queries on userId alone, userId+date, or userId+date+departure. But NOT on date alone or departure alone — you need a separate index for those.</p>
+    <div class="highlight"><strong>Explain plans:</strong> Add <code>.explain("executionStats")</code> after any query. Look for IXSCAN (using an index — good) vs COLLSCAN (reading everything — bad). Check totalDocsExamined vs nReturned — if examined >> returned, you need a better index or compound index.</div>`,
+    usecases: [
+      { where: 'Bus Portal: taken-seats query', desc: '<code>Booking.find({routeId, date, departure, status: {$nin: ["cancelled"]}})</code> runs many times per minute. Compound index: <code>{routeId: 1, date: 1, departure: 1, status: 1}</code>. MongoDB can satisfy this query entirely from the index without reading document data — an index-only scan.' },
+      { where: 'Bus Portal: my bookings query', desc: '<code>Booking.find({userId}).sort({createdAt: -1})</code> fetches a user\'s bookings sorted by date. Compound index: <code>{userId: 1, createdAt: -1}</code>. The sort is free because it matches the index order.' },
+      { where: 'Bus Portal: user lookup by email', desc: '<code>User.findOne({email})</code> runs on every login. Unique index on email: already created by Mongoose\'s <code>unique: true</code> schema option. Verify it exists with <code>User.collection.indexes()</code>.' },
+    ],
+    code: `<span class="cm">// Add indexes to Mongoose models</span>
+
+<span class="cm">// Booking model — compound index for taken-seats query</span>
+bookingSchema.index(
+  { routeId: <span class="num">1</span>, date: <span class="num">1</span>, departure: <span class="num">1</span> },
+  { name: <span class="str">'taken_seats_lookup'</span> }
+);
+
+<span class="cm">// Compound index for my-bookings query</span>
+bookingSchema.index(
+  { userId: <span class="num">1</span>, date: <span class="num">1</span> },
+  { name: <span class="str">'user_bookings'</span> }
+);
+
+<span class="cm">// Check explain plan</span>
+<span class="kw">const</span> plan = <span class="kw">await</span> Booking
+  .<span class="fn">find</span>({ userId: <span class="str">'u-123'</span> })
+  .<span class="fn">explain</span>(<span class="str">'executionStats'</span>);
+
+console.<span class="fn">log</span>(plan.executionStats.executionStages.stage);
+<span class="cm">// Should show IXSCAN, not COLLSCAN</span>
+console.<span class="fn">log</span>(plan.executionStats.totalDocsExamined);
+<span class="cm">// Should be close to nReturned</span>`,
+    tags: ['MongoDB', 'Indexes', 'Compound Index', 'Explain Plan', 'IXSCAN', 'Performance']
+  },
+],
+};
+
+// ════════════════════════════════════════════════
+// CHECKLIST DATA
+// ════════════════════════════════════════════════
+const CHECKLISTS = {
+  'ck-ph1': [
+    'Fixed NoSQL injection — installed express-mongo-sanitize, tested that {"$gt":""} returns 401 not 500',
+    'Added rate limiting — 10 attempts/15min on login, 100/min general via express-rate-limit',
+    'Added Helmet.js — securityheaders.com shows A rating on deployed URL',
+    'Added express-validator — all POST/PUT routes validate and sanitize inputs',
+    'Shortened JWT expiry to 1 hour, implemented RS256 key pair',
+    'Implemented HttpOnly refresh token cookie (7 day expiry)',
+    'Ran OWASP ZAP against staging — reviewed all findings',
+    'Tested all OWASP Top 10 categories against Bus Portal manually',
+    'Wrote security audit document — vulnerabilities found, CVSS scores, fixes applied',
+    'Published security audit as GitHub README writeup',
+  ],
+  'ck-ph2': [
+    'Installed WSL2 with Ubuntu 22.04 on Dell Latitude',
+    'Comfortable with: ls, cd, pwd, find, grep, awk, sed',
+    'Understand file permissions — chmod, chown, setuid',
+    'Set up SSH key-based auth, disabled password auth on a server',
+    'Written a bash script that automates a repetitive task',
+    'Set up a cron job on a Linux system',
+    'Can explain all 7 OSI layers and what happens at each',
+    'Can explain TCP 3-way handshake and difference from UDP',
+    'Used nmap to scan localhost — understand what the output means',
+    'Captured and analyzed HTTP traffic with Wireshark',
+    'Set up UFW firewall on an Ubuntu server (allow 22, 80, 443 only)',
+    'Deployed Bus Portal manually on AWS EC2 — documented every command',
+  ],
+  'ck-ph3': [
+    'Written a Dockerfile for Bus Portal backend (multi-stage, non-root user)',
+    'Built Docker image locally — verified it works with docker run',
+    'Created docker-compose.yml for backend + MongoDB',
+    'docker compose up gets a working Bus Portal in under 5 minutes',
+    'Set up GitHub Actions workflow that runs on every PR',
+    'CI pipeline runs: lint, tests, build',
+    'CD pipeline deploys to Render on merge to main',
+    'Written Jest tests for 6 critical endpoints (auth, booking creation, access control)',
+    'Added Docker Scout or Snyk Container image scanning to CI',
+    'Added Hadolint Dockerfile linting to CI',
+    'README has CI status badge and setup instructions',
+  ],
+  'ck-ph4': [
+    'Created an AWS account with MFA on root account',
+    'Created an IAM user with only needed permissions (no AdministratorAccess)',
+    'Deployed Bus Portal on EC2 behind an Application Load Balancer',
+    'VPC has public subnets (ALB) and private subnets (EC2, DB)',
+    'Security groups: ALB allows 80/443 from internet, EC2 allows 5000 from ALB only',
+    'Enabled GuardDuty in the AWS account',
+    'Enabled CloudTrail for all API calls',
+    'Set up CloudWatch alarms for CPU > 80% and error rate > 5%',
+    'Wrote Terraform to create the VPC, EC2, ALB, and security groups',
+    'terraform apply creates the entire environment, terraform destroy tears it down',
+    'Route 53 custom domain with ACM certificate (HTTPS)',
+  ],
+  'ck-ph5': [
+    'Added compound indexes to Booking model — explain plan shows IXSCAN not COLLSCAN',
+    'Added Redis caching for routes list (5min TTL)',
+    'Added Redis caching for taken-seats (30s TTL), invalidated on booking creation',
+    'Moved rate limiting store from in-memory to Redis',
+    'Added Sentry error tracking — errors appear in Sentry dashboard',
+    'Replaced console.log with Winston structured logging',
+    'Added prom-client metrics endpoint (/metrics)',
+    'Written k6 load test script simulating 200 concurrent users booking',
+    'Identified and fixed at least one performance bottleneck from load test results',
+    'Written a before/after performance comparison report with metrics',
+  ],
+  'ck-ph6': [
+    'Installed Kali Linux in WSL2',
+    'Completed TryHackMe Jr Penetration Tester path',
+    'Completed 5 HackTheBox Starting Point machines',
+    'Completed 10 PortSwigger Web Academy labs',
+    'Tested Bus Portal for broken access control (IDOR)',
+    'Tested Bus Portal for JWT vulnerabilities',
+    'Tested Bus Portal for rate limiting bypass',
+    'Tested Bus Portal for mass assignment',
+    'Tested Bus Portal for information leakage in error messages',
+    'Written a professional penetration test report with CVSS-scored findings',
+    'Submitted at least 1 bug bounty report (any platform)',
+  ],
+  'ck-ph7': [
+    'Installed Minikube locally — cluster running',
+    'Deployed Bus Portal API as a Kubernetes Deployment (3 replicas)',
+    'Created a Service for the API',
+    'Created an Ingress with TLS',
+    'Used ConfigMap for config, Secret for sensitive values',
+    'Set up HorizontalPodAutoscaler targeting 70% CPU',
+    'Added resource requests and limits to all containers',
+    'Added readiness and liveness probes',
+    'Performed a rolling update without downtime',
+    'Performed a rollback with kubectl rollout undo',
+    'Created a Helm chart for Bus Portal',
+    'Set up NetworkPolicy restricting inter-pod communication',
+  ],
+  'ck-ph8': [
+    'Read NERC CIP-005 and CIP-007 standards',
+    'Completed CISA 100W ICS security course',
+    'Read 10 CISA ICS-CERT advisories — understand attack vectors',
+    'Set up MQTT broker with TLS (port 8883)',
+    'Implemented MQTT client certificate authentication',
+    'Written MQTT ACL file restricting publishers and subscribers',
+    'Built IoT dashboard with secure MQTT pipeline',
+    'Written asset inventory document for IoT system',
+    'Written network diagram showing IT/OT boundary',
+    'Implemented audit log for all control actions',
+    'Registered for GICSP exam (or started study materials)',
+  ],
+  'ck-certs': [
+    'CompTIA Security+ — studying (Professor Messer free videos + practice exams)',
+    'CompTIA Security+ — PASSED',
+    'CCNA — studying (Jeremy\'s IT Lab YouTube)',
+    'CCNA — PASSED',
+    'AWS SAA-C03 — studying (Adrian Cantrill or Stephane Maarek course)',
+    'AWS SAA-C03 — PASSED',
+    'CEH — studying',
+    'CEH — PASSED',
+    'OSCP — enrolled in PEN-200 course',
+    'OSCP — PASSED (24-hour exam completed)',
+    'GICSP — studying',
+    'GICSP — PASSED',
+    'CKA — studying (KodeKloud)',
+    'CKA — PASSED',
+  ],
+};
+
+// ════════════════════════════════════════════════
+// RENDERING ENGINE
+// ════════════════════════════════════════════════
+function renderKB(secId, items) {
+  const list = document.getElementById(secId + '-list');
+  if (!list) return;
+  list.innerHTML = items.map((item, idx) => {
+    const v = item.color || 'green';
+    const searchData = [item.title, item.badge, item.tagline, item.explanation,
+      ...(item.tags||[]), ...(item.usecases||[]).map(u => u.where + ' ' + u.desc)
+    ].join(' ').toLowerCase();
+    return `
+    <article class="concept cv-${v}" id="${secId}-${idx}" data-search="${searchData.replace(/"/g,'&quot;')}">
+      <div class="concept-hdr" onclick="toggleConcept(this)">
+        <div class="concept-meta">
+          <div class="concept-title-row">
+            <span class="concept-title">${item.title}</span>
+            <span class="concept-badge badge-${v}">${item.badge}</span>
+          </div>
+          <p class="concept-tagline">${item.tagline}</p>
+        </div>
+        <div class="concept-toggle">+</div>
+      </div>
+      <div class="concept-body">
+        <div class="concept-body-inner">
+          <div class="explanation">
+            <div class="col-label">Explanation</div>
+            ${item.explanation}
+          </div>
+          <div class="use-cases">
+            <div class="col-label">Practical Use Cases</div>
+            ${(item.usecases||[]).map(uc => `
+              <div class="use-case">
+                <div class="uc-where">${uc.where}</div>
+                <p class="uc-desc">${uc.desc}</p>
+              </div>
+            `).join('')}
+          </div>
+          ${item.code ? `
+          <div class="code-section">
+            <div class="col-label">Code Example</div>
+            <div class="code-block">${item.code}</div>
+          </div>` : ''}
+        </div>
+        ${item.tags ? `
+        <div class="tags-row">
+          ${item.tags.map(t => `<span class="tag">${t}</span>`).join('')}
+        </div>` : ''}
+      </div>
+    </article>`;
+  }).join('');
+}
+
+function toggleConcept(hdr) {
+  const c = hdr.closest('.concept');
+  const isOpen = c.classList.contains('open');
+  c.classList.toggle('open', !isOpen);
+  hdr.querySelector('.concept-toggle').textContent = isOpen ? '+' : '−';
+}
+
+function searchKB(input, secId) {
+  const q = input.value.toLowerCase().trim();
+  const list = document.getElementById(secId + '-list');
+  const items = list.querySelectorAll('.concept');
+  let visible = 0;
+  items.forEach(item => {
+    const match = !q || item.dataset.search.includes(q);
+    item.style.display = match ? '' : 'none';
+    if (match) visible++;
+  });
+  const rc = document.getElementById('rc-' + secId);
+  if (rc) rc.textContent = q ? `${visible} result${visible !== 1 ? 's' : ''} for "${q}"` : '';
+  if (visible === 1 && q) {
+    const only = [...items].find(i => i.style.display !== 'none');
+    if (only && !only.classList.contains('open')) only.querySelector('.concept-hdr').click();
+  }
+}
+
+function loadChecklist(id, items) {
+  const container = document.getElementById(id);
+  if (!container) return;
+  const saved = JSON.parse(localStorage.getItem('devsec-' + id) || '{}');
+  container.innerHTML = items.map((item, i) => {
+    const checked = saved[i] || false;
+    return `<div class="check-item" onclick="toggleCheck('${id}',${i},this)">
+      <div class="check-box${checked ? ' checked' : ''}"></div>
+      <div class="check-text${checked ? ' done' : ''}">${item}</div>
+    </div>`;
+  }).join('');
+}
+
+function toggleCheck(id, index, el) {
+  const box = el.querySelector('.check-box');
+  const text = el.querySelector('.check-text');
+  const isChecked = box.classList.contains('checked');
+  box.classList.toggle('checked', !isChecked);
+  text.classList.toggle('done', !isChecked);
+  const saved = JSON.parse(localStorage.getItem('devsec-' + id) || '{}');
+  saved[index] = !isChecked;
+  localStorage.setItem('devsec-' + id, JSON.stringify(saved));
+}
+
+// ════════════════════════════════════════════════
+// NAVIGATION
+// ════════════════════════════════════════════════
+function show(id) {
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+  const page = document.getElementById('page-' + id);
+  if (page) page.classList.add('active');
+  document.querySelectorAll('.nav-item').forEach(item => {
+    const oc = item.getAttribute('onclick') || '';
+    if (oc.includes(`'${id}'`)) item.classList.add('active');
+  });
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+  closeSB();
+}
+
+function toggleSB() {
+  document.getElementById('sidebar').classList.toggle('open');
+  document.getElementById('overlay').classList.toggle('open');
+}
+function closeSB() {
+  document.getElementById('sidebar').classList.remove('open');
+  document.getElementById('overlay').classList.remove('open');
+}
+
+document.addEventListener('keydown', e => { if (e.key === 'Escape') closeSB(); });
+
+// ════════════════════════════════════════════════
+// INIT
+// ════════════════════════════════════════════════
+// Render knowledge base sections
+renderKB('kb-sec', KB['kb-sec']);
+renderKB('kb-linux', KB['kb-linux']);
+renderKB('kb-backend', KB['kb-backend']);
+renderKB('kb-infra', KB['kb-infra']);
+renderKB('kb-db', KB['kb-db']);
+
+// Load all checklists
+Object.entries(CHECKLISTS).forEach(([id, items]) => loadChecklist(id, items));
+</script>
+</body>
+</html>
