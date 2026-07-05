@@ -6,6 +6,7 @@
     --bg: #0c1420;
     --panel: #121f30;
     --panel-raised: #17263b;
+    --explain-bg: #0f1c2c;
     --grid-line: rgba(124,141,166,0.10);
     --ink: #dce4ec;
     --muted: #7c8da6;
@@ -57,7 +58,7 @@
     font-size: 14px;
     line-height: 1.6;
     margin: 0 0 26px;
-    max-width: 520px;
+    max-width: 540px;
   }
 
   .sft-overall {
@@ -168,7 +169,7 @@
 
   .sft-card-head:hover { background: var(--panel-raised); }
 
-  .sft-card-head-left { display: flex; align-items: baseline; gap: 12px; }
+  .sft-card-head-left { display: flex; align-items: baseline; gap: 12px; flex-wrap: wrap; }
 
   .sft-phase-num {
     font-family: 'JetBrains Mono', monospace;
@@ -195,6 +196,7 @@
     gap: 10px;
     font-family: 'JetBrains Mono', monospace;
     font-size: 13px;
+    flex: none;
   }
 
   .sft-pct { color: var(--copper); min-width: 34px; text-align: right; }
@@ -221,6 +223,8 @@
     color: var(--muted);
     margin: 18px 0 10px;
   }
+
+  .sft-topic-row { border-bottom: 1px solid transparent; }
 
   .sft-topic {
     display: flex;
@@ -259,11 +263,42 @@
     font-size: 13.5px;
     line-height: 1.5;
     color: var(--ink);
+    flex: 1;
   }
   .sft-topic.sft-done .sft-topic-text { color: var(--muted); text-decoration: line-through; text-decoration-color: var(--muted-dim); }
 
+  .sft-explain-toggle {
+    flex: none;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    color: var(--cyan);
+    letter-spacing: 0.05em;
+    padding: 2px 6px;
+    border: 1px solid var(--cyan-dim);
+    border-radius: 4px;
+    background: none;
+    cursor: pointer;
+    white-space: nowrap;
+    margin-top: 1px;
+  }
+  .sft-explain-toggle:hover { background: var(--cyan-dim); }
+
+  .sft-explain-panel {
+    display: none;
+    margin: 0 0 10px 26px;
+    padding: 10px 14px;
+    background: var(--explain-bg);
+    border-left: 2px solid var(--cyan-dim);
+    border-radius: 0 6px 6px 0;
+    font-size: 13px;
+    line-height: 1.65;
+    color: var(--muted);
+  }
+  .sft-explain-panel.sft-shown { display: block; }
+
   .sft-resources { font-size: 13px; color: var(--muted); line-height: 1.7; }
   .sft-resources strong { color: var(--ink); font-weight: 500; }
+  .sft-resources .sft-res-note { color: var(--muted-dim); font-size: 12px; margin-top: 6px; }
 
   .sft-build-box {
     background: var(--panel-raised);
@@ -277,7 +312,7 @@
   }
   .sft-build-box .sft-topic-text { font-size: 13.5px; }
 
-  .sft-notes {
+  .sft-notes, .sft-buildlog {
     width: 100%;
     background: var(--panel-raised);
     border: 1px solid var(--grid-line);
@@ -289,8 +324,9 @@
     resize: vertical;
     min-height: 56px;
   }
-  .sft-notes:focus { outline: none; border-color: var(--cyan-dim); }
-  .sft-notes::placeholder { color: var(--muted-dim); }
+  .sft-buildlog { font-family: 'JetBrains Mono', monospace; font-size: 12px; min-height: 44px; }
+  .sft-notes:focus, .sft-buildlog:focus { outline: none; border-color: var(--cyan-dim); }
+  .sft-notes::placeholder, .sft-buildlog::placeholder { color: var(--muted-dim); }
 
   .sft-footer {
     display: flex;
@@ -324,7 +360,7 @@
   <div class="sft-wrap">
     <div class="sft-eyebrow">Self-Study Curriculum · Systems Fundamentals</div>
     <h1 class="sft-title">From Silicon to Sockets</h1>
-    <p class="sft-sub">Five phases, architecture through distributed systems. Check off topics as you learn them, mark builds when shipped, and drop notes as you go — everything here saves automatically.</p>
+    <p class="sft-sub">Five phases, architecture through distributed systems. Each topic has a plain-language explanation built in — tap "explain" to read it right here. Check things off, log TrackGo builds against each phase, and everything saves automatically.</p>
 
     <div class="sft-overall">
       <div class="sft-overall-top">
@@ -352,17 +388,17 @@
       title: 'Architecture & OS Fundamentals',
       weeks: '6–8 weeks',
       topics: [
-        'Fetch–decode–execute cycle: how a CPU actually runs an instruction',
-        'Memory hierarchy — registers, cache, RAM, disk — and why it dictates performance',
-        'Binary and hex representation, two\'s complement, floating point',
-        'ASCII vs Unicode character encoding',
-        'Stack vs heap memory',
-        'Processes vs threads',
-        'Concurrency vs parallelism',
-        'Scheduling and context switching',
-        'Virtual memory and paging',
-        'File systems',
-        'System calls — how code talks to the OS'
+        { t: 'Fetch–decode–execute cycle', e: "Every instruction a CPU runs goes through three stages, over and over, millions of times a second. Fetch pulls the next instruction from memory using the address in the program counter. Decode figures out what that instruction means — which operation, which registers. Execute performs it, usually inside the ALU, then the program counter moves on (or jumps, for branches). Everything your code does eventually reduces to this loop." },
+        { t: 'Memory hierarchy — registers, cache, RAM, disk', e: "Not all memory is equal — there's a trade-off between speed and size, so systems layer several kinds. Registers sit inside the CPU and are fastest but tiny. L1/L2/L3 cache sit close to the CPU, larger but slower. RAM is much bigger and slower again, and disk/SSD is huge but slower still. Programs run fast when the data they need is already in a fast layer — this is why cache-friendly code and data locality matter." },
+        { t: "Binary, hex, two's complement, floating point", e: "Computers only store bits, so numbers, characters, and instructions are all just encoding choices. Hex is a compact way for humans to read binary (each hex digit = 4 bits). Two's complement represents negative integers so the same hardware circuit can handle addition and subtraction for both positive and negative numbers. Floating point (IEEE 754) represents fractional numbers with a sign, exponent, and mantissa — which is also why 0.1 + 0.2 doesn't equal 0.3 exactly in most languages." },
+        { t: 'ASCII vs Unicode', e: "ASCII maps 128 numbers to English letters, digits, and symbols — one byte per character, but it can't represent most of the world's scripts or emoji. Unicode assigns a unique code point to essentially every character in every writing system, but a code point isn't the same as its byte representation. UTF-8 is the encoding that turns Unicode code points into bytes, using 1–4 bytes per character, and stays backward-compatible with ASCII for the first 128 characters." },
+        { t: 'Stack vs heap memory', e: "The stack stores function call frames — local variables, return addresses — and is managed automatically: it grows on function call, shrinks on return, which is why stack allocation is fast and why deep recursion causes a stack overflow. The heap is for dynamically allocated memory whose lifetime isn't tied to a function call; it's slower to allocate and must be freed manually or by a garbage collector. This distinction explains a lot of memory bugs and why some languages need GC." },
+        { t: 'Processes vs threads', e: "A process is an independent running program with its own memory space — the OS isolates one process from another. A thread is a unit of execution within a process; all threads in a process share the same memory space, which makes communication cheap but makes race conditions possible. This is why crashing one browser tab (process) doesn't crash the others, but a bug in one thread can corrupt data shared with another thread in the same process." },
+        { t: 'Concurrency vs parallelism', e: "Concurrency is about structure — dealing with multiple tasks in progress over overlapping time, even on a single core, by interleaving them. Parallelism is about execution — actually running multiple tasks at the same literal instant, which requires multiple cores. A single-core machine can be concurrent but never truly parallel; a multi-core machine can be both." },
+        { t: 'Scheduling and context switching', e: "With more processes/threads than CPU cores, the OS scheduler decides which one runs next and for how long, using policies like round-robin or priority-based scheduling. Switching from running one thread to another is a context switch — the OS saves the current thread's state and loads the next one's. Context switches aren't free; too many (thrashing) hurts performance, which is part of why lightweight async models exist." },
+        { t: 'Virtual memory and paging', e: "Virtual memory gives every process the illusion of its own private, contiguous address space, even though physical RAM is shared and fragmented. The OS maps virtual addresses to physical ones in fixed-size chunks called pages, via a page table. When a program accesses memory not currently in RAM, a page fault occurs and the OS loads it from disk — this is also how systems run programs larger than physical RAM." },
+        { t: 'File systems', e: "A file system organizes data on disk into files and directories, and tracks where each file's data actually lives on the physical medium (via structures like inodes). It also manages metadata — permissions, timestamps, size — and maps the human-friendly path you type to actual disk blocks. Different file systems (ext4, NTFS, APFS) trade off speed, journaling for crash recovery, and max file size differently." },
+        { t: 'System calls', e: "Application code can't directly touch hardware or other processes' memory — that would break isolation and security. A system call is the formal request your program makes to the OS kernel to do something privileged: open a file, send network data, allocate memory, spawn a process. Every 'high-level' operation you write eventually goes through one or more syscalls." }
       ],
       resources: [
         ['Primary', 'Nand2Tetris — build a computer from logic gates up to a simple OS'],
@@ -376,16 +412,16 @@
       title: 'Networking & Protocols',
       weeks: '4–6 weeks',
       topics: [
-        'OSI model — what each layer actually does',
-        'TCP vs UDP, and how the TCP handshake works',
-        'DNS resolution chain: browser → resolver → root → TLD → authoritative server',
-        'HTTP/HTTPS — methods, status codes, headers',
-        'HTTP/1.1 vs HTTP/2',
-        'TLS/SSL handshake, conceptually'
+        { t: 'OSI model', e: "A conceptual seven-layer map of what has to happen for one machine to talk to another: physical transmission, local framing (data link), routing between networks (network), reliable delivery (transport), session management, data formatting (presentation), and the application itself. The real internet is closer to a four-layer TCP/IP model, but OSI is a useful map for locating a networking problem — is this routing, or an application bug?" },
+        { t: 'TCP vs UDP, and the TCP handshake', e: "TCP is connection-oriented and reliable: before data moves, both sides perform a three-way handshake (SYN, SYN-ACK, ACK), and TCP guarantees packets arrive in order, retransmitting lost ones. UDP skips all of that — faster, lower overhead, no reliability guarantee. That's why HTTP and file transfers use TCP, while video calls and DNS lookups often use UDP, where a dropped packet is cheaper than retransmission delay." },
+        { t: 'DNS resolution chain', e: "Your machine doesn't know a domain's IP address upfront. It checks its own cache, then asks a recursive resolver (often your ISP's or a public one), which asks a root server, which points to the right top-level-domain server, which points to the domain's authoritative server, which returns the actual IP. Caching happens at nearly every step, which is why the first lookup for a domain is slower than the next one." },
+        { t: 'HTTP/HTTPS methods, status codes, headers', e: "Methods express intent: GET retrieves without side effects, POST creates, PUT/PATCH update, DELETE removes. Status codes group by category — 2xx success, 3xx redirect, 4xx client error, 5xx server error — with the specific number narrowing it (404 not found, 401 unauthenticated, 403 unauthorized, 429 rate-limited). Headers carry metadata alongside the body — content type, caching rules, auth tokens — separate from the payload itself." },
+        { t: 'HTTP/1.1 vs HTTP/2', e: "HTTP/1.1 sends requests over a connection mostly one at a time, so a page with many assets often opens multiple TCP connections to load in parallel. HTTP/2 introduced multiplexing — many requests and responses interleaved over a single connection — plus header compression and server push, which is why it's noticeably faster for asset-heavy pages without any application code changes." },
+        { t: 'TLS/SSL handshake, conceptually', e: "TLS wraps HTTP in encryption to make HTTPS. Before encrypted data flows, client and server agree on a cipher suite, the server proves its identity via a CA-signed certificate, and both sides derive a shared secret key — using slow asymmetric crypto just for this exchange, then switching to fast symmetric encryption for the session. The padlock icon means 'this connection is encrypted and identity was verified,' not 'this site is trustworthy.'" }
       ],
       resources: [
         ['Primary', 'Computer Networking: A Top-Down Approach — Kurose & Ross'],
-        ['Free alt', 'Beej\'s Guide to Network Programming']
+        ['Free alt', "Beej's Guide to Network Programming"]
       ],
       build: 'Write a raw HTTP server from scratch using only TCP sockets, no framework. Then build a basic HTTP client to talk to it.'
     },
@@ -395,13 +431,13 @@
       title: 'Data, Algorithms & Databases',
       weeks: '6–8 weeks',
       topics: [
-        'Arrays, linked lists, trees, graphs, hash tables — implement each yourself once',
-        'Big-O analysis and why it matters for real systems',
-        'How data is stored on disk vs in memory',
-        'Database indexes and B-trees',
-        'How query planners work',
-        'ACID properties',
-        'Normalization'
+        { t: 'Arrays, linked lists, trees, graphs, hash tables', e: "Arrays give O(1) access by index but O(n) insertion in the middle, since elements are contiguous. Linked lists trade that for O(1) insertion anywhere (given a pointer to the spot) but O(n) access, since you walk from the head. Balanced trees give O(log n) search/insert and back most database indexes. Graphs model non-hierarchical relationships — networks, dependencies, maps. Hash tables give near-O(1) average lookup by trading memory and handling collisions, which is why they back most languages' dictionary/map types." },
+        { t: 'Big-O analysis', e: "Big-O describes how an algorithm's time or space grows as input size grows, ignoring constant factors and lower-order terms. It matters because an O(n²) algorithm might beat an O(n log n) one on tiny inputs but falls apart at scale — and that crossover point is often exactly where production systems eventually land. It predicts how code degrades, it doesn't precisely measure speed on any single input." },
+        { t: 'How data is stored on disk vs memory', e: "RAM is volatile and randomly addressed — any byte is roughly as fast to reach as any other. Disk, especially spinning HDDs, is far slower and historically much faster to read sequentially than randomly, due to physical seek time. This is why databases are engineered around sequential writes (append-only logs, write-ahead logs) and batch random access wherever possible — it's working with physics, not a style choice." },
+        { t: 'Database indexes and B-trees', e: "Without an index, finding a row means scanning the whole table — O(n). An index is a separate, ordered structure — commonly a B-tree — that lets the database jump to the right rows in roughly O(log n), at the cost of extra storage and slower writes. A B-tree is shaped wide and shallow specifically to minimize disk reads, so most lookups touch only a few disk blocks instead of many." },
+        { t: 'Query planners', e: "A query often has multiple possible execution strategies — which table to scan first, which index to use, when to sort. The query planner estimates the cost of each, using statistics about table size and data distribution, and picks the plan it expects to be cheapest. This is why the same query can suddenly get slow after a schema change or major growth in row count — the planner's assumptions changed." },
+        { t: 'ACID properties', e: "ACID is what a transactional database guarantees so you can reason about correctness under concurrency and failure. Atomicity: a transaction fully happens or fully doesn't. Consistency: it never leaves the data in a state that violates its own rules. Isolation: concurrent transactions don't see each other's half-finished work. Durability: once committed, data survives a crash. Distributed/NoSQL systems often relax one of these on purpose, in exchange for availability or scale." },
+        { t: 'Normalization', e: "Normalization structures relational tables to eliminate redundant data, splitting information into separate tables linked by keys, following a progression of 'normal forms.' The payoff: updating a fact requires changing it in exactly one place instead of hunting duplicates. The trade-off: more JOINs to reassemble the full picture, which is why some high-read systems deliberately denormalize for speed." }
       ],
       resources: [
         ['Accessible', 'Grokking Algorithms'],
@@ -415,16 +451,16 @@
       title: 'Security',
       weeks: '3–4 weeks',
       topics: [
-        'OWASP Top 10 — the mechanism behind each, not just the name',
-        'SQL injection and XSS — how the exploit actually works',
-        'Authentication vs authorization',
-        'How JWT and OAuth work internally',
-        'Symmetric vs asymmetric encryption',
-        'Hashing vs encryption — what each is actually for',
-        'TLS handshake, in detail this time'
+        { t: 'OWASP Top 10 — mechanisms, not just names', e: "The OWASP Top 10 is a ranked list of the most common, impactful web vulnerability categories, revised from real-world incident data. Knowing the names (injection, broken access control) is far less useful than understanding the mechanism behind each, because that's what lets you spot a new variant you've never seen named before." },
+        { t: 'SQL injection and XSS mechanism', e: "SQL injection happens when user input is concatenated directly into a SQL query string instead of passed as a parameter — an attacker injects their own SQL logic the database can't distinguish from the intended query. Cross-site scripting happens when untrusted input is rendered into a page as raw HTML/JS instead of escaped text — the browser executes the attacker's script as if the site wrote it. Both share one root cause: treating untrusted data as trusted code/structure." },
+        { t: 'Authentication vs authorization', e: "Authentication answers 'who are you' — proving identity, typically via password, token, or biometric. Authorization answers 'what are you allowed to do' — checking permissions once identity is established. Breaches often happen when these get conflated: a user is correctly authenticated yet still authorized for something they shouldn't touch, because an authorization check was missing or wrong." },
+        { t: 'How JWT and OAuth work internally', e: "A JWT is a signed (not necessarily encrypted) token with three parts — header, payload, signature — base64-encoded and dot-separated. The signature lets a server verify it hasn't been tampered with, without a database lookup, which is why JWTs suit stateless auth. OAuth is a broader protocol for delegated authorization — letting an app act on a user's behalf on another service without ever seeing their password — and often uses JWTs as the token format, but solves a different problem." },
+        { t: 'Symmetric vs asymmetric encryption', e: "Symmetric encryption uses one shared secret key for both encrypting and decrypting — fast, but both parties need the same key, creating a distribution problem. Asymmetric encryption uses a public/private key pair: anyone can encrypt with the public key, but only the private key holder can decrypt — solving distribution at the cost of speed. TLS uses asymmetric crypto only to exchange a symmetric key, then switches to symmetric for the bulk of the data." },
+        { t: 'Hashing vs encryption', e: "Encryption is reversible by design — with the right key, you get the original data back. Hashing is meant to be one-way: it maps input to a fixed-size output with no key that reverses it. This is exactly why passwords should be hashed, not encrypted — the server should never be able to recover your original password, only verify a new attempt hashes to the same value." },
+        { t: 'TLS handshake, in detail', e: "The client sends supported cipher suites and a random value (ClientHello); the server responds with its choice, its certificate, and its own random value (ServerHello); the client verifies the certificate against a trusted CA, then both sides use the exchanged randoms plus a key-exchange algorithm (commonly Diffie-Hellman variants today) to independently derive the same symmetric session key without ever transmitting it. TLS 1.3 compresses this into fewer round trips than 1.2, specifically to cut handshake latency." }
       ],
       resources: [
-        ['Primary', 'OWASP Top 10 documentation, read for mechanism not checklist'],
+        ['Primary', 'OWASP Top 10 documentation, read for mechanism, not checklist'],
         ['Supplement', 'Any solid applied cryptography primer']
       ],
       build: 'Implement JWT auth from scratch — encode, decode, and verify manually. Then build a deliberately vulnerable login form in a sandbox and exploit it yourself (SQLi, XSS).'
@@ -435,12 +471,12 @@
       title: 'Distributed Systems',
       weeks: '4–6 weeks',
       topics: [
-        'Caching strategies',
-        'Load balancing',
-        'Consistency models',
-        'CAP theorem',
-        'Message queues and pub/sub',
-        'How horizontal scaling actually works'
+        { t: 'Caching strategies', e: "Caching stores a copy of expensive-to-compute or expensive-to-fetch data somewhere faster to access again. The hard problems are policy: what to evict when full (LRU, LFU), how long an entry stays valid (TTL), and how to avoid serving stale data after the source changes (invalidation) — that last one is famously one of the harder problems in computing, not the caching mechanism itself." },
+        { t: 'Load balancing', e: "A load balancer sits in front of multiple servers and distributes incoming requests across them, so no single server gets overwhelmed and the system can scale horizontally. Strategies range from simple (round-robin) to state-aware (least-connections, health-check-based routing). It's also a single point of failure unless it's itself redundant, which is why production setups usually run more than one." },
+        { t: 'Consistency models', e: "With multiple copies of data across a distributed system, consistency models define what guarantees you get about seeing up-to-date data. Strong consistency means every read sees the latest write everywhere, immediately — expensive across a network. Eventual consistency allows copies to briefly disagree after a write, converging over time — cheaper and more available, but callers must tolerate occasionally stale reads." },
+        { t: 'CAP theorem', e: "CAP states a distributed system can't simultaneously guarantee Consistency, Availability, and Partition tolerance all at once when a network partition happens — you give up one. Since partitions are a fact of networked life, the real choice in practice is between prioritizing consistency (reject requests during a partition) or availability (keep answering, accept some staleness). It's less a hard law and more a framing tool for that specific trade-off." },
+        { t: 'Message queues and pub/sub', e: "A message queue lets one part of a system hand off work to another without waiting for it to finish — the producer drops a message and moves on, a consumer picks it up when ready, decoupling the two in time. Pub/sub extends this so one message can be delivered to many independent subscribers rather than exactly one consumer. Both patterns keep systems responsive and resilient when one component is slow or down." },
+        { t: 'How horizontal scaling actually works', e: "Vertical scaling means making one machine bigger — simple, but it hits a ceiling and that machine is a single point of failure. Horizontal scaling means adding more machines and spreading load across them, which scales further but introduces real complexity: now you need load balancing, and your application/data layer must tolerate running as multiple instances instead of one — which is exactly where caching, consistency models, and message queues stop being optional." }
       ],
       resources: [
         ['Primary', 'Designing Data-Intensive Applications — Martin Kleppmann']
@@ -449,14 +485,15 @@
     }
   ];
 
-  const STORAGE_KEY = 'systems-fundamentals-tracker-v1';
+  const STORAGE_KEY = 'systems-fundamentals-tracker-v2';
   let state = null;
   let saveTimer = null;
+  const expanded = new Set(); // transient UI state, not persisted: `${phaseId}:${topicIndex}`
 
   function defaultState() {
     const s = {};
     PHASES.forEach(p => {
-      s[p.id] = { topics: p.topics.map(() => false), build: false, notes: '', open: false };
+      s[p.id] = { topics: p.topics.map(() => false), build: false, notes: '', buildLog: '', open: false };
     });
     return s;
   }
@@ -545,25 +582,64 @@
       body.appendChild(topicsLabel);
 
       p.topics.forEach((topic, ti) => {
+        const key = p.id + ':' + ti;
+        const rowWrap = document.createElement('div');
+        rowWrap.className = 'sft-topic-row';
+
         const row = document.createElement('div');
         row.className = 'sft-topic' + (s.topics[ti] ? ' sft-done' : '');
-        row.innerHTML = `<span class="sft-checkbox${s.topics[ti] ? ' sft-checked' : ''}"></span><span class="sft-topic-text">${topic}</span>`;
-        row.addEventListener('click', () => {
+
+        const checkbox = document.createElement('span');
+        checkbox.className = 'sft-checkbox' + (s.topics[ti] ? ' sft-checked' : '');
+        checkbox.addEventListener('click', (e) => {
+          e.stopPropagation();
           s.topics[ti] = !s.topics[ti];
           scheduleSave();
           render();
         });
-        body.appendChild(row);
+
+        const text = document.createElement('span');
+        text.className = 'sft-topic-text';
+        text.textContent = topic.t;
+        text.addEventListener('click', () => {
+          s.topics[ti] = !s.topics[ti];
+          scheduleSave();
+          render();
+        });
+
+        const explainBtn = document.createElement('button');
+        explainBtn.className = 'sft-explain-toggle';
+        explainBtn.textContent = expanded.has(key) ? 'hide' : 'explain';
+        explainBtn.addEventListener('click', (e) => {
+          e.stopPropagation();
+          if (expanded.has(key)) expanded.delete(key); else expanded.add(key);
+          render();
+        });
+
+        row.appendChild(checkbox);
+        row.appendChild(text);
+        row.appendChild(explainBtn);
+        rowWrap.appendChild(row);
+
+        if (expanded.has(key)) {
+          const panel = document.createElement('div');
+          panel.className = 'sft-explain-panel sft-shown';
+          panel.textContent = topic.e;
+          rowWrap.appendChild(panel);
+        }
+
+        body.appendChild(rowWrap);
       });
 
       const resLabel = document.createElement('div');
       resLabel.className = 'sft-section-label';
-      resLabel.textContent = 'Resources';
+      resLabel.textContent = 'Further resources';
       body.appendChild(resLabel);
 
       const resBox = document.createElement('div');
       resBox.className = 'sft-resources';
-      resBox.innerHTML = p.resources.map(r => `<div><strong>${r[0]}:</strong> ${r[1]}</div>`).join('');
+      resBox.innerHTML = p.resources.map(r => `<div><strong>${r[0]}:</strong> ${r[1]}</div>`).join('') +
+        `<div class="sft-res-note">Go deeper here — the explanations above are the core mental model, these go further.</div>`;
       body.appendChild(resBox);
 
       const buildLabel = document.createElement('div');
@@ -580,6 +656,21 @@
         render();
       });
       body.appendChild(buildBox);
+
+      const logLabel = document.createElement('div');
+      logLabel.className = 'sft-section-label';
+      logLabel.textContent = 'Build log — TrackGo commits';
+      body.appendChild(logLabel);
+
+      const buildLog = document.createElement('textarea');
+      buildLog.className = 'sft-buildlog';
+      buildLog.placeholder = 'e.g. a3f9c1 — added B-tree index to operator dashboard search (2026-07-10)';
+      buildLog.value = s.buildLog;
+      buildLog.addEventListener('input', (e) => {
+        s.buildLog = e.target.value;
+        scheduleSave();
+      });
+      body.appendChild(buildLog);
 
       const notesLabel = document.createElement('div');
       notesLabel.className = 'sft-section-label';
@@ -614,13 +705,13 @@
     } catch (e) {
       state = defaultState();
     }
-    // Backfill in case topic lists changed length since last save
     PHASES.forEach(p => {
-      if (!state[p.id]) state[p.id] = { topics: p.topics.map(() => false), build: false, notes: '', open: false };
+      if (!state[p.id]) state[p.id] = { topics: p.topics.map(() => false), build: false, notes: '', buildLog: '', open: false };
       if (state[p.id].topics.length !== p.topics.length) {
         const old = state[p.id].topics;
         state[p.id].topics = p.topics.map((_, i) => old[i] || false);
       }
+      if (typeof state[p.id].buildLog !== 'string') state[p.id].buildLog = '';
     });
     const el = document.getElementById('sft-savestate');
     if (el) el.textContent = 'Progress loaded';
