@@ -1,0 +1,644 @@
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+
+<style>
+  :root {
+    --bg: #0c1420;
+    --panel: #121f30;
+    --panel-raised: #17263b;
+    --grid-line: rgba(124,141,166,0.10);
+    --ink: #dce4ec;
+    --muted: #7c8da6;
+    --muted-dim: #4d5c72;
+    --copper: #d68a3c;
+    --copper-dim: rgba(214,138,60,0.25);
+    --cyan: #4fc3c7;
+    --cyan-dim: rgba(79,195,199,0.2);
+    --danger: #c85a4a;
+  }
+
+  * { box-sizing: border-box; }
+
+  #sft-root {
+    background: var(--bg);
+    background-image:
+      linear-gradient(var(--grid-line) 1px, transparent 1px),
+      linear-gradient(90deg, var(--grid-line) 1px, transparent 1px);
+    background-size: 28px 28px;
+    color: var(--ink);
+    font-family: 'Inter', sans-serif;
+    padding: 32px 20px 60px;
+    min-height: 100%;
+    border-radius: 8px;
+  }
+
+  .sft-wrap { max-width: 760px; margin: 0 auto; }
+
+  .sft-eyebrow {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 0.16em;
+    color: var(--cyan);
+    text-transform: uppercase;
+    margin-bottom: 10px;
+  }
+
+  .sft-title {
+    font-family: 'JetBrains Mono', monospace;
+    font-weight: 700;
+    font-size: 28px;
+    letter-spacing: -0.01em;
+    color: var(--ink);
+    margin: 0 0 6px;
+  }
+
+  .sft-sub {
+    color: var(--muted);
+    font-size: 14px;
+    line-height: 1.6;
+    margin: 0 0 26px;
+    max-width: 520px;
+  }
+
+  .sft-overall {
+    background: var(--panel);
+    border: 1px solid var(--grid-line);
+    border-radius: 10px;
+    padding: 18px 20px;
+    margin-bottom: 34px;
+  }
+
+  .sft-overall-top {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    margin-bottom: 10px;
+  }
+
+  .sft-overall-label {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 0.1em;
+    color: var(--muted);
+    text-transform: uppercase;
+  }
+
+  .sft-overall-pct {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 20px;
+    font-weight: 600;
+    color: var(--copper);
+  }
+
+  .sft-trace-track {
+    height: 6px;
+    background: var(--panel-raised);
+    border-radius: 3px;
+    overflow: hidden;
+    position: relative;
+  }
+
+  .sft-trace-fill {
+    height: 100%;
+    background: linear-gradient(90deg, var(--cyan), var(--copper));
+    border-radius: 3px;
+    transition: width 0.4s ease;
+  }
+
+  .sft-phase {
+    position: relative;
+    padding-left: 26px;
+    margin-bottom: 18px;
+  }
+
+  .sft-phase-rail {
+    position: absolute;
+    left: 6px;
+    top: 6px;
+    bottom: -18px;
+    width: 2px;
+    background: var(--panel-raised);
+  }
+  .sft-phase:last-child .sft-phase-rail { display: none; }
+
+  .sft-phase-rail-fill {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    background: var(--copper);
+    transition: height 0.4s ease;
+  }
+
+  .sft-phase-node {
+    position: absolute;
+    left: 0;
+    top: 4px;
+    width: 14px;
+    height: 14px;
+    border-radius: 50%;
+    background: var(--panel-raised);
+    border: 2px solid var(--muted-dim);
+    z-index: 2;
+    transition: border-color 0.3s, background 0.3s;
+  }
+  .sft-phase-node.sft-complete {
+    background: var(--copper);
+    border-color: var(--copper);
+  }
+  .sft-phase-node.sft-partial {
+    border-color: var(--cyan);
+  }
+
+  .sft-card {
+    background: var(--panel);
+    border: 1px solid var(--grid-line);
+    border-radius: 10px;
+    overflow: hidden;
+  }
+
+  .sft-card-head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 16px 18px;
+    cursor: pointer;
+    user-select: none;
+  }
+
+  .sft-card-head:hover { background: var(--panel-raised); }
+
+  .sft-card-head-left { display: flex; align-items: baseline; gap: 12px; }
+
+  .sft-phase-num {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    color: var(--muted);
+    letter-spacing: 0.08em;
+  }
+
+  .sft-phase-title {
+    font-family: 'JetBrains Mono', monospace;
+    font-weight: 600;
+    font-size: 15px;
+    color: var(--ink);
+  }
+
+  .sft-phase-weeks {
+    font-size: 12px;
+    color: var(--muted-dim);
+  }
+
+  .sft-card-head-right {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 13px;
+  }
+
+  .sft-pct { color: var(--copper); min-width: 34px; text-align: right; }
+
+  .sft-caret {
+    color: var(--muted);
+    transition: transform 0.25s ease;
+    font-size: 12px;
+  }
+  .sft-card.sft-open .sft-caret { transform: rotate(90deg); }
+
+  .sft-card-body {
+    display: none;
+    padding: 4px 18px 20px;
+    border-top: 1px solid var(--grid-line);
+  }
+  .sft-card.sft-open .sft-card-body { display: block; }
+
+  .sft-section-label {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin: 18px 0 10px;
+  }
+
+  .sft-topic {
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+    padding: 7px 0;
+    cursor: pointer;
+  }
+
+  .sft-checkbox {
+    width: 16px;
+    height: 16px;
+    border-radius: 4px;
+    border: 1.5px solid var(--muted-dim);
+    flex: none;
+    margin-top: 1px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: background 0.2s, border-color 0.2s;
+  }
+  .sft-checkbox.sft-checked {
+    background: var(--copper);
+    border-color: var(--copper);
+  }
+  .sft-checkbox.sft-checked::after {
+    content: '';
+    width: 4px;
+    height: 8px;
+    border-right: 2px solid #0c1420;
+    border-bottom: 2px solid #0c1420;
+    transform: rotate(45deg) translate(-1px,-1px);
+  }
+
+  .sft-topic-text {
+    font-size: 13.5px;
+    line-height: 1.5;
+    color: var(--ink);
+  }
+  .sft-topic.sft-done .sft-topic-text { color: var(--muted); text-decoration: line-through; text-decoration-color: var(--muted-dim); }
+
+  .sft-resources { font-size: 13px; color: var(--muted); line-height: 1.7; }
+  .sft-resources strong { color: var(--ink); font-weight: 500; }
+
+  .sft-build-box {
+    background: var(--panel-raised);
+    border: 1px solid var(--cyan-dim);
+    border-radius: 8px;
+    padding: 12px 14px;
+    display: flex;
+    gap: 10px;
+    align-items: flex-start;
+    cursor: pointer;
+  }
+  .sft-build-box .sft-topic-text { font-size: 13.5px; }
+
+  .sft-notes {
+    width: 100%;
+    background: var(--panel-raised);
+    border: 1px solid var(--grid-line);
+    border-radius: 8px;
+    color: var(--ink);
+    font-family: 'Inter', sans-serif;
+    font-size: 13px;
+    padding: 10px 12px;
+    resize: vertical;
+    min-height: 56px;
+  }
+  .sft-notes:focus { outline: none; border-color: var(--cyan-dim); }
+  .sft-notes::placeholder { color: var(--muted-dim); }
+
+  .sft-footer {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: 30px;
+    font-size: 12px;
+    color: var(--muted-dim);
+  }
+
+  .sft-reset {
+    background: none;
+    border: 1px solid var(--grid-line);
+    color: var(--muted);
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    padding: 7px 12px;
+    border-radius: 6px;
+    cursor: pointer;
+  }
+  .sft-reset:hover { border-color: var(--danger); color: var(--danger); }
+
+  .sft-savestate {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    color: var(--muted-dim);
+  }
+</style>
+
+<div id="sft-root">
+  <div class="sft-wrap">
+    <div class="sft-eyebrow">Self-Study Curriculum · Systems Fundamentals</div>
+    <h1 class="sft-title">From Silicon to Sockets</h1>
+    <p class="sft-sub">Five phases, architecture through distributed systems. Check off topics as you learn them, mark builds when shipped, and drop notes as you go — everything here saves automatically.</p>
+
+    <div class="sft-overall">
+      <div class="sft-overall-top">
+        <span class="sft-overall-label">Overall progress</span>
+        <span class="sft-overall-pct" id="sft-overall-pct">0%</span>
+      </div>
+      <div class="sft-trace-track"><div class="sft-trace-fill" id="sft-overall-fill" style="width:0%"></div></div>
+    </div>
+
+    <div id="sft-phases"></div>
+
+    <div class="sft-footer">
+      <span class="sft-savestate" id="sft-savestate">Loading progress…</span>
+      <button class="sft-reset" id="sft-reset">Reset all progress</button>
+    </div>
+  </div>
+</div>
+
+<script>
+(function() {
+  const PHASES = [
+    {
+      id: 'p1',
+      num: '01',
+      title: 'Architecture & OS Fundamentals',
+      weeks: '6–8 weeks',
+      topics: [
+        'Fetch–decode–execute cycle: how a CPU actually runs an instruction',
+        'Memory hierarchy — registers, cache, RAM, disk — and why it dictates performance',
+        'Binary and hex representation, two\'s complement, floating point',
+        'ASCII vs Unicode character encoding',
+        'Stack vs heap memory',
+        'Processes vs threads',
+        'Concurrency vs parallelism',
+        'Scheduling and context switching',
+        'Virtual memory and paging',
+        'File systems',
+        'System calls — how code talks to the OS'
+      ],
+      resources: [
+        ['Primary', 'Nand2Tetris — build a computer from logic gates up to a simple OS'],
+        ['Supplement', 'CS50 (Harvard) — broader but shallower pass']
+      ],
+      build: 'Implement a simple stack-based virtual machine, or a basic shell in C.'
+    },
+    {
+      id: 'p2',
+      num: '02',
+      title: 'Networking & Protocols',
+      weeks: '4–6 weeks',
+      topics: [
+        'OSI model — what each layer actually does',
+        'TCP vs UDP, and how the TCP handshake works',
+        'DNS resolution chain: browser → resolver → root → TLD → authoritative server',
+        'HTTP/HTTPS — methods, status codes, headers',
+        'HTTP/1.1 vs HTTP/2',
+        'TLS/SSL handshake, conceptually'
+      ],
+      resources: [
+        ['Primary', 'Computer Networking: A Top-Down Approach — Kurose & Ross'],
+        ['Free alt', 'Beej\'s Guide to Network Programming']
+      ],
+      build: 'Write a raw HTTP server from scratch using only TCP sockets, no framework. Then build a basic HTTP client to talk to it.'
+    },
+    {
+      id: 'p3',
+      num: '03',
+      title: 'Data, Algorithms & Databases',
+      weeks: '6–8 weeks',
+      topics: [
+        'Arrays, linked lists, trees, graphs, hash tables — implement each yourself once',
+        'Big-O analysis and why it matters for real systems',
+        'How data is stored on disk vs in memory',
+        'Database indexes and B-trees',
+        'How query planners work',
+        'ACID properties',
+        'Normalization'
+      ],
+      resources: [
+        ['Accessible', 'Grokking Algorithms'],
+        ['Rigorous', 'CLRS (Introduction to Algorithms)']
+      ],
+      build: 'Build a basic key-value store with your own indexing — a hash index or a B-tree — no library shortcuts.'
+    },
+    {
+      id: 'p4',
+      num: '04',
+      title: 'Security',
+      weeks: '3–4 weeks',
+      topics: [
+        'OWASP Top 10 — the mechanism behind each, not just the name',
+        'SQL injection and XSS — how the exploit actually works',
+        'Authentication vs authorization',
+        'How JWT and OAuth work internally',
+        'Symmetric vs asymmetric encryption',
+        'Hashing vs encryption — what each is actually for',
+        'TLS handshake, in detail this time'
+      ],
+      resources: [
+        ['Primary', 'OWASP Top 10 documentation, read for mechanism not checklist'],
+        ['Supplement', 'Any solid applied cryptography primer']
+      ],
+      build: 'Implement JWT auth from scratch — encode, decode, and verify manually. Then build a deliberately vulnerable login form in a sandbox and exploit it yourself (SQLi, XSS).'
+    },
+    {
+      id: 'p5',
+      num: '05',
+      title: 'Distributed Systems',
+      weeks: '4–6 weeks',
+      topics: [
+        'Caching strategies',
+        'Load balancing',
+        'Consistency models',
+        'CAP theorem',
+        'Message queues and pub/sub',
+        'How horizontal scaling actually works'
+      ],
+      resources: [
+        ['Primary', 'Designing Data-Intensive Applications — Martin Kleppmann']
+      ],
+      build: 'Extend your Phase 3 key-value store into a distributed version, or add a caching layer and a message queue to TrackGo.'
+    }
+  ];
+
+  const STORAGE_KEY = 'systems-fundamentals-tracker-v1';
+  let state = null;
+  let saveTimer = null;
+
+  function defaultState() {
+    const s = {};
+    PHASES.forEach(p => {
+      s[p.id] = { topics: p.topics.map(() => false), build: false, notes: '', open: false };
+    });
+    return s;
+  }
+
+  function phaseProgress(p) {
+    const s = state[p.id];
+    const total = p.topics.length + 1;
+    const done = s.topics.filter(Boolean).length + (s.build ? 1 : 0);
+    return Math.round((done / total) * 100);
+  }
+
+  function overallProgress() {
+    let total = 0, done = 0;
+    PHASES.forEach(p => {
+      const s = state[p.id];
+      total += p.topics.length + 1;
+      done += s.topics.filter(Boolean).length + (s.build ? 1 : 0);
+    });
+    return total ? Math.round((done / total) * 100) : 0;
+  }
+
+  function scheduleSave() {
+    const el = document.getElementById('sft-savestate');
+    if (el) el.textContent = 'Saving…';
+    clearTimeout(saveTimer);
+    saveTimer = setTimeout(async () => {
+      try {
+        await window.storage.set(STORAGE_KEY, JSON.stringify(state), false);
+        if (el) el.textContent = 'Progress saved';
+      } catch (e) {
+        if (el) el.textContent = 'Could not save — will retry on next change';
+        console.error('Save failed', e);
+      }
+    }, 400);
+  }
+
+  function render() {
+    const container = document.getElementById('sft-phases');
+    container.innerHTML = '';
+
+    PHASES.forEach((p, idx) => {
+      const s = state[p.id];
+      const pct = phaseProgress(p);
+      const wrap = document.createElement('div');
+      wrap.className = 'sft-phase';
+
+      const rail = document.createElement('div');
+      rail.className = 'sft-phase-rail';
+      const railFill = document.createElement('div');
+      railFill.className = 'sft-phase-rail-fill';
+      railFill.style.height = pct + '%';
+      rail.appendChild(railFill);
+      if (idx < PHASES.length - 1) wrap.appendChild(rail);
+
+      const node = document.createElement('div');
+      node.className = 'sft-phase-node' + (pct === 100 ? ' sft-complete' : pct > 0 ? ' sft-partial' : '');
+      wrap.appendChild(node);
+
+      const card = document.createElement('div');
+      card.className = 'sft-card' + (s.open ? ' sft-open' : '');
+
+      const head = document.createElement('div');
+      head.className = 'sft-card-head';
+      head.innerHTML = `
+        <div class="sft-card-head-left">
+          <span class="sft-phase-num">PHASE ${p.num}</span>
+          <span class="sft-phase-title">${p.title}</span>
+          <span class="sft-phase-weeks">${p.weeks}</span>
+        </div>
+        <div class="sft-card-head-right">
+          <span class="sft-pct">${pct}%</span>
+          <span class="sft-caret">▸</span>
+        </div>
+      `;
+      head.addEventListener('click', () => {
+        s.open = !s.open;
+        render();
+      });
+
+      const body = document.createElement('div');
+      body.className = 'sft-card-body';
+
+      const topicsLabel = document.createElement('div');
+      topicsLabel.className = 'sft-section-label';
+      topicsLabel.textContent = 'Topics';
+      body.appendChild(topicsLabel);
+
+      p.topics.forEach((topic, ti) => {
+        const row = document.createElement('div');
+        row.className = 'sft-topic' + (s.topics[ti] ? ' sft-done' : '');
+        row.innerHTML = `<span class="sft-checkbox${s.topics[ti] ? ' sft-checked' : ''}"></span><span class="sft-topic-text">${topic}</span>`;
+        row.addEventListener('click', () => {
+          s.topics[ti] = !s.topics[ti];
+          scheduleSave();
+          render();
+        });
+        body.appendChild(row);
+      });
+
+      const resLabel = document.createElement('div');
+      resLabel.className = 'sft-section-label';
+      resLabel.textContent = 'Resources';
+      body.appendChild(resLabel);
+
+      const resBox = document.createElement('div');
+      resBox.className = 'sft-resources';
+      resBox.innerHTML = p.resources.map(r => `<div><strong>${r[0]}:</strong> ${r[1]}</div>`).join('');
+      body.appendChild(resBox);
+
+      const buildLabel = document.createElement('div');
+      buildLabel.className = 'sft-section-label';
+      buildLabel.textContent = 'Build project';
+      body.appendChild(buildLabel);
+
+      const buildBox = document.createElement('div');
+      buildBox.className = 'sft-build-box';
+      buildBox.innerHTML = `<span class="sft-checkbox${s.build ? ' sft-checked' : ''}"></span><span class="sft-topic-text">${p.build}</span>`;
+      buildBox.addEventListener('click', () => {
+        s.build = !s.build;
+        scheduleSave();
+        render();
+      });
+      body.appendChild(buildBox);
+
+      const notesLabel = document.createElement('div');
+      notesLabel.className = 'sft-section-label';
+      notesLabel.textContent = 'Notes';
+      body.appendChild(notesLabel);
+
+      const notes = document.createElement('textarea');
+      notes.className = 'sft-notes';
+      notes.placeholder = 'Jot down what clicked, what to revisit, links you found useful…';
+      notes.value = s.notes;
+      notes.addEventListener('input', (e) => {
+        s.notes = e.target.value;
+        scheduleSave();
+      });
+      body.appendChild(notes);
+
+      card.appendChild(head);
+      card.appendChild(body);
+      wrap.appendChild(card);
+      container.appendChild(wrap);
+    });
+
+    const overallPct = overallProgress();
+    document.getElementById('sft-overall-pct').textContent = overallPct + '%';
+    document.getElementById('sft-overall-fill').style.width = overallPct + '%';
+  }
+
+  async function init() {
+    try {
+      const result = await window.storage.get(STORAGE_KEY, false);
+      state = result && result.value ? JSON.parse(result.value) : defaultState();
+    } catch (e) {
+      state = defaultState();
+    }
+    // Backfill in case topic lists changed length since last save
+    PHASES.forEach(p => {
+      if (!state[p.id]) state[p.id] = { topics: p.topics.map(() => false), build: false, notes: '', open: false };
+      if (state[p.id].topics.length !== p.topics.length) {
+        const old = state[p.id].topics;
+        state[p.id].topics = p.topics.map((_, i) => old[i] || false);
+      }
+    });
+    const el = document.getElementById('sft-savestate');
+    if (el) el.textContent = 'Progress loaded';
+    render();
+  }
+
+  document.getElementById('sft-reset').addEventListener('click', async () => {
+    if (!confirm('Reset all progress and notes? This cannot be undone.')) return;
+    state = defaultState();
+    render();
+    try {
+      await window.storage.set(STORAGE_KEY, JSON.stringify(state), false);
+      document.getElementById('sft-savestate').textContent = 'Progress reset';
+    } catch (e) {
+      console.error('Reset save failed', e);
+    }
+  });
+
+  init();
+})();
+</script>
